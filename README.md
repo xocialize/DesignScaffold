@@ -140,3 +140,7 @@ appearance is the host's job (`.preferredColorScheme(.dark)`).
 ## Adopters
 
 - `mlxengine-audio/PROD/Audio8/Audio8 Demo`
+
+## License
+
+MIT — see [LICENSE](LICENSE).
