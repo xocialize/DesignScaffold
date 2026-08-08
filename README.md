@@ -10,6 +10,7 @@ in those tokens, shipped as separately selectable libraries.
 |---|---|
 | `DesignScaffold` | `Tokens` + `cardSurface()` — the vocabulary |
 | `DesignScaffoldCalendar` | Month calendar (single/multiple/range selection) in the house style; re-exports `DesignScaffold` |
+| `DesignScaffoldPlaylist` | `PlaylistIterator` — sortable playlist list (thumbnail · name · metadata, drag-reorder, active marker); re-exports `DesignScaffold` |
 
 In Xcode's package sheet, select only the libraries the app uses.
 
@@ -95,47 +96,63 @@ Text("Real-time factor")
 **House rule:** no view hardcodes a colour, font size, or spacing value. If something is
 missing, add it here first — that constraint is what keeps a kit refresh a one-file change.
 
-### Calendar
+## Components
+
+Each component ships as its own selectable library, wears the scaffold look **by
+default** (no theme call needed — every colour, metric, and font resolves through
+`Tokens`), and re-exports `DesignScaffold`. Full instructions live in `Docs/`, one page
+per component.
+
+### Calendar — [Docs/Calendar.md](Docs/Calendar.md)
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="Docs/images/calendar-dark.png">
+  <img src="Docs/images/calendar-light.png" width="732" alt="The calendar in the default scaffold theme next to a custom accent override">
+</picture>
+
+Month calendar for date, multi-date, and date-range input — the selection mode follows
+from which binding you pass. First weekday, locale, bounds, disabled dates, and week
+numbers are chainable modifiers; the grid math and selection rules are pure,
+unit-tested value types.
 
 ```swift
-import DesignScaffoldCalendar   // re-exports DesignScaffold, so Tokens comes along
+import DesignScaffoldCalendar
 
-@State private var date: Date?                 // single
-@State private var dates: [Date] = []          // multiple (tap to toggle)
-@State private var range: ClosedRange<Date>?   // range (first tap = start, second = end)
+@State private var range: ClosedRange<Date>?
 
 CalendarView(range: $range)
     .firstWeekday(.monday)
-    .bounds(minimum: .now)
     .disabledWeekdays(Weekday.weekend)
-    .disabledDates { holidays.contains($0) }
-    .showsWeekNumbers()
     .padding(Tokens.Space.s)
     .cardSurface()
 ```
 
-The selection mode follows from which binding you pass (`Date?` / `[Date]` /
-`ClosedRange<Date>?`). Behaviour — locale, calendar, bounds, disabled dates — is
-configured via the chainable modifiers or a `CalendarConfiguration`; the grid math
-(`MonthLayout`) and selection rules (`SelectionEngine`) are pure value types covered by
-the package's unit tests.
+### Playlist iterator — [Docs/PlaylistIterator.md](Docs/PlaylistIterator.md)
 
-**No theme call is needed: the scaffold look is the default.** Every colour, metric, and
-font resolves through `Tokens` — a Figma token refresh re-skins the calendar for free.
-Where the original port's choices disagreed with the tokens (8pt cell radius vs control
-radius 6, 34pt cells vs control height 24, SwiftUI's `.headline`/`.callout` vs the
-measured type ramp, opacity hacks vs real label semantics), **the token won** — each
-divergence is recorded in `Sources/DesignScaffoldCalendar/Theme/CalendarTheme.swift`.
-For brand accents, mutate a copy and pass it once:
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="Docs/images/playlist-dark.png">
+  <img src="Docs/images/playlist-light.png" width="822" alt="The playlist iterator: a populated list with an active ring and a selected row, a placeholder-thumbnail variant, and the empty state">
+</picture>
+
+Sortable playlist list — rows of thumbnail · name · metadata with drag-to-reorder, tap
+selection, and a distinct ACTIVE (now-playing) accent ring. Reorders live as the dragged
+row passes neighbours and commits once on drop; the move rule is pure and unit-tested.
+`Item` is your own `Identifiable` model, and thumbnails arrive as a `ViewBuilder`.
 
 ```swift
-var brand = CalendarTheme.scaffold
-brand.accent = .pink
-CalendarView(selection: $date).theme(brand)
-```
+import DesignScaffoldPlaylist
 
-There are no fixed light/dark palettes: the semantic tokens adapt, and forcing an
-appearance is the host's job (`.preferredColorScheme(.dark)`).
+PlaylistIterator(
+    items: $clips, selection: $selectedId, active: nowPlayingId,
+    name: { $0.title },
+    metadata: { [PlaylistMetadatum("TRT", $0.runtime)] }
+) { clip in
+    clip.artwork.resizable().scaledToFill()
+}
+.onReorder { reordered in persist(reordered.map(\.id)) }
+.clipShape(RoundedRectangle(cornerRadius: Tokens.Radius.container))
+.cardSurface()
+```
 
 ## Adopters
 
