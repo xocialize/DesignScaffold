@@ -23,6 +23,8 @@ let package = Package(
         .library(name: "DesignScaffold", targets: ["DesignScaffold"]),
         // Month calendar (single/multiple/range selection) in the scaffold house style.
         .library(name: "DesignScaffoldCalendar", targets: ["DesignScaffoldCalendar"]),
+        // Sortable playlist list (thumbnail · name · metadata, drag-reorder, active marker).
+        .library(name: "DesignScaffoldPlaylist", targets: ["DesignScaffoldPlaylist"]),
     ],
     targets: [
         .target(name: "DesignScaffold", path: "Sources/DesignScaffold"),
@@ -31,9 +33,18 @@ let package = Package(
             dependencies: ["DesignScaffold"],
             path: "Sources/DesignScaffoldCalendar"
         ),
+        .target(
+            name: "DesignScaffoldPlaylist",
+            dependencies: ["DesignScaffold"],
+            path: "Sources/DesignScaffoldPlaylist"
+        ),
         .testTarget(
             name: "DesignScaffoldCalendarTests",
             dependencies: ["DesignScaffoldCalendar"]
+        ),
+        .testTarget(
+            name: "DesignScaffoldPlaylistTests",
+            dependencies: ["DesignScaffoldPlaylist"]
         ),
     ]
 )
