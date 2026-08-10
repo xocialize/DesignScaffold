@@ -1,0 +1,60 @@
+{
+  "originHash" : "b282cc0758bb15522211c3621d5fce4fb838ac03eebcd09a2ba6080a26effa28",
+  "pins" : [
+    {
+      "identity" : "loggingkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/xocialize/LoggingKit",
+      "state" : {
+        "revision" : "157c3370e2f00465c1656bf638d785204949230d",
+        "version" : "1.0.1"
+      }
+    },
+    {
+      "identity" : "metaltoolbox",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/xocialize/MetalToolBox",
+      "state" : {
+        "revision" : "0add7b8c9e4594a6226215fff162ac41554ac72a",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "mlx-engine-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/xocialize/mlx-engine-swift",
+      "state" : {
+        "revision" : "0c1a08488352ae68bce6428038c59edc4f254268",
+        "version" : "0.43.0"
+      }
+    },
+    {
+      "identity" : "mlx-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ml-explore/mlx-swift",
+      "state" : {
+        "revision" : "0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
+        "version" : "0.31.6"
+      }
+    },
+    {
+      "identity" : "swift-argument-parser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-argument-parser",
+      "state" : {
+        "revision" : "6a52f3251125d74daf04fcbd5e6f08a75d074382",
+        "version" : "1.8.2"
+      }
+    },
+    {
+      "identity" : "swift-numerics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-numerics",
+      "state" : {
+        "revision" : "0c0290ff6b24942dadb83a929ffaaa1481df04a2",
+        "version" : "1.1.1"
+      }
+    }
+  ],
+  "version" : 3
+}

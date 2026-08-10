@@ -1,0 +1,511 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 110;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		239A3C72301DB4B50052AF6F /* DesignScaffold in Frameworks */ = {isa = PBXBuildFile; productRef = 239A3C71301DB4B50052AF6F /* DesignScaffold */; };
+		23E796B53020E1BF00120F27 /* LoggingKit in Frameworks */ = {isa = PBXBuildFile; productRef = 23E796B43020E1BF00120F27 /* LoggingKit */; };
+		23E796B83020E20B00120F27 /* MetalToolBox in Frameworks */ = {isa = PBXBuildFile; productRef = 23E796B73020E20B00120F27 /* MetalToolBox */; };
+		23E796BA3020E20B00120F27 /* TextureCompositorEngine in Frameworks */ = {isa = PBXBuildFile; productRef = 23E796B93020E20B00120F27 /* TextureCompositorEngine */; };
+		23E796BC3020E20B00120F27 /* VideoPlayerKit in Frameworks */ = {isa = PBXBuildFile; productRef = 23E796BB3020E20B00120F27 /* VideoPlayerKit */; };
+		23E796BE3020E20B00120F27 /* ZoneLayoutGenerator in Frameworks */ = {isa = PBXBuildFile; productRef = 23E796BD3020E20B00120F27 /* ZoneLayoutGenerator */; };
+		23E796DB3020E29000120F27 /* MLXEngineTestKit in Frameworks */ = {isa = PBXBuildFile; productRef = 23E796DA3020E29000120F27 /* MLXEngineTestKit */; };
+		23E796DD3020E29000120F27 /* MLXEngineUI in Frameworks */ = {isa = PBXBuildFile; productRef = 23E796DC3020E29000120F27 /* MLXEngineUI */; };
+		23E796DF3020E29000120F27 /* MLXHubMetadata in Frameworks */ = {isa = PBXBuildFile; productRef = 23E796DE3020E29000120F27 /* MLXHubMetadata */; };
+		23E796E13020E29000120F27 /* MLXRetrievalKit in Frameworks */ = {isa = PBXBuildFile; productRef = 23E796E03020E29000120F27 /* MLXRetrievalKit */; };
+		23E796E33020E29000120F27 /* MLXRetrievalKitContracts in Frameworks */ = {isa = PBXBuildFile; productRef = 23E796E23020E29000120F27 /* MLXRetrievalKitContracts */; };
+		23E796E53020E29000120F27 /* MLXServeConformance in Frameworks */ = {isa = PBXBuildFile; productRef = 23E796E43020E29000120F27 /* MLXServeConformance */; };
+		23E796E73020E29000120F27 /* MLXServeConformanceNN in Frameworks */ = {isa = PBXBuildFile; productRef = 23E796E63020E29000120F27 /* MLXServeConformanceNN */; };
+		23E796E93020E29000120F27 /* MLXServeCore in Frameworks */ = {isa = PBXBuildFile; productRef = 23E796E83020E29000120F27 /* MLXServeCore */; };
+		23E796EB3020E29000120F27 /* MLXToolKit in Frameworks */ = {isa = PBXBuildFile; productRef = 23E796EA3020E29000120F27 /* MLXToolKit */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		239A3C5F301DB4920052AF6F /* DesignWorkspace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DesignWorkspace.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		2396C93E302629A900943CCC /* Exceptions for "DesignWorkspace" folder in "DesignWorkspace" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				ZoneLayoutConfig.swift,
+			);
+			target = 239A3C5E301DB4920052AF6F /* DesignWorkspace */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		239A3C61301DB4920052AF6F /* DesignWorkspace */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				2396C93E302629A900943CCC /* Exceptions for "DesignWorkspace" folder in "DesignWorkspace" target */,
+			);
+			path = DesignWorkspace;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		239A3C5C301DB4920052AF6F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+				23E796DD3020E29000120F27 /* MLXEngineUI in Frameworks */,
+				239A3C72301DB4B50052AF6F /* DesignScaffold in Frameworks */,
+				23E796E33020E29000120F27 /* MLXRetrievalKitContracts in Frameworks */,
+				23E796BA3020E20B00120F27 /* TextureCompositorEngine in Frameworks */,
+				23E796E53020E29000120F27 /* MLXServeConformance in Frameworks */,
+				23E796B83020E20B00120F27 /* MetalToolBox in Frameworks */,
+				23E796DF3020E29000120F27 /* MLXHubMetadata in Frameworks */,
+				23E796E73020E29000120F27 /* MLXServeConformanceNN in Frameworks */,
+				23E796BC3020E20B00120F27 /* VideoPlayerKit in Frameworks */,
+				23E796EB3020E29000120F27 /* MLXToolKit in Frameworks */,
+				23E796BE3020E20B00120F27 /* ZoneLayoutGenerator in Frameworks */,
+				23E796DB3020E29000120F27 /* MLXEngineTestKit in Frameworks */,
+				23E796E93020E29000120F27 /* MLXServeCore in Frameworks */,
+				23E796E13020E29000120F27 /* MLXRetrievalKit in Frameworks */,
+				23E796B53020E1BF00120F27 /* LoggingKit in Frameworks */,
+			);
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		239A3C56301DB4920052AF6F = {
+			isa = PBXGroup;
+			children = (
+				239A3C61301DB4920052AF6F /* DesignWorkspace */,
+				239A3C60301DB4920052AF6F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		239A3C60301DB4920052AF6F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				239A3C5F301DB4920052AF6F /* DesignWorkspace.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		239A3C5E301DB4920052AF6F /* DesignWorkspace */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 239A3C6D301DB4930052AF6F /* Build configuration list for PBXNativeTarget "DesignWorkspace" */;
+			buildPhases = (
+				239A3C5B301DB4920052AF6F /* Sources */,
+				239A3C5C301DB4920052AF6F /* Frameworks */,
+				239A3C5D301DB4920052AF6F /* Resources */,
+			);
+			buildRules = (
+			);
+			fileSystemSynchronizedGroups = (
+				239A3C61301DB4920052AF6F /* DesignWorkspace */,
+			);
+			name = DesignWorkspace;
+			packageProductDependencies = (
+				239A3C71301DB4B50052AF6F /* DesignScaffold */,
+				23E796B43020E1BF00120F27 /* LoggingKit */,
+				23E796B73020E20B00120F27 /* MetalToolBox */,
+				23E796B93020E20B00120F27 /* TextureCompositorEngine */,
+				23E796BB3020E20B00120F27 /* VideoPlayerKit */,
+				23E796BD3020E20B00120F27 /* ZoneLayoutGenerator */,
+				23E796DA3020E29000120F27 /* MLXEngineTestKit */,
+				23E796DC3020E29000120F27 /* MLXEngineUI */,
+				23E796DE3020E29000120F27 /* MLXHubMetadata */,
+				23E796E03020E29000120F27 /* MLXRetrievalKit */,
+				23E796E23020E29000120F27 /* MLXRetrievalKitContracts */,
+				23E796E43020E29000120F27 /* MLXServeConformance */,
+				23E796E63020E29000120F27 /* MLXServeConformanceNN */,
+				23E796E83020E29000120F27 /* MLXServeCore */,
+				23E796EA3020E29000120F27 /* MLXToolKit */,
+			);
+			productName = DesignWorkspace;
+			productReference = 239A3C5F301DB4920052AF6F /* DesignWorkspace.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		239A3C57301DB4920052AF6F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2700;
+				LastUpgradeCheck = 2700;
+				TargetAttributes = {
+					239A3C5E301DB4920052AF6F = {
+						CreatedOnToolsVersion = 27.0;
+					};
+				};
+			};
+			buildConfigurationList = 239A3C5A301DB4920052AF6F /* Build configuration list for PBXProject "DesignWorkspace" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 239A3C56301DB4920052AF6F;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				239A3C70301DB4B50052AF6F /* XCLocalSwiftPackageReference "../DesignScaffold" */,
+				23E796B33020E1BF00120F27 /* XCRemoteSwiftPackageReference "LoggingKit" */,
+				23E796B63020E20B00120F27 /* XCRemoteSwiftPackageReference "MetalToolBox" */,
+				23E796D93020E29000120F27 /* XCRemoteSwiftPackageReference "mlx-engine-swift" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 239A3C60301DB4920052AF6F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				239A3C5E301DB4920052AF6F /* DesignWorkspace */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		239A3C5D301DB4920052AF6F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		239A3C5B301DB4920052AF6F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		239A3C6B301DB4930052AF6F /* Debug configuration for PBXProject "DesignWorkspace" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = CFZS6RXUCP;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		239A3C6C301DB4930052AF6F /* Release configuration for PBXProject "DesignWorkspace" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = CFZS6RXUCP;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		239A3C6E301DB4930052AF6F /* Debug configuration for PBXNativeTarget "DesignWorkspace" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CFZS6RXUCP;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				INFOPLIST_KEY_NSViewGestureRecognizerIsExclusive = NO;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.xocialize.DesignWorkspace;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		239A3C6F301DB4930052AF6F /* Release configuration for PBXNativeTarget "DesignWorkspace" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CFZS6RXUCP;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				INFOPLIST_KEY_NSViewGestureRecognizerIsExclusive = NO;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.xocialize.DesignWorkspace;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		239A3C5A301DB4920052AF6F /* Build configuration list for PBXProject "DesignWorkspace" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				239A3C6B301DB4930052AF6F /* Debug configuration for PBXProject "DesignWorkspace" */,
+				239A3C6C301DB4930052AF6F /* Release configuration for PBXProject "DesignWorkspace" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		239A3C6D301DB4930052AF6F /* Build configuration list for PBXNativeTarget "DesignWorkspace" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				239A3C6E301DB4930052AF6F /* Debug configuration for PBXNativeTarget "DesignWorkspace" */,
+				239A3C6F301DB4930052AF6F /* Release configuration for PBXNativeTarget "DesignWorkspace" */,
+			);
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		239A3C70301DB4B50052AF6F /* XCLocalSwiftPackageReference "../DesignScaffold" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../DesignScaffold;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		23E796B33020E1BF00120F27 /* XCRemoteSwiftPackageReference "LoggingKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/xocialize/LoggingKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.1;
+			};
+		};
+		23E796B63020E20B00120F27 /* XCRemoteSwiftPackageReference "MetalToolBox" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/xocialize/MetalToolBox";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+		23E796D93020E29000120F27 /* XCRemoteSwiftPackageReference "mlx-engine-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/xocialize/mlx-engine-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.40.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		239A3C71301DB4B50052AF6F /* DesignScaffold */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DesignScaffold;
+		};
+		23E796B43020E1BF00120F27 /* LoggingKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 23E796B33020E1BF00120F27 /* XCRemoteSwiftPackageReference "LoggingKit" */;
+			productName = LoggingKit;
+		};
+		23E796B73020E20B00120F27 /* MetalToolBox */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 23E796B63020E20B00120F27 /* XCRemoteSwiftPackageReference "MetalToolBox" */;
+			productName = MetalToolBox;
+		};
+		23E796B93020E20B00120F27 /* TextureCompositorEngine */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 23E796B63020E20B00120F27 /* XCRemoteSwiftPackageReference "MetalToolBox" */;
+			productName = TextureCompositorEngine;
+		};
+		23E796BB3020E20B00120F27 /* VideoPlayerKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 23E796B63020E20B00120F27 /* XCRemoteSwiftPackageReference "MetalToolBox" */;
+			productName = VideoPlayerKit;
+		};
+		23E796BD3020E20B00120F27 /* ZoneLayoutGenerator */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 23E796B63020E20B00120F27 /* XCRemoteSwiftPackageReference "MetalToolBox" */;
+			productName = ZoneLayoutGenerator;
+		};
+		23E796DA3020E29000120F27 /* MLXEngineTestKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 23E796D93020E29000120F27 /* XCRemoteSwiftPackageReference "mlx-engine-swift" */;
+			productName = MLXEngineTestKit;
+		};
+		23E796DC3020E29000120F27 /* MLXEngineUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 23E796D93020E29000120F27 /* XCRemoteSwiftPackageReference "mlx-engine-swift" */;
+			productName = MLXEngineUI;
+		};
+		23E796DE3020E29000120F27 /* MLXHubMetadata */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 23E796D93020E29000120F27 /* XCRemoteSwiftPackageReference "mlx-engine-swift" */;
+			productName = MLXHubMetadata;
+		};
+		23E796E03020E29000120F27 /* MLXRetrievalKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 23E796D93020E29000120F27 /* XCRemoteSwiftPackageReference "mlx-engine-swift" */;
+			productName = MLXRetrievalKit;
+		};
+		23E796E23020E29000120F27 /* MLXRetrievalKitContracts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 23E796D93020E29000120F27 /* XCRemoteSwiftPackageReference "mlx-engine-swift" */;
+			productName = MLXRetrievalKitContracts;
+		};
+		23E796E43020E29000120F27 /* MLXServeConformance */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 23E796D93020E29000120F27 /* XCRemoteSwiftPackageReference "mlx-engine-swift" */;
+			productName = MLXServeConformance;
+		};
+		23E796E63020E29000120F27 /* MLXServeConformanceNN */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 23E796D93020E29000120F27 /* XCRemoteSwiftPackageReference "mlx-engine-swift" */;
+			productName = MLXServeConformanceNN;
+		};
+		23E796E83020E29000120F27 /* MLXServeCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 23E796D93020E29000120F27 /* XCRemoteSwiftPackageReference "mlx-engine-swift" */;
+			productName = MLXServeCore;
+		};
+		23E796EA3020E29000120F27 /* MLXToolKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 23E796D93020E29000120F27 /* XCRemoteSwiftPackageReference "mlx-engine-swift" */;
+			productName = MLXToolKit;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 239A3C57301DB4920052AF6F /* Project object */;
+	validationLevel = 1;
+}

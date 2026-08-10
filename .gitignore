@@ -1,7 +1,12 @@
+# (github.com/xocialize/DesignScaffold) — the subdirectory is intentionally untracked here.
+# Workspace-level repo: the DesignScaffold package now lives in its own repo
 .DS_Store
-/.build
-/Packages
-xcuserdata/
-DerivedData/
-.swiftpm/
+.build/
+.git-accidental-*/
 .netrc
+.swiftpm/
+/.build
+/DesignScaffold/
+/Packages
+DerivedData/
+xcuserdata/
