@@ -96,6 +96,9 @@ public enum Tokens {
         public static let metricInline = SwiftUI.Font.system(size: 12).monospacedDigit()
         /// Transcripts, JSON, and anything where alignment carries meaning.
         public static let mono = SwiftUI.Font.system(size: 11, design: .monospaced)
+        /// Dense stat/telemetry lines one step below `mono` (the loading readout's
+        /// byte counters). Pairs with `metricLabel` (10) on the size ramp.
+        public static let monoSmall = SwiftUI.Font.system(size: 10, design: .monospaced)
     }
 
     // MARK: - Spacing (4pt base grid)

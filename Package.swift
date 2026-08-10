@@ -25,6 +25,8 @@ let package = Package(
         .library(name: "DesignScaffoldCalendar", targets: ["DesignScaffoldCalendar"]),
         // Sortable playlist list (thumbnail · name · metadata, drag-reorder, active marker).
         .library(name: "DesignScaffoldPlaylist", targets: ["DesignScaffoldPlaylist"]),
+        // Model/product loading modal (hero percentage · status · detail fields · bar).
+        .library(name: "DesignScaffoldLoading", targets: ["DesignScaffoldLoading"]),
     ],
     targets: [
         .target(name: "DesignScaffold", path: "Sources/DesignScaffold"),
@@ -38,9 +40,18 @@ let package = Package(
             dependencies: ["DesignScaffold"],
             path: "Sources/DesignScaffoldPlaylist"
         ),
+        .target(
+            name: "DesignScaffoldLoading",
+            dependencies: ["DesignScaffold"],
+            path: "Sources/DesignScaffoldLoading"
+        ),
         .testTarget(
             name: "DesignScaffoldCalendarTests",
             dependencies: ["DesignScaffoldCalendar"]
+        ),
+        .testTarget(
+            name: "DesignScaffoldLoadingTests",
+            dependencies: ["DesignScaffoldLoading"]
         ),
         .testTarget(
             name: "DesignScaffoldPlaylistTests",

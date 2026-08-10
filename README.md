@@ -11,6 +11,7 @@ in those tokens, shipped as separately selectable libraries.
 | `DesignScaffold` | `Tokens` + `cardSurface()` — the vocabulary |
 | `DesignScaffoldCalendar` | Month calendar (single/multiple/range selection) in the house style; re-exports `DesignScaffold` |
 | `DesignScaffoldPlaylist` | `PlaylistIterator` — sortable playlist list (thumbnail · name · metadata, drag-reorder, active marker); re-exports `DesignScaffold` |
+| `DesignScaffoldLoading` | `LoadingCard` + `.loadingModal(...)` — model/product loading modal (hero percentage · status · fields · bar); re-exports `DesignScaffold` |
 
 In Xcode's package sheet, select only the libraries the app uses.
 
@@ -152,6 +153,31 @@ PlaylistIterator(
 .onReorder { reordered in persist(reordered.map(\.id)) }
 .clipShape(RoundedRectangle(cornerRadius: Tokens.Radius.container))
 .cardSurface()
+```
+
+### Loading modal — [Docs/LoadingModal.md](Docs/LoadingModal.md)
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="Docs/images/loading-dark.png">
+  <img src="Docs/images/loading-light.png" width="825" alt="The loading modal over a dimmed app: hero percentage, status line, detail fields, and progress bar on an 800×600 card">
+</picture>
+
+Modal loading card for model/product loads — display-size percentage, uppercase status,
+dot-separated detail fields, thin progress bar, on an 800×600 card with a slot for
+full-bleed art behind a legibility scrim. You pass in the percentage and the fields;
+formatting is the app's business. No close affordance on purpose — dismissal is the
+load's job.
+
+```swift
+import DesignScaffoldLoading
+
+MyAppContent()
+    .loadingModal(
+        isPresented: loading,
+        progress: LoadingProgress(fraction: 0.29,
+                                  status: "Streaming weights",
+                                  fields: ["1.13 / 3.79 GB", "ETA 1:17"]),
+        title: "Audio8 TTS")
 ```
 
 ## Adopters
