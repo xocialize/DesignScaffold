@@ -57,7 +57,7 @@ public struct CalendarTheme: Sendable {
         weekendText: Color = Tokens.Color.secondaryLabel,
         outsideMonthText: Color = Tokens.Color.tertiaryLabel,
         disabledText: Color = Tokens.Color.quaternaryLabel,
-        inRangeBackground: Color = Tokens.Color.accent.opacity(0.15),
+        inRangeBackground: Color = Tokens.Color.selectionWash,
         todayIndicator: Color = Tokens.Color.accent,
         headerText: Color = Tokens.Color.label,
         weekdaySymbolText: Color = Tokens.Color.secondaryLabel,

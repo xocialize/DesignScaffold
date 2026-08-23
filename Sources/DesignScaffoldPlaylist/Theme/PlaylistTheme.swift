@@ -55,7 +55,7 @@ public struct PlaylistTheme: Sendable {
     public var emptyFont: Font
 
     public init(
-        selectionWash: Color = Tokens.Color.accent.opacity(0.15),
+        selectionWash: Color = Tokens.Color.selectionWash,
         activeRing: Color = Tokens.Color.accent,
         nameText: Color = Tokens.Color.label,
         secondaryText: Color = Tokens.Color.secondaryLabel,

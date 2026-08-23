@@ -46,6 +46,10 @@ def doc_for(product):
     return f"{base}.md" if p.exists() else None
 
 def latest_tag():
+    # An explicit --tag lets a release regenerate the catalog BEFORE tagging, so the
+    # tagged tree states its own version instead of the previous one.
+    if "--tag" in sys.argv:
+        return sys.argv[sys.argv.index("--tag") + 1]
     try:
         return subprocess.run(["git", "describe", "--tags", "--abbrev=0"], cwd=ROOT,
                               capture_output=True, text=True, check=True).stdout.strip()

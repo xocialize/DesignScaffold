@@ -51,6 +51,24 @@ public enum Tokens {
         /// Hairlines and card borders.
         public static let separator = SwiftUI.Color(nsColor: .separatorColor)
 
+        /// The wash behind a selected row or an in-range span — the accent at low opacity.
+        ///
+        /// PROMOTED, not invented: the calendar's range fill and the playlist's selection
+        /// fill had independently landed on exactly this value, so it lived in two places.
+        /// One definition now. (MLXEngineUI's `selectionBackground` #094771 is the same
+        /// intent, hardcoded — see AB-A-0019.)
+        public static let selectionWash = accent.opacity(0.15)
+
+        /// Fill for an editable field or input well sitting on a surface.
+        ///
+        /// `textBackgroundColor` is the system semantic Apple's own bordered text fields
+        /// use, so it tracks appearance and Increase Contrast. Note for conformers
+        /// replacing a custom elevated well (MLXEngineUI's `bgInput` #2D2D2D): this sits
+        /// *darker* in dark mode, which is the adaptation working rather than a
+        /// regression. If a distinctly raised well is genuinely wanted, that is a separate
+        /// `fillElevated` token — ask for it rather than reaching for a literal.
+        public static let fieldFill = SwiftUI.Color(nsColor: .textBackgroundColor)
+
         /// Panel/card fill that sits on top of a window material.
         public static let surface = SwiftUI.Color(nsColor: .controlBackgroundColor)
         /// A subtler fill for nested content (metric tiles inside a card).
