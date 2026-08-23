@@ -27,6 +27,8 @@ let package = Package(
         .library(name: "DesignScaffoldPlaylist", targets: ["DesignScaffoldPlaylist"]),
         // Model/product loading modal (hero percentage · status · detail fields · bar).
         .library(name: "DesignScaffoldLoading", targets: ["DesignScaffoldLoading"]),
+        // Run-progress stepper for multi-phase operations (planned nodes · pulse · counters).
+        .library(name: "DesignScaffoldStageStepper", targets: ["DesignScaffoldStageStepper"]),
     ],
     targets: [
         .target(name: "DesignScaffold", path: "Sources/DesignScaffold"),
@@ -45,6 +47,11 @@ let package = Package(
             dependencies: ["DesignScaffold"],
             path: "Sources/DesignScaffoldLoading"
         ),
+        .target(
+            name: "DesignScaffoldStageStepper",
+            dependencies: ["DesignScaffold"],
+            path: "Sources/DesignScaffoldStageStepper"
+        ),
         .testTarget(
             name: "DesignScaffoldCalendarTests",
             dependencies: ["DesignScaffoldCalendar"]
@@ -52,6 +59,10 @@ let package = Package(
         .testTarget(
             name: "DesignScaffoldLoadingTests",
             dependencies: ["DesignScaffoldLoading"]
+        ),
+        .testTarget(
+            name: "DesignScaffoldStageStepperTests",
+            dependencies: ["DesignScaffoldStageStepper"]
         ),
         .testTarget(
             name: "DesignScaffoldPlaylistTests",
