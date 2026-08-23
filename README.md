@@ -12,6 +12,7 @@ in those tokens, shipped as separately selectable libraries.
 | `DesignScaffoldCalendar` | Month calendar (single/multiple/range selection) in the house style; re-exports `DesignScaffold` |
 | `DesignScaffoldPlaylist` | `PlaylistIterator` — sortable playlist list (thumbnail · name · metadata, drag-reorder, active marker); re-exports `DesignScaffold` |
 | `DesignScaffoldLoading` | `LoadingCard` + `.loadingModal(...)` — model/product loading modal (hero percentage · status · fields · bar); re-exports `DesignScaffold` |
+| `DesignScaffoldStageStepper` | `StageStepper` — run-progress stepper for multi-phase operations (planned nodes · pulse · counters); re-exports `DesignScaffold` |
 
 In Xcode's package sheet, select only the libraries the app uses.
 
@@ -178,6 +179,29 @@ MyAppContent()
                                   status: "Streaming weights",
                                   fields: ["1.13 / 3.79 GB", "ETA 1:17"]),
         title: "Audio8 TTS")
+```
+
+### Stage stepper — [Docs/StageStepper.md](Docs/StageStepper.md)
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="Docs/images/stepper-dark.png">
+  <img src="Docs/images/stepper-light.png" width="760" alt="The stage stepper in four states: plan drawn before the run, mid-run with counters, a quiet slow node with an elapsed timer, and the completed run">
+</picture>
+
+Run-progress for a multi-phase operation — the planned nodes drawn up front, a pulsing
+ring on the live one, counters as text, and an elapsed timer when a node runs long.
+Encodes a measured contract: **never a percentage synthesised across phases** (they are
+unequal in time, so such a bar races then freezes), and the quietest node gets the
+strongest still-working affordance. Engine-free — event correlation stays in the host.
+
+```swift
+import DesignScaffoldStageStepper
+
+StageStepper(progress: StageProgress(
+    nodes: plan,                                  // known before the run starts
+    currentIndex: reachedIndex,                   // monotonic; nodes.count == complete
+    counterText: "step 5 of 8 · pass 1 of 2",
+    elapsedInNode: elapsed))
 ```
 
 ## Adopters
