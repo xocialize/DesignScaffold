@@ -69,7 +69,7 @@ def main():
 Current release: **{tag}** · `https://github.com/xocialize/DesignScaffold` (public, MIT).
 
 > **Before building any macOS UI surface, look here first.** DesignScaffold is the fleet's
-> single design authority (AB-D-0040 / AB-D-0041): the token vocabulary and every shared
+> single design authority (AB-D-0040 / AB-D-0042): the token vocabulary and every shared
 > component live here, so apps stop re-deriving spacing, radii, and type by eye. If what you
 > need is listed, adopt it. If it is close but not right, ask for the change. If it does not
 > exist and more than one app would use it, propose it.
@@ -108,7 +108,7 @@ one-file change instead of a fleet-wide hunt.
 |---|---|
 | Design vocabulary — colour, type, spacing, radii, `cardSurface()` | **DesignScaffold** (authoritative) |
 | Shared components — calendar, playlist, loading, stepper | **DesignScaffold** |
-| Engine-management panels — settings, model storage, model state | **MLXEngineUI** (should consume DesignScaffold tokens — AB-A-0018) |
+| Engine-management panels — settings, model storage, model state | **MLXEngineUI** (conforming to these tokens — AB-A-0019) |
 | App-specific product UI (chat views, editors, composites) | the app |
 
 ## Requesting a component
