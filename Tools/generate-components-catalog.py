@@ -64,6 +64,8 @@ def main():
         link = f"[{name}]({doc})" if doc else f"`{name}`"
         rows.append(f"| {link} | {desc} |")
 
+    adopters_p = (ROOT / "Docs" / "component-adopters.md")
+    adopters_md = adopters_p.read_text().strip() if adopters_p.exists() else "_Not yet scanned._"
     candidates = (ROOT / "Docs" / "component-candidates.md")
     candidates_md = candidates.read_text().strip() if candidates.exists() else "_None open._"
 
@@ -138,6 +140,14 @@ below matches something you need, say so on its ask — that is the strongest ev
 ## Candidates — observed, not yet settled
 
 {candidates_md}
+
+## Who has adopted
+
+Detected by `Tools/scan-adopters.py`, never announced — a hand-kept list rots (ours once
+claimed an adopter that had quietly forked the vocabulary instead). Ground truth is a
+source `import`; the pin column shows version drift.
+
+{adopters_md}
 """
     (ROOT / "Docs" / "COMPONENTS.md").write_text(md)
     print(f"wrote Docs/COMPONENTS.md ({len(rows)} products, tag {tag})")
