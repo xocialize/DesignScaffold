@@ -4,6 +4,9 @@ The shared macOS design vocabulary for the fleet's demo and harness apps — ext
 Apple's macOS 26/27 UI kit in Figma rather than estimated by eye — plus components dressed
 in those tokens, shipped as separately selectable libraries.
 
+**[Docs/COMPONENTS.md](Docs/COMPONENTS.md) is the fleet catalog** — what exists, how to adopt
+it, and how to request something new. Look there before building a macOS UI surface.
+
 ## Products
 
 | Library | What you get |

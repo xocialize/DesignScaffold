@@ -19,7 +19,8 @@ let package = Package(
     name: "DesignScaffold",
     platforms: [.macOS(.v26)],
     products: [
-        // Tokens only.
+        // The design vocabulary itself: Tokens (colour · type · spacing · radii · layout)
+        // + cardSurface(). Zero dependencies; every component product re-exports it.
         .library(name: "DesignScaffold", targets: ["DesignScaffold"]),
         // Month calendar (single/multiple/range selection) in the scaffold house style.
         .library(name: "DesignScaffoldCalendar", targets: ["DesignScaffoldCalendar"]),
