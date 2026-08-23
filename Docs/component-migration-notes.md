@@ -1,0 +1,8 @@
+Adopting a token sometimes changes what pairs with it. Notes earned by real migrations:
+
+| Token | Watch for |
+|---|---|
+| `Color.selectionWash` | It is a **15% wash, not a solid fill**. Content keeps its normal `label`/`secondaryLabel` colours. Migrating from a solid selection colour (e.g. `#094771`) means the hardcoded `Color.white` that solid required goes illegible — MLXEngineUI hit exactly this on a selected sidebar row, caught only by rendering the real view. White-on-accent stays correct for a *solid* accent fill (prominent buttons, a selected calendar day). |
+| `Color.fieldFill` | `textBackgroundColor` sits **darker in dark mode** than a hand-picked elevated well (e.g. `#2D2D2D`). That is adaptation working. If a genuinely raised well is wanted, that is `Color.fillElevated`. |
+| `Color.fillElevated` | A derived `label @ 8%` composite, so it reads as raised on any surface — but it is *subtle by design*. If you need a hard-edged chip, add a `separator` border rather than reaching for a heavier fill. |
+| Any hardcoded literal | Replacing hex with a semantic changes light mode the most, because that is where the hardcoded value was never right. Render both appearances: **dark is the control** — if dark shifts more than your geometry deltas predict, something forwarded wrong. |

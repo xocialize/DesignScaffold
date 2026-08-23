@@ -57,7 +57,24 @@ public enum Tokens {
         /// fill had independently landed on exactly this value, so it lived in two places.
         /// One definition now. (MLXEngineUI's `selectionBackground` #094771 is the same
         /// intent, hardcoded — see AB-A-0019.)
+        ///
+        /// ⚠️ **Foreground pairing:** this is a 15% wash, NOT a solid fill — content on it
+        /// keeps its normal `label`/`secondaryLabel` colours. Migrating from a solid
+        /// selection colour means the hardcoded white foreground that solid fill required
+        /// becomes illegible; MLXEngineUI hit exactly this. White-on-accent is correct only
+        /// for a SOLID accent fill (a prominent button, a selected calendar day).
         public static let selectionWash = accent.opacity(0.15)
+
+        /// A control fill that must read as RAISED above the surface it sits on.
+        ///
+        /// Derived, not borrowed: `label` at low opacity composites white-over in dark and
+        /// black-over in light, so "elevated" holds in both appearances by construction.
+        /// Chosen by swatch against the value it replaces (MLXEngineUI's `bgElevated`
+        /// #3C3C3C) — 0.05 vanishes in light, 0.12 is heavy, and macOS has no true
+        /// elevated-fill semantic: `controlColor` renders pure white in light (invisible
+        /// as a fill) and `unemphasizedSelectedContentBackgroundColor` reads as a
+        /// *selection*, which its name would also make a lie at the call site.
+        public static let fillElevated = label.opacity(0.08)
 
         /// Fill for an editable field or input well sitting on a surface.
         ///
@@ -112,6 +129,11 @@ public enum Tokens {
         public static let metricLabel = SwiftUI.Font.system(size: 10, weight: .medium)
         /// Table cells and inline numbers.
         public static let metricInline = SwiftUI.Font.system(size: 12).monospacedDigit()
+        /// A panel or sheet header — one step below `screenTitle` (22), for surfaces that
+        /// are a pane rather than a whole screen. Added on measured evidence: three
+        /// MLXEngineUI settings headers at 520pt (AB-A-0019).
+        public static let panelTitle = SwiftUI.Font.system(size: 18, weight: .semibold)
+
         /// Transcripts, JSON, and anything where alignment carries meaning.
         public static let mono = SwiftUI.Font.system(size: 11, design: .monospaced)
         /// Dense stat/telemetry lines one step below `mono` (the loading readout's

@@ -64,6 +64,8 @@ def main():
         link = f"[{name}]({doc})" if doc else f"`{name}`"
         rows.append(f"| {link} | {desc} |")
 
+    notes_p = (ROOT / "Docs" / "component-migration-notes.md")
+    notes_md = notes_p.read_text().strip() if notes_p.exists() else ""
     adopters_p = (ROOT / "Docs" / "component-adopters.md")
     adopters_md = adopters_p.read_text().strip() if adopters_p.exists() else "_Not yet scanned._"
     candidates = (ROOT / "Docs" / "component-candidates.md")
@@ -140,6 +142,10 @@ below matches something you need, say so on its ask — that is the strongest ev
 ## Candidates — observed, not yet settled
 
 {candidates_md}
+
+## Migration notes
+
+{notes_md}
 
 ## Who has adopted
 
