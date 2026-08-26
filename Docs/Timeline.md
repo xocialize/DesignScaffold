@@ -154,6 +154,17 @@ travel past the midpoint of the destination row**, not merely enter it. Moving a
 than the height of the row it starts in. That is the standard midpoint rule and it is
 deliberate, but it is further than it looks.
 
+### Selection
+
+A plain click **selects and never deselects**; shift-click toggles membership; clicking
+empty lane space clears. Deselection deliberately does not live on the clip itself.
+
+The tidy alternative — clicking the only selected clip clears it — is a footgun in an
+editor. Selection gates the destructive commands (delete, ripple delete, re-roll,
+take-cycling), and clicking a clip you have already selected is the ordinary reflex
+*before* pressing one of those keys; the toggle silently disarmed all of them with no
+visible cause. (Raised by ML[X] LTX Studio on AB-A-0031 and changed in 0.6.3.)
+
 ## Snapping — pluggable, and always in points
 
 A snap source is just a closure returning candidate times for the visible range, so you

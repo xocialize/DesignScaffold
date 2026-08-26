@@ -133,6 +133,7 @@ public struct TimelineView<Clip: TimelineClip, TrackID: Hashable, ClipBody: View
             selection: selection, draft: draft,
             isDropTarget: isDropTarget(track: index),
             onSelect: { id, additive in select(id, additive: additive) },
+            onBackgroundTap: { selection.removeAll() },
             onDragChanged: { clip, translation in dragChanged(clip, translation) },
             onDragEnded: { commitDraft() },
             onTrimChanged: { clip, edge, dx in trimChanged(clip, edge, dx) },
@@ -153,11 +154,20 @@ public struct TimelineView<Clip: TimelineClip, TrackID: Hashable, ClipBody: View
 
     // MARK: Gestures → geometry-derived edits
 
+    /// A plain click SELECTS; it never deselects.
+    ///
+    /// It used to clear the selection when you clicked the only selected clip — a tidy
+    /// toggle in the abstract, and a footgun in an editor. Selection gates the destructive
+    /// commands (delete, ripple delete, re-roll, take-cycling), and clicking a clip you have
+    /// already selected is the ordinary reflex *before* pressing one of those keys. The
+    /// toggle silently disarmed all of them with no visible cause. Deselection belongs to
+    /// the background click and Escape, which is where an editor user looks for it.
+    /// (Raised by ML[X] LTX Studio on AB-A-0031, found through their hit-test gate.)
     private func select(_ id: Clip.ID, additive: Bool) {
         if additive {
             if selection.contains(id) { selection.remove(id) } else { selection.insert(id) }
         } else {
-            selection = selection.contains(id) && selection.count == 1 ? [] : [id]
+            selection = [id]
         }
     }
 

@@ -22,6 +22,9 @@ struct TimelineLane<Clip: TimelineClip, TrackID: Hashable, Body: View>: View {
     /// the drop target. A colour change only — never a structural one.
     let isDropTarget: Bool
     let onSelect: (Clip.ID, Bool) -> Void
+    /// Clicking empty lane clears the selection — the counterpart to a plain click never
+    /// deselecting. Without it there is no way to deselect at all until T3's marquee.
+    let onBackgroundTap: () -> Void
     let onDragChanged: (Clip, CGSize) -> Void
     let onDragEnded: () -> Void
     let onTrimChanged: (Clip, TimelineEdge, CGFloat) -> Void
@@ -37,9 +40,12 @@ struct TimelineLane<Clip: TimelineClip, TrackID: Hashable, Body: View>: View {
         (isAlternate ? theme.laneAlternate : theme.laneBackground)
             .frame(maxWidth: .infinity, minHeight: track.resolvedHeight,
                    maxHeight: track.resolvedHeight)
+            .contentShape(Rectangle())
+            .onTapGesture { onBackgroundTap() }
             .overlay(alignment: .topLeading) {
                 ZStack(alignment: .topLeading) {
-                    Color.clear
+                    // Sizes the stack without swallowing taps meant for the lane behind it.
+                    Color.clear.allowsHitTesting(false)
                     ForEach(visibleClips) { clip in
                         clipView(clip)
                     }
