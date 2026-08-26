@@ -98,8 +98,40 @@ on the way in rather than applied silently:
 
 | Spec says | Ships as | Why |
 |---|---|---|
-| selection `accentFigma` (#0091ff literal) | `Tokens.Color.accent` | The system accent keeps the timeline consistent with every other component and honours the user's accent + Increase Contrast. An editor wanting fixed brand blue sets `theme.selection = Tokens.Color.accentFigma` — a deliberate app override, not the library default. |
+| selection `accentFigma` (#0091ff literal) | `Tokens.Color.accent` | The system accent keeps the timeline consistent with every other component and honours the user's accent + Increase Contrast. Overriding is one line — see the collision note below. |
 | playhead "`failure` #ff4245" | its own literal (same value) | A playhead is not an error. Binding it to the failure semantic means a future change to error red silently moves the playhead. Same colour today, independent meaning. |
+
+### ⚠️ When to override the selection colour
+
+**The playhead is red, and the selection follows the user's system accent — so a user
+whose accent is red or orange gets selection chrome that reads as a playhead.** On a
+colour-critical editing surface that is a real misread, not a taste issue.
+
+The library still defaults to the system accent (consistency and accessibility win by
+default), but if your timeline is a precision editing surface, pin the selection:
+
+```swift
+var theme = TimelineTheme.scaffold
+theme.selection = Tokens.Color.accentFigma   // fixed blue: cannot collide with the playhead
+```
+
+This is the intended shape of the exception — an app-level override for an app-specific
+collision, rather than the library abandoning semantics for everyone. (Raised by ML[X] LTX
+Studio on AB-A-0031, and it applies to any consumer with a red playhead.)
+
+## Time base — seconds here, exactness in your document
+
+``TimelineClip`` speaks `TimeInterval` **seconds**, deliberately: this component is
+cross-media, and an audio consumer has no frame grid to quantise to.
+
+If your document has an exact time base — integer ticks, or frames at 23.976/29.97 —
+**keep that base authoritative and convert at the view boundary.** Do not let display
+seconds round-trip back into the model: `Double` seconds cannot represent 1/1001-family
+rates exactly, and edit boundaries that survive a round trip through them will drift.
+Convert in, convert out, and let the timeline own only what it draws.
+
+(ML[X] LTX Studio does exactly this from a 120,000/s tick base — flagged on AB-A-0031 as a
+deliberate adaptation rather than a surprise.)
 
 ## Under the hood
 
