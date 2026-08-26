@@ -178,7 +178,17 @@ trim, by contrast, snaps only the edge being dragged; snapping the far edge woul
 side the user is holding still.
 
 The tolerance is `theme.snapThreshold` (8pt) converted through
-`geometry.seconds(forPoints:)` — **no API anywhere stores a duration**. A hairline marks the
+`geometry.seconds(forPoints:)` — **no API anywhere stores a duration**.
+
+⚠️ **If your consumer quantises edits to a grid, check the threshold against your own
+pitch.** Quantisation is a second capture radius sitting next to this one: snapping to a
+grid already captures anything within half a grid step, so snapping adds reach only while
+`snapThreshold > pointsPerStep / 2`. Below that it draws its hairline and changes nothing —
+worse than no snapping, because it reads as a feature that works. Worked example from a
+24 fps video consumer: a frame is 2.5pt at the 60 pt/s default, so 8pt reaches 6.4× further
+than frame quantisation and is doing real work; it would go inert above ~384 pt/s, and a 4pt
+default would go inert above ~192 pt/s. The useful range of the threshold is bounded by your
+grid, not only by the zoom. (Analysis contributed by ML[X] LTX Studio on AB-A-0031.) A hairline marks the
 snapped time while a gesture is snapped, because snapping that is felt but not seen cannot
 be told apart from a coincidence.
 
