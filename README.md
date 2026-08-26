@@ -16,6 +16,7 @@ it, and how to request something new. Look there before building a macOS UI surf
 | `DesignScaffoldPlaylist` | `PlaylistIterator` — sortable playlist list (thumbnail · name · metadata, drag-reorder, active marker); re-exports `DesignScaffold` |
 | `DesignScaffoldLoading` | `LoadingCard` + `.loadingModal(...)` — model/product loading modal (hero percentage · status · fields · bar); re-exports `DesignScaffold` |
 | `DesignScaffoldStageStepper` | `StageStepper` — run-progress stepper for multi-phase operations (planned nodes · pulse · counters); re-exports `DesignScaffold` |
+| `DesignScaffoldTimeline` | `TimelineView` — media-agnostic multi-track timeline (ruler · headers · clip lanes · playhead), generic over your clip model; re-exports `DesignScaffold` |
 
 In Xcode's package sheet, select only the libraries the app uses.
 
@@ -205,6 +206,29 @@ StageStepper(progress: StageProgress(
     currentIndex: reachedIndex,                   // monotonic; nodes.count == complete
     counterText: "step 5 of 8 · pass 1 of 2",
     elapsedInNode: elapsed))
+```
+
+### Timeline — [Docs/Timeline.md](Docs/Timeline.md)
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="Docs/images/timeline-dark.png">
+  <img src="Docs/images/timeline-light.png" width="880" alt="The timeline at two zoom levels: ruler, track headers, clip lanes, playhead">
+</picture>
+
+Multi-track timeline chrome — ruler with adaptive ticks and scrub, track headers with
+state controls, clip lanes, playhead, zoom — generic over a clip model you supply, with a
+ViewBuilder for the clip body. Ruler, headers and lanes all derive from **one geometry**,
+so there are no scroll offsets to keep in sync and virtualisation comes free. The snap
+threshold is expressed in **points** and converted per zoom, so snap feel is identical at
+every zoom level.
+
+```swift
+import DesignScaffoldTimeline
+
+TimelineView(tracks: tracks, clips: clips,
+             geometry: $geometry, playhead: $playhead, selection: $selection) { clip in
+    Filmstrip(clip.asset)        // you draw the inside; the scaffold places it
+}
 ```
 
 ## Adopters

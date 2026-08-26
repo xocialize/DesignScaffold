@@ -30,6 +30,8 @@ let package = Package(
         .library(name: "DesignScaffoldLoading", targets: ["DesignScaffoldLoading"]),
         // Run-progress stepper for multi-phase operations (planned nodes · pulse · counters).
         .library(name: "DesignScaffoldStageStepper", targets: ["DesignScaffoldStageStepper"]),
+        // Media-agnostic multi-track timeline (ruler · headers · clip lanes · playhead).
+        .library(name: "DesignScaffoldTimeline", targets: ["DesignScaffoldTimeline"]),
     ],
     targets: [
         .target(name: "DesignScaffold", path: "Sources/DesignScaffold"),
@@ -53,6 +55,11 @@ let package = Package(
             dependencies: ["DesignScaffold"],
             path: "Sources/DesignScaffoldStageStepper"
         ),
+        .target(
+            name: "DesignScaffoldTimeline",
+            dependencies: ["DesignScaffold"],
+            path: "Sources/DesignScaffoldTimeline"
+        ),
         .testTarget(
             name: "DesignScaffoldCalendarTests",
             dependencies: ["DesignScaffoldCalendar"]
@@ -64,6 +71,10 @@ let package = Package(
         .testTarget(
             name: "DesignScaffoldStageStepperTests",
             dependencies: ["DesignScaffoldStageStepper"]
+        ),
+        .testTarget(
+            name: "DesignScaffoldTimelineTests",
+            dependencies: ["DesignScaffoldTimeline"]
         ),
         .testTarget(
             name: "DesignScaffoldPlaylistTests",
