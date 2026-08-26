@@ -11,10 +11,10 @@ clip lanes, playhead. Generic over a clip model the consumer supplies.
 *Two zoom levels of the same edit. The tick interval steps 1s → 5s on its own; everything
 else is identical because it all derives from one geometry.*
 
-> **Status: T1.** Ruler (adaptive ticks, timecode, click/drag scrub) · track headers (name,
-> state controls, app accessory slot) · clip lanes (layout, selection rendering, tap-select)
-> · playhead · zoom. **T2** adds drag, cross-track move, edge trim and snapping; **T3** adds
-> in/out brackets, gap indicators, marquee select and row-height resize.
+> **Status: T1 + T2.** Ruler (adaptive ticks, timecode, click/drag scrub) · track headers ·
+> clip lanes · playhead · zoom · **drag, cross-track move, edge-drag trim, snapping with
+> pluggable sources, trackpad scroll + pinch**. **T3** adds in/out brackets, gap indicators,
+> marquee select and row-height resize.
 
 ## Scope — what this owns, and what it deliberately does not
 
@@ -118,6 +118,72 @@ theme.selection = Tokens.Color.accentFigma   // fixed blue: cannot collide with 
 This is the intended shape of the exception — an app-level override for an app-specific
 collision, rather than the library abandoning semantics for everyone. (Raised by ML[X] LTX
 Studio on AB-A-0031, and it applies to any consumer with a red playhead.)
+
+## Editing — drag, cross-track, trim
+
+Gestures compute a **result** and report it; the component never mutates your model. While
+a gesture runs the clip follows the cursor from the timeline's own state, so the edit
+previews without a round trip — and a clip dragged onto another track renders in the
+destination lane rather than being clipped by its origin.
+
+```swift
+TimelineView(...)
+    .snapSources([.clipEdges(clips), .playhead(playhead), .origin])
+    .minimumClipDuration(0.1)
+    .onMove { id, start, trackIndex in document.move(id, to: start, on: trackIndex) }
+    .onTrim { id, start, duration in document.retime(id, start: start, duration: duration) }
+```
+
+Neither callback fires when a gesture ends where it started. Which callback fires is
+decided by **which gesture ran**, recorded on the draft — not by diffing the result, which
+misreports the edge cases (a trim that lands on the original duration, a zero-length move).
+
+A **leading trim holds the tail still** and a trailing trim holds the head still; that is
+what makes a trim read as a trim rather than a move. Both respect `minimumClipDuration`,
+and a leading trim cannot drag the head below zero.
+
+Cross-track resolution walks the **real row heights** rather than dividing by a constant:
+rows are 64/44/28, so a fixed divisor drifts as the drag crosses rows of different kinds.
+The boundary between two rows is the mean of their heights.
+
+## Snapping — pluggable, and always in points
+
+A snap source is just a closure returning candidate times for the visible range, so you
+contribute your own without the component knowing what they mean:
+
+```swift
+.snapSources([
+    .clipEdges(clips, excluding: draggedID),   // a clip must not snap to itself
+    .playhead(playhead),
+    .origin,                                   // seat against the head of the timeline
+    .fixed(markers),
+    TimelineSnapSource { visible in beatGrid(in: visible) },   // anything you like
+])
+```
+
+Passing no sources (the default) disables snapping entirely.
+
+**Both clip edges compete.** A clip snaps when *either* its head or its tail comes near a
+candidate, and the closer edge wins — snapping only the head would leave a clip's tail
+visibly short of the next clip's head, which is the case an editor cares most about. A
+trim, by contrast, snaps only the edge being dragged; snapping the far edge would move the
+side the user is holding still.
+
+The tolerance is `theme.snapThreshold` (8pt) converted through
+`geometry.seconds(forPoints:)` — **no API anywhere stores a duration**. A hairline marks the
+snapped time while a gesture is snapped, because snapping that is felt but not seen cannot
+be told apart from a coincidence.
+
+## Trackpad
+
+Horizontal two-finger scroll pans and pinch zooms (anchored under the fingers). Vertical
+scrolling is left to the host, by request.
+
+This is implemented with a **local event monitor**, not an overlay that overrides
+`scrollWheel(with:)`. The overlay is the obvious approach and does not work: to receive
+scroll events a view must be the hit view, and a view that is the hit view also swallows
+the clicks the lanes need. The monitor sees events without touching hit testing, and
+filters to its own window and frame so it never steals scroll from the rest of the app.
 
 ## Time base — seconds here, exactness in your document
 

@@ -1,31 +1,31 @@
 import DesignScaffold
 import SwiftUI
 
-/// A media-agnostic multi-track timeline: ruler, track headers, clip lanes, playhead.
+/// A media-agnostic multi-track timeline: ruler, track headers, clip lanes, playhead,
+/// with drag, cross-track move, edge trim and snapping.
 ///
 /// ```swift
 /// TimelineView(tracks: tracks, clips: clips,
-///              geometry: $geometry, playhead: $playhead,
-///              selection: $selection) { clip in
-///     FilmstripBody(clip)          // the consumer draws the inside
+///              geometry: $geometry, playhead: $playhead, selection: $selection) { clip in
+///     Filmstrip(clip.asset)          // the consumer draws the inside
 /// }
+/// .snapSources([.clipEdges(clips), .playhead(playhead), .origin])
+/// .onMove { id, start, track in document.move(id, to: start, on: track) }
+/// .onTrim { id, start, duration in document.retime(id, start, duration) }
 /// ```
 ///
-/// **Scope.** The scaffold owns the chrome and the gestures — ruler and scrub, headers and
-/// their state controls, lane layout, the playhead, zoom, and (from T2) selection, drag,
-/// trim and snapping. What a clip *means* stays with the consumer: filmstrips, waveforms,
-/// take chips, generation overlays. The tool rail on the spec artboard is app chrome and is
-/// deliberately not built here — place the timeline beside your own rail.
+/// **Scope.** The scaffold owns the chrome and the gestures; what a clip *means* stays with
+/// the consumer. The tool rail on the spec artboard is app chrome and is deliberately not
+/// built here.
 ///
 /// **Everything derives from one ``TimelineGeometry``**, so ruler, headers and lanes cannot
-/// drift out of sync; there are no scroll offsets to reconcile. Panning and zooming are
-/// writes to that one value.
+/// drift out of sync — there are no scroll offsets to reconcile, and virtualisation falls
+/// out of the same choice. Panning and zooming are writes to that one value.
 ///
-/// T1 ships static lanes (layout, selection rendering, tap-select). Drag, cross-track move,
-/// edge trim and snapping are T2; brackets, gap indicators, marquee and row resize are T3.
-public struct TimelineView<Clip: TimelineClip, ClipBody: View, HeaderAccessory: View>: View {
+/// T3 adds in/out brackets, gap indicators, marquee select and row-height resize.
+public struct TimelineView<Clip: TimelineClip, TrackID: Hashable, ClipBody: View, HeaderAccessory: View>: View {
 
-    let tracks: [TimelineTrack]
+    let tracks: [TimelineTrack<TrackID>]
     let clips: [Clip]
     @Binding var geometry: TimelineGeometry
     @Binding var playhead: TimeInterval
@@ -33,21 +33,28 @@ public struct TimelineView<Clip: TimelineClip, ClipBody: View, HeaderAccessory: 
 
     var themeOverride: TimelineTheme?
     var timecode = Timecode()
-    var onToggleControl: ((TimelineTrack, TimelineTrack.Control) -> Void)?
+    var snapSources: [TimelineSnapSource] = []
+    var minimumClipDuration: TimeInterval = 0.1
+    var onToggleControl: ((TimelineTrack<TrackID>, TimelineTrack<TrackID>.Control) -> Void)?
+    var onMove: ((Clip.ID, TimeInterval, Int) -> Void)?
+    var onTrim: ((Clip.ID, TimeInterval, TimeInterval) -> Void)?
 
     let clipBody: (Clip) -> ClipBody
-    let headerAccessory: (TimelineTrack) -> HeaderAccessory
+    let headerAccessory: (TimelineTrack<TrackID>) -> HeaderAccessory
+
+    /// The edit currently under the cursor, if any.
+    @State private var draft: TimelineDraft<Clip.ID>?
 
     var theme: TimelineTheme { themeOverride ?? .scaffold }
 
     public init(
-        tracks: [TimelineTrack],
+        tracks: [TimelineTrack<TrackID>],
         clips: [Clip],
         geometry: Binding<TimelineGeometry>,
         playhead: Binding<TimeInterval>,
         selection: Binding<Set<Clip.ID>>,
         @ViewBuilder clipBody: @escaping (Clip) -> ClipBody,
-        @ViewBuilder headerAccessory: @escaping (TimelineTrack) -> HeaderAccessory
+        @ViewBuilder headerAccessory: @escaping (TimelineTrack<TrackID>) -> HeaderAccessory
     ) {
         self.tracks = tracks
         self.clips = clips
@@ -79,14 +86,7 @@ public struct TimelineView<Clip: TimelineClip, ClipBody: View, HeaderAccessory: 
                                     headerAccessory(track)
                                 }
                                 verticalRule(height: track.resolvedHeight)
-                                TimelineLane(
-                                    track: track,
-                                    clips: clips.filter { $0.trackIndex == index },
-                                    geometry: geometry, theme: theme,
-                                    isAlternate: index.isMultiple(of: 2),
-                                    selection: selection,
-                                    onSelect: { toggle($0) },
-                                    clipBody: clipBody)
+                                lane(track: track, index: index)
                             }
                             .frame(height: track.resolvedHeight)
                             horizontalRule
@@ -94,9 +94,23 @@ public struct TimelineView<Clip: TimelineClip, ClipBody: View, HeaderAccessory: 
                     }
                 }
             }
-            // The playhead spans ruler and lanes, so it is drawn over the whole body
-            // rather than per-lane.
             .overlay(alignment: .topLeading) { playheadLine(laneWidth: laneWidth) }
+            .overlay(alignment: .topLeading) { snapIndicator(laneWidth: laneWidth) }
+            // Trackpad scroll + pinch, scoped to the lane area so the header column and the
+            // rest of the app keep their own scrolling.
+            .background(alignment: .topTrailing) {
+                TrackpadGestureCatcher(
+                    onScroll: { delta in
+                        geometry.scroll(to: geometry.visibleStart + geometry.seconds(forPoints: delta))
+                    },
+                    onMagnify: { magnification, location in
+                        let anchor = geometry.time(atX: location.x)
+                        geometry.zoom(to: geometry.pointsPerSecond * (1 + magnification),
+                                      keeping: anchor)
+                        if geometry.visibleStart < 0 { geometry.scroll(to: 0) }
+                    })
+                .frame(width: laneWidth)
+            }
             .background(theme.laneBackground)
             .clipShape(RoundedRectangle(cornerRadius: theme.panelRadius))
             .overlay(
@@ -106,6 +120,91 @@ public struct TimelineView<Clip: TimelineClip, ClipBody: View, HeaderAccessory: 
             .onChange(of: proxy.size.width, initial: true) { _, width in
                 geometry.viewportWidth = max(0, width - theme.headerWidth)
             }
+        }
+    }
+
+    // MARK: Lane
+
+    private func lane(track: TimelineTrack<TrackID>, index: Int) -> some View {
+        TimelineLane(
+            track: track, trackIndex: index, clips: clips,
+            geometry: geometry, theme: theme,
+            isAlternate: index.isMultiple(of: 2),
+            selection: selection, draft: draft,
+            onSelect: { id, additive in select(id, additive: additive) },
+            onDragChanged: { clip, translation in dragChanged(clip, translation) },
+            onDragEnded: { commitDraft() },
+            onTrimChanged: { clip, edge, dx in trimChanged(clip, edge, dx) },
+            onTrimEnded: { commitDraft() },
+            clipBody: clipBody)
+    }
+
+    // MARK: Gestures → geometry-derived edits
+
+    private func select(_ id: Clip.ID, additive: Bool) {
+        if additive {
+            if selection.contains(id) { selection.remove(id) } else { selection.insert(id) }
+        } else {
+            selection = selection.contains(id) && selection.count == 1 ? [] : [id]
+        }
+    }
+
+    private func dragChanged(_ clip: Clip, _ translation: CGSize) {
+        let deltaTime = geometry.seconds(forPoints: translation.width)
+        let deltaTracks = TimelineEdit.trackDelta(
+            from: clip.trackIndex, verticalTranslation: translation.height,
+            heights: tracks.map(\.resolvedHeight))
+        let moved = TimelineEdit.move(
+            start: clip.start, trackIndex: clip.trackIndex,
+            deltaTime: deltaTime, deltaTracks: deltaTracks, trackCount: tracks.count)
+
+        // Snap tolerance is POINTS converted at the current zoom — never a stored duration.
+        let tolerance = geometry.seconds(forPoints: theme.snapThreshold)
+        let candidates = TimelineSnap.candidates(from: snapSources, in: geometry.visibleRange)
+        let snapped = TimelineSnap.snapStart(start: moved.start, duration: clip.duration,
+                                             candidates: candidates, tolerance: tolerance)
+        draft = TimelineDraft(id: clip.id, kind: .move,
+                              start: max(0, snapped ?? moved.start),
+                              duration: clip.duration,
+                              trackIndex: moved.trackIndex,
+                              snappedTo: snapped)
+    }
+
+    private func trimChanged(_ clip: Clip, _ edge: TimelineEdge, _ dx: CGFloat) {
+        let deltaTime = geometry.seconds(forPoints: dx)
+        let trimmed = TimelineEdit.trim(start: clip.start, duration: clip.duration,
+                                        edge: edge, deltaTime: deltaTime,
+                                        minimumDuration: minimumClipDuration)
+        let tolerance = geometry.seconds(forPoints: theme.snapThreshold)
+        let candidates = TimelineSnap.candidates(from: snapSources, in: geometry.visibleRange)
+        // Only the dragged EDGE snaps during a trim — snapping the far edge would move the
+        // side the user is holding still.
+        let movingEdge = edge == .leading ? trimmed.start : trimmed.start + trimmed.duration
+        let snap = TimelineSnap.nearest(to: movingEdge, candidates: candidates, tolerance: tolerance)
+        var result = trimmed
+        if let snap {
+            result = TimelineEdit.trim(
+                start: clip.start, duration: clip.duration, edge: edge,
+                deltaTime: snap - (edge == .leading ? clip.start : clip.start + clip.duration),
+                minimumDuration: minimumClipDuration)
+        }
+        draft = TimelineDraft(id: clip.id, kind: .trim, start: result.start,
+                              duration: result.duration,
+                              trackIndex: clip.trackIndex, snappedTo: snap)
+    }
+
+    /// Report the finished edit to the host, which owns the document. Nothing fires when
+    /// the gesture ended where it started.
+    private func commitDraft() {
+        defer { draft = nil }
+        guard let draft, let original = clips.first(where: { $0.id == draft.id }) else { return }
+        switch draft.kind {
+        case .move:
+            guard draft.start != original.start || draft.trackIndex != original.trackIndex else { return }
+            onMove?(draft.id, draft.start, draft.trackIndex)
+        case .trim:
+            guard draft.start != original.start || draft.duration != original.duration else { return }
+            onTrim?(draft.id, draft.start, draft.duration)
         }
     }
 
@@ -130,8 +229,6 @@ public struct TimelineView<Clip: TimelineClip, ClipBody: View, HeaderAccessory: 
                 .fill(theme.playhead)
                 .frame(width: theme.playheadWidth)
                 .overlay(alignment: .top) {
-                    // The head: a small marker so the line is grabbable and readable
-                    // against a busy lane.
                     Path { p in
                         p.move(to: CGPoint(x: -4, y: 0))
                         p.addLine(to: CGPoint(x: 5, y: 0))
@@ -146,19 +243,28 @@ public struct TimelineView<Clip: TimelineClip, ClipBody: View, HeaderAccessory: 
         }
     }
 
-    /// A vertical hairline. The height is REQUIRED: a `Rectangle` given only a width is
-    /// greedy vertically, and in an HStack that silently inflates the whole row — it is
-    /// what pushed the last track out of frame in the first render.
+    /// A hairline at the snapped time while a gesture is snapped — without it, snapping is
+    /// felt but not seen, and a user cannot tell a snap from a coincidence.
+    @ViewBuilder
+    private func snapIndicator(laneWidth: CGFloat) -> some View {
+        if let snapped = draft?.snappedTo {
+            let x = geometry.x(for: snapped)
+            if x >= 0, x <= laneWidth {
+                Rectangle()
+                    .fill(theme.selection)
+                    .frame(width: theme.hairline)
+                    .offset(x: theme.headerWidth + theme.hairline + x)
+                    .allowsHitTesting(false)
+            }
+        }
+    }
+
     private func verticalRule(height: CGFloat) -> some View {
         Rectangle().fill(theme.separator).frame(width: theme.hairline, height: height)
     }
 
     private var horizontalRule: some View {
         Rectangle().fill(theme.separator).frame(height: theme.hairline)
-    }
-
-    private func toggle(_ id: Clip.ID) {
-        if selection.contains(id) { selection.remove(id) } else { selection = [id] }
     }
 }
 
@@ -167,7 +273,7 @@ public struct TimelineView<Clip: TimelineClip, ClipBody: View, HeaderAccessory: 
 extension TimelineView where HeaderAccessory == EmptyView {
     /// No app-specific header accessory.
     public init(
-        tracks: [TimelineTrack],
+        tracks: [TimelineTrack<TrackID>],
         clips: [Clip],
         geometry: Binding<TimelineGeometry>,
         playhead: Binding<TimeInterval>,
@@ -196,10 +302,38 @@ public extension TimelineView {
         return copy
     }
 
+    /// Times drags snap to. Empty (the default) disables snapping entirely.
+    func snapSources(_ sources: [TimelineSnapSource]) -> TimelineView {
+        var copy = self
+        copy.snapSources = sources
+        return copy
+    }
+
+    /// Shortest a clip may be trimmed to.
+    func minimumClipDuration(_ duration: TimeInterval) -> TimelineView {
+        var copy = self
+        copy.minimumClipDuration = duration
+        return copy
+    }
+
     /// Called when a header's state control is tapped — the host owns the state.
-    func onToggleControl(_ handler: @escaping (TimelineTrack, TimelineTrack.Control) -> Void) -> TimelineView {
+    func onToggleControl(_ handler: @escaping (TimelineTrack<TrackID>, TimelineTrack<TrackID>.Control) -> Void) -> TimelineView {
         var copy = self
         copy.onToggleControl = handler
+        return copy
+    }
+
+    /// Committed at the end of a move: the clip's new start and track index.
+    func onMove(_ handler: @escaping (Clip.ID, TimeInterval, Int) -> Void) -> TimelineView {
+        var copy = self
+        copy.onMove = handler
+        return copy
+    }
+
+    /// Committed at the end of a trim: the clip's new start and duration.
+    func onTrim(_ handler: @escaping (Clip.ID, TimeInterval, TimeInterval) -> Void) -> TimelineView {
+        var copy = self
+        copy.onTrim = handler
         return copy
     }
 }

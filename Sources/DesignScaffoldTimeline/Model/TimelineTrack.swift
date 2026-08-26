@@ -3,11 +3,20 @@ import Foundation
 
 /// One row of the timeline. The scaffold owns the row's chrome (name, state controls,
 /// height); what the row's clips *mean* is the consumer's business.
-public struct TimelineTrack: Identifiable, Equatable, Sendable {
+///
+/// Generic over `ID` so a consumer with `UUID`-keyed tracks keeps its own type end to end.
+/// (It was `String` in 0.5.0, which forced a `uuidString` round trip on the way in and a
+/// `UUID(uuidString:)` parse on the way back out of `onToggleControl` — a stringly-typed
+/// seam in otherwise type-safe code, and a silent no-op if the parse ever failed. Raised
+/// from real integration on AB-A-0031.)
+///
+/// Nested types need the parameter in an explicit annotation — `TimelineTrack<UUID>.Control`
+/// — but inference covers the common call sites (`controls: [.mute, .solo]`).
+public struct TimelineTrack<ID: Hashable>: Identifiable {
 
     /// Row kind — sets the default height, since a video row needs to show a filmstrip
     /// and a subtitle row needs one line of text.
-    public enum Kind: Equatable, Sendable {
+    public enum Kind: Equatable, Sendable, CaseIterable {
         case video, audio, subtitle
 
         /// Heights from the build spec (artboard "Timeline anatomy").
@@ -27,7 +36,7 @@ public struct TimelineTrack: Identifiable, Equatable, Sendable {
         case lock, mute, solo, enable
     }
 
-    public let id: String
+    public let id: ID
     public var name: String
     public var kind: Kind
     /// Explicit row height; `nil` uses the kind's default. (T3's drag-resize writes here.)
@@ -40,7 +49,7 @@ public struct TimelineTrack: Identifiable, Equatable, Sendable {
     public var isSoloed: Bool
     public var isEnabled: Bool
 
-    public init(id: String, name: String, kind: Kind,
+    public init(id: ID, name: String, kind: Kind,
                 height: CGFloat? = nil,
                 controls: Set<Control> = [],
                 isLocked: Bool = false, isMuted: Bool = false,
@@ -84,3 +93,7 @@ public protocol TimelineClip: Identifiable {
 public extension TimelineClip {
     var end: TimeInterval { start + duration }
 }
+
+
+extension TimelineTrack: Equatable where ID: Equatable {}
+extension TimelineTrack: Sendable where ID: Sendable {}

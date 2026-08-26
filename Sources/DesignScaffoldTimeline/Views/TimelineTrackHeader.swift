@@ -4,10 +4,10 @@ import SwiftUI
 /// One track's header: name plus whichever state controls the track declares. A trailing
 /// slot carries anything app-specific (the spec's source-patch picker, for instance) so the
 /// scaffold never has to know what routing means.
-struct TimelineTrackHeader<Accessory: View>: View {
-    let track: TimelineTrack
+struct TimelineTrackHeader<ID: Hashable, Accessory: View>: View {
+    let track: TimelineTrack<ID>
     let theme: TimelineTheme
-    let onToggle: ((TimelineTrack.Control) -> Void)?
+    let onToggle: ((TimelineTrack<ID>.Control) -> Void)?
     @ViewBuilder let accessory: Accessory
 
     var body: some View {
@@ -22,7 +22,7 @@ struct TimelineTrackHeader<Accessory: View>: View {
             Spacer(minLength: 0)
             // Ordered by the enum, not by Set iteration — a header whose buttons move
             // between renders is unusable.
-            ForEach(TimelineTrack.Control.allCases.filter(track.controls.contains), id: \.self) { control in
+            ForEach(TimelineTrack<ID>.Control.allCases.filter(track.controls.contains), id: \.self) { control in
                 Button { onToggle?(control) } label: {
                     Image(systemName: symbol(control))
                         .font(.system(size: 10, weight: .medium))
@@ -42,7 +42,7 @@ struct TimelineTrackHeader<Accessory: View>: View {
         .opacity(track.isEnabled ? 1 : 0.55)
     }
 
-    private func symbol(_ control: TimelineTrack.Control) -> String {
+    private func symbol(_ control: TimelineTrack<ID>.Control) -> String {
         switch control {
         case .lock: return track.isLocked ? "lock.fill" : "lock.open"
         case .mute: return track.isMuted ? "speaker.slash.fill" : "speaker.wave.2"
@@ -51,7 +51,7 @@ struct TimelineTrackHeader<Accessory: View>: View {
         }
     }
 
-    private func helpText(_ control: TimelineTrack.Control) -> String {
+    private func helpText(_ control: TimelineTrack<ID>.Control) -> String {
         switch control {
         case .lock: return track.isLocked ? "Unlock track" : "Lock track"
         case .mute: return track.isMuted ? "Unmute" : "Mute"
