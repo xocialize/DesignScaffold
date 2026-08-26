@@ -77,3 +77,55 @@ final class TimelineSnapTests: XCTestCase {
                                             tolerance: loose.seconds(forPoints: 8)), 10)
     }
 }
+
+final class TimelineSnapDirectionTests: XCTestCase {
+
+    /// Snapping must never pull a clip against the way it is being dragged. Dragging right
+    /// while a candidate sits behind you is what made the movement feel like a fight.
+    func testForwardDragIgnoresCandidatesBehind() {
+        // Clip at 10…12 dragged forward; a candidate at 9.8 is within tolerance of the head
+        // but lies BEHIND, so it must be refused.
+        XCTAssertNil(TimelineSnap.snap(start: 10, duration: 2, candidates: [9.8],
+                                       tolerance: 0.5, direction: .forward))
+        // The same candidate is fair game when dragging backwards.
+        XCTAssertEqual(TimelineSnap.snap(start: 10, duration: 2, candidates: [9.8],
+                                         tolerance: 0.5, direction: .backward)?.start, 9.8)
+    }
+
+    func testBackwardDragIgnoresCandidatesAhead() {
+        XCTAssertNil(TimelineSnap.snap(start: 10, duration: 2, candidates: [10.3],
+                                       tolerance: 0.5, direction: .backward))
+    }
+
+    func testAnyDirectionKeepsBothSides() {
+        XCTAssertNotNil(TimelineSnap.snap(start: 10, duration: 2, candidates: [9.8],
+                                          tolerance: 0.5, direction: .any))
+        XCTAssertNotNil(TimelineSnap.snap(start: 10, duration: 2, candidates: [10.3],
+                                          tolerance: 0.5, direction: .any))
+    }
+
+    /// The anti-chop rule: while the candidate already holding this drag stays in range it
+    /// keeps the drag, even when another candidate is momentarily nearer. Without it, head
+    /// and tail trade the win as the clip moves and it lurches between two positions.
+    func testHeldCandidateWinsWhileItRemainsInRange() {
+        // Head is 0.30 from candidate 10.30; tail is 0.10 from candidate 12.10 (nearer).
+        let free = TimelineSnap.snap(start: 10, duration: 2, candidates: [10.3, 12.1],
+                                     tolerance: 0.5, direction: .forward)
+        XCTAssertEqual(free?.candidate, 12.1, "nearest wins with nothing held")
+
+        let holding = TimelineSnap.snap(start: 10, duration: 2, candidates: [10.3, 12.1],
+                                        tolerance: 0.5, direction: .forward, held: 10.3)
+        XCTAssertEqual(holding?.candidate, 10.3, "the held candidate keeps the drag")
+    }
+
+    func testHeldCandidateIsReleasedOnceOutOfRange() {
+        let result = TimelineSnap.snap(start: 10, duration: 2, candidates: [10.3, 12.1],
+                                       tolerance: 0.5, direction: .forward, held: 99)
+        XCTAssertEqual(result?.candidate, 12.1, "a held candidate out of range must not stick")
+    }
+
+    func testStillNoSnapWhenNothingIsInRange() {
+        XCTAssertNil(TimelineSnap.snap(start: 10, duration: 2, candidates: [40],
+                                       tolerance: 0.5, direction: .forward, held: 40))
+    }
+}

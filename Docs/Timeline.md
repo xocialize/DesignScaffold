@@ -11,10 +11,10 @@ clip lanes, playhead. Generic over a clip model the consumer supplies.
 *Two zoom levels of the same edit. The tick interval steps 1s → 5s on its own; everything
 else is identical because it all derives from one geometry.*
 
-> **Status: T1 + T2.** Ruler (adaptive ticks, timecode, click/drag scrub) · track headers ·
-> clip lanes · playhead · zoom · **drag, cross-track move, edge-drag trim, snapping with
-> pluggable sources, trackpad scroll + pinch**. **T3** adds in/out brackets, gap indicators,
-> marquee select and row-height resize.
+> **Status: complete — T1, T2 and T3.** Ruler (adaptive ticks, timecode, scrub) · track
+> headers with state controls and row-height resize · clip lanes · playhead · zoom ·
+> drag, cross-track move, edge trim · snapping with pluggable sources · trackpad scroll and
+> pinch · **gap indicators · marquee select · in/out brackets**.
 
 ## Scope — what this owns, and what it deliberately does not
 
@@ -165,6 +165,35 @@ take-cycling), and clicking a clip you have already selected is the ordinary ref
 *before* pressing one of those keys; the toggle silently disarmed all of them with no
 visible cause. (Raised by ML[X] LTX Studio on AB-A-0031 and changed in 0.6.3.)
 
+## Gaps
+
+A gap is a hole **between** clips — never the space before the first or after the last,
+which has no second anchor. The scaffold draws *that* a gap exists; you decorate it:
+
+```swift
+TimelineView(tracks: tracks, clips: clips, geometry: $geometry,
+             playhead: $playhead, selection: $selection,
+             clipBody: { Filmstrip($0.asset) },
+             gapBody: { gap in GenerateHere(seconds: gap.duration) })
+```
+
+Omit `gapBody` and you get `TimelineGapIndicator`, a dashed outline and nothing else.
+
+⚠️ **A gap has no durable identity.** It is the absence of clips, so its `id` is positional —
+move either neighbour and it becomes a *different* gap. Do not key persistent state (a
+pending generation, say) to it; anchor that to the clips on either side, which do have
+identity, and read the gap purely as geometry.
+
+## Marquee, brackets, row resize
+
+- **Marquee** — drag empty lane space. Selection is by **intersection, not containment**, so
+  a clip longer than the viewport can still be caught by its corner; containment would make
+  long clips unselectable at most zooms.
+- **In/out brackets** — `.inOut($range)`; drag either bracket. The feet point into the marked
+  span so in and out are distinguishable without labels.
+- **Row-height resize** — `.onResizeTrack { track, height in … }`. The grip appears only when
+  a host handles it, and the callback carries an absolute height, not a delta.
+
 ## Snapping — pluggable, and always in points
 
 A snap source is just a closure returning candidate times for the visible range, so you
@@ -187,6 +216,14 @@ candidate, and the closer edge wins — snapping only the head would leave a cli
 visibly short of the next clip's head, which is the case an editor cares most about. A
 trim, by contrast, snaps only the edge being dragged; snapping the far edge would move the
 side the user is holding still.
+
+**Snapping is applied on RELEASE, not while dragging.** During the drag the clip tracks the
+pointer exactly and the candidate it would land on is previewed as a hairline; the snap
+happens once, on drop. Live snapping means the position is rewritten every frame while the
+pointer is also moving it — two things writing one value — and it cannot be tuned into
+smoothness. Direction limiting and hysteresis were both tried first and both only made it
+less bad. (`TimelineSnap.snap(…)` still accepts `direction:` and `held:` for anyone building
+live snapping; the component does not use them.)
 
 The tolerance is `theme.snapThreshold` (8pt) converted through
 `geometry.seconds(forPoints:)` — **no API anywhere stores a duration**.
@@ -228,13 +265,40 @@ Convert in, convert out, and let the timeline own only what it draws.
 (ML[X] LTX Studio does exactly this from a 120,000/s tick base — flagged on AB-A-0031 as a
 deliberate adaptation rather than a surprise.)
 
-## Two SwiftUI traps this component encodes
+## The SwiftUI traps this component encodes
+
+Every defect found in this component after it compiled had one of two shapes, and **all of
+them were invisible to headless tests and obvious within seconds under a pointer.** They are
+written down because the natural simplification in each case puts the bug back.
+
+### Rule 1 — a hit region follows the LAYOUT frame, not the drawing
+
+### Rule 2 — during a gesture, change VALUES, never STRUCTURE, IDENTITY, or the FRAME A DRAG IS MEASURED IN
+
+A drag lives on a specific view. Destroy or re-key that view and the drag stops silently:
+the preview sticks, `onEnded` never fires, nothing commits. Measure the drag against
+something that moves and it fights itself. Four variants hit this component:
+
+| What changed mid-gesture | Symptom |
+|---|---|
+| A clip's view moved between lanes (membership taken from the draft) | cross-track drag committed nothing |
+| A `@ViewBuilder` `if` flipped (clipped vs not) — two different view *types* | drag died even earlier |
+| `ForEach` identity keyed on the dragged value itself (a bracket's time) | one jump, then nothing |
+| Translation measured in the moving view's own `.local` space | jittery, jumpy, never tracks |
+
+So: lane membership is keyed on the clip's own `trackIndex`; cross-track feedback is a
+**tint**, not a view that flies; bracket identity is *which bracket it is*; off-screen is
+hidden by **opacity**; and every drag is measured in a fixed named coordinate space on the
+lane. The general form of the last two is the same — **never let a value feed back into its
+own input.**
+
+### The old Rule 1, in detail
 
 Both produced the same signature — **correct rendering, correct math, no callback** — and
 both were invisible to every headless test. They are written down because the natural
 "simplification" in each case reintroduces the bug.
 
-**1. `.offset` moves the drawing, not the layout.** A view's hit region follows its *layout*
+**`.offset` moves the drawing, not the layout.** A view's hit region follows its *layout*
 frame, so `.contentShape` after `.offset` anchors the hit region where the view would have
 been. Every clip's region then overlapped at the lane's left edge and z-order decided which
 one a click hit — taps landed on the wrong clip while everything looked perfect. Measured:

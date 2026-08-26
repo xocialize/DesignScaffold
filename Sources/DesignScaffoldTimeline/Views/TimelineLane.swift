@@ -5,10 +5,20 @@ import SwiftUI
 /// inside to the consumer's `ViewBuilder`, and owns the T2 gestures — drag (including
 /// across tracks) and edge-drag trim.
 ///
+/// ⚠️ Every drag here is measured in ``TimelineLane/laneSpace``, a FIXED coordinate space on
+/// the lane — never the default `.local`. A clip's local space travels with the clip, so a
+/// drag on a moving view measures its translation against a frame the previous update just
+/// shifted: the value being changed feeds back into its own input, and the clip stutters and
+/// jumps instead of tracking the pointer. The lane does not move, so measuring against it is
+/// stable no matter where the clip goes.
+///
 /// Gestures compute a *result* and report it; the lane never mutates the consumer's model.
 /// While a drag is live the clip follows the cursor from local state, so the edit previews
 /// without the host having to round-trip every frame.
-struct TimelineLane<Clip: TimelineClip, TrackID: Hashable, Body: View>: View {
+struct TimelineLane<Clip: TimelineClip, TrackID: Hashable, Body: View, GapBody: View>: View {
+    /// The fixed frame every drag in this lane is measured against — see the type's note.
+    static var laneSpace: String { "DesignScaffoldTimeline.lane" }
+
     let track: TimelineTrack<TrackID>
     let trackIndex: Int
     let clips: [Clip]
@@ -25,6 +35,11 @@ struct TimelineLane<Clip: TimelineClip, TrackID: Hashable, Body: View>: View {
     /// Clicking empty lane clears the selection — the counterpart to a plain click never
     /// deselecting. Without it there is no way to deselect at all until T3's marquee.
     let onBackgroundTap: () -> Void
+    /// Rubber-band selection. The lane reports raw drag values; the timeline owns the rect,
+    /// so the marquee is drawn as a sibling in the parent and never rebuilds this subtree.
+    let onMarqueeChanged: (_ startX: CGFloat, _ translation: CGSize, _ fromTrack: Int) -> Void
+    let onMarqueeEnded: () -> Void
+    @ViewBuilder let gapBody: (TimelineGap) -> GapBody
     let onDragChanged: (Clip, CGSize) -> Void
     let onDragEnded: () -> Void
     let onTrimChanged: (Clip, TimelineEdge, CGFloat) -> Void
@@ -42,10 +57,18 @@ struct TimelineLane<Clip: TimelineClip, TrackID: Hashable, Body: View>: View {
                    maxHeight: track.resolvedHeight)
             .contentShape(Rectangle())
             .onTapGesture { onBackgroundTap() }
+            .gesture(
+                DragGesture(minimumDistance: 4, coordinateSpace: .named(Self.laneSpace))
+                    .onChanged { onMarqueeChanged($0.startLocation.x, $0.translation, trackIndex) }
+                    .onEnded { _ in onMarqueeEnded() }
+            )
             .overlay(alignment: .topLeading) {
                 ZStack(alignment: .topLeading) {
                     // Sizes the stack without swallowing taps meant for the lane behind it.
                     Color.clear.allowsHitTesting(false)
+                    ForEach(visibleGaps) { gap in
+                        gapView(gap)
+                    }
                     ForEach(visibleClips) { clip in
                         clipView(clip)
                     }
@@ -57,6 +80,7 @@ struct TimelineLane<Clip: TimelineClip, TrackID: Hashable, Body: View>: View {
             // BOTH rebuild the view tree and tear down the live gesture — measured twice.
             .overlay(theme.selectionWash.opacity(isDropTarget ? 1 : 0).allowsHitTesting(false))
             .clipped()
+            .coordinateSpace(.named(Self.laneSpace))
     }
 
     /// Clips that render in THIS lane.
@@ -88,6 +112,20 @@ struct TimelineLane<Clip: TimelineClip, TrackID: Hashable, Body: View>: View {
         return (draft.start, draft.duration, draft.trackIndex)
     }
 
+    /// Gaps on this track that intersect the viewport.
+    private var visibleGaps: [TimelineGap] {
+        TimelineGaps.gaps(in: clips, trackIndex: trackIndex)
+            .map { TimelineGap(trackIndex: trackIndex, range: $0) }
+            .filter { geometry.isVisible(start: $0.start, duration: $0.duration) }
+    }
+
+    private func gapView(_ gap: TimelineGap) -> some View {
+        gapBody(gap)
+            .frame(width: max(1, geometry.width(for: gap.duration)),
+                   height: track.resolvedHeight - theme.clipInset * 2)
+            .timelinePlaced(x: geometry.x(for: gap.start), y: theme.clipInset)
+    }
+
     private func clipView(_ clip: Clip) -> some View {
         let placed = resolved(clip)
         let isSelected = selection.contains(clip.id)
@@ -112,8 +150,9 @@ struct TimelineLane<Clip: TimelineClip, TrackID: Hashable, Body: View>: View {
             .timelinePlaced(x: geometry.x(for: placed.start), y: theme.clipInset)
             .onTapGesture { onSelect(clip.id, NSEvent.modifierFlags.contains(.shift)) }
             // minimumDistance keeps a click from registering as a zero-length drag.
+            // Measured against the LANE, not the clip: the clip moves as this drag runs.
             .gesture(
-                DragGesture(minimumDistance: 3)
+                DragGesture(minimumDistance: 3, coordinateSpace: .named(Self.laneSpace))
                     .onChanged { onDragChanged(clip, $0.translation) }
                     .onEnded { _ in onDragEnded() }
             )
@@ -130,8 +169,9 @@ struct TimelineLane<Clip: TimelineClip, TrackID: Hashable, Body: View>: View {
             .onHover { inside in
                 if inside { NSCursor.resizeLeftRight.push() } else { NSCursor.pop() }
             }
+            // The handle travels with the edge it trims, so the same rule applies.
             .gesture(
-                DragGesture(minimumDistance: 2)
+                DragGesture(minimumDistance: 2, coordinateSpace: .named(Self.laneSpace))
                     .onChanged { onTrimChanged(clip, edge, $0.translation.width) }
                     .onEnded { _ in onTrimEnded() }
             )

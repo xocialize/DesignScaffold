@@ -8,6 +8,13 @@ struct TimelineTrackHeader<ID: Hashable, Accessory: View>: View {
     let track: TimelineTrack<ID>
     let theme: TimelineTheme
     let onToggle: ((TimelineTrack<ID>.Control) -> Void)?
+    /// Row-height resize: the ABSOLUTE new height, derived from the height at gesture start
+    /// plus the drag so far. `nil` hides the grip entirely, so a host that does not support
+    /// resizing shows no affordance for it.
+    let onResize: ((CGFloat) -> Void)?
+
+    /// The row's height when the resize drag began — see `onResize`.
+    @State private var resizeStartHeight: CGFloat?
     @ViewBuilder let accessory: Accessory
 
     var body: some View {
@@ -40,6 +47,30 @@ struct TimelineTrackHeader<ID: Hashable, Accessory: View>: View {
         .frame(width: theme.headerWidth, height: track.resolvedHeight, alignment: .leading)
         .background(theme.headerBackground)
         .opacity(track.isEnabled ? 1 : 0.55)
+        .overlay(alignment: .bottom) { resizeGrip }
+    }
+
+    /// A 5pt grip on the bottom edge. Drawn only when the host handles resizing.
+    @ViewBuilder
+    private var resizeGrip: some View {
+        if let onResize {
+            Rectangle()
+                .fill(Color.clear)
+                .frame(height: 5)
+                .contentShape(Rectangle())
+                .onHover { inside in
+                    if inside { NSCursor.resizeUpDown.push() } else { NSCursor.pop() }
+                }
+                .gesture(
+                    DragGesture(minimumDistance: 1)
+                        .onChanged { value in
+                            let base = resizeStartHeight ?? track.resolvedHeight
+                            if resizeStartHeight == nil { resizeStartHeight = track.resolvedHeight }
+                            onResize(base + value.translation.height)
+                        }
+                        .onEnded { _ in resizeStartHeight = nil }
+                )
+        }
     }
 
     private func symbol(_ control: TimelineTrack<ID>.Control) -> String {
