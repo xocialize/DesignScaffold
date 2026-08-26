@@ -27,14 +27,23 @@ struct TimelineLane<Clip: TimelineClip, TrackID: Hashable, Body: View>: View {
     @ViewBuilder let clipBody: (Clip) -> Body
 
     var body: some View {
-        ZStack(alignment: .topLeading) {
-            (isAlternate ? theme.laneAlternate : theme.laneBackground)
-            ForEach(visibleClips) { clip in
-                clipView(clip)
+        // Clips live in an OVERLAY, not as ZStack children. Placing them by layout means
+        // their extents would otherwise dictate the lane's ideal width — a 13-second edit
+        // at 60 pt/s asks for 800pt — which widens the scroll content and shoves the ruler
+        // out of alignment with the lanes below it. An overlay is sized by its parent and
+        // never reports size upward, so the lane stays exactly as wide as the viewport.
+        (isAlternate ? theme.laneAlternate : theme.laneBackground)
+            .frame(maxWidth: .infinity, minHeight: track.resolvedHeight,
+                   maxHeight: track.resolvedHeight)
+            .overlay(alignment: .topLeading) {
+                ZStack(alignment: .topLeading) {
+                    Color.clear
+                    ForEach(visibleClips) { clip in
+                        clipView(clip)
+                    }
+                }
             }
-        }
-        .frame(height: track.resolvedHeight)
-        .clipped()
+            .clipped()
     }
 
     /// Clips that render in THIS lane: those belonging to it, minus one being dragged away,
@@ -73,8 +82,10 @@ struct TimelineLane<Clip: TimelineClip, TrackID: Hashable, Body: View>: View {
             .overlay(alignment: .leading) { trimHandle(clip, edge: .leading) }
             .overlay(alignment: .trailing) { trimHandle(clip, edge: .trailing) }
             .opacity(isDragging ? 0.85 : 1)
-            .offset(x: geometry.x(for: placed.start), y: theme.clipInset)
             .contentShape(Rectangle())
+            // Placed by LAYOUT, never `.offset` — see TimelinePlacement for the bug that
+            // rule exists to prevent (hit regions all anchoring at the lane's left edge).
+            .timelinePlaced(x: geometry.x(for: placed.start), y: theme.clipInset)
             .onTapGesture { onSelect(clip.id, NSEvent.modifierFlags.contains(.shift)) }
             // minimumDistance keeps a click from registering as a zero-length drag.
             .gesture(

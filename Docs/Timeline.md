@@ -144,7 +144,11 @@ and a leading trim cannot drag the head below zero.
 
 Cross-track resolution walks the **real row heights** rather than dividing by a constant:
 rows are 64/44/28, so a fixed divisor drifts as the drag crosses rows of different kinds.
-The boundary between two rows is the mean of their heights.
+The boundary between two rows is the mean of their heights — which means **the drag must
+travel past the midpoint of the destination row**, not merely enter it. Moving a clip from a
+44pt audio row up into a 64pt video row takes (44+64)/2 = **54pt** of vertical travel, more
+than the height of the row it starts in. That is the standard midpoint rule and it is
+deliberate, but it is further than it looks.
 
 ## Snapping — pluggable, and always in points
 
