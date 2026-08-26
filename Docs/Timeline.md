@@ -142,6 +142,10 @@ A **leading trim holds the tail still** and a trailing trim holds the head still
 what makes a trim read as a trim rather than a move. Both respect `minimumClipDuration`,
 and a leading trim cannot drag the head below zero.
 
+While a drag crosses rows, the **destination lane tints** — the clip itself stays on its own
+row rather than flying across. That is deliberate and hard-won: see *Two SwiftUI traps*
+below. The clip lands on the destination row when you release.
+
 Cross-track resolution walks the **real row heights** rather than dividing by a constant:
 rows are 64/44/28, so a fixed divisor drifts as the drag crosses rows of different kinds.
 The boundary between two rows is the mean of their heights — which means **the drag must
@@ -202,6 +206,40 @@ Convert in, convert out, and let the timeline own only what it draws.
 
 (ML[X] LTX Studio does exactly this from a 120,000/s tick base — flagged on AB-A-0031 as a
 deliberate adaptation rather than a surprise.)
+
+## Two SwiftUI traps this component encodes
+
+Both produced the same signature — **correct rendering, correct math, no callback** — and
+both were invisible to every headless test. They are written down because the natural
+"simplification" in each case reintroduces the bug.
+
+**1. `.offset` moves the drawing, not the layout.** A view's hit region follows its *layout*
+frame, so `.contentShape` after `.offset` anchors the hit region where the view would have
+been. Every clip's region then overlapped at the lane's left edge and z-order decided which
+one a click hit — taps landed on the wrong clip while everything looked perfect. Measured:
+
+```
+offset      B expected x=120  measured x=0.0
+alignGuide  B expected x=120  measured x=120.0
+```
+
+Clips are placed by layout (`TimelinePlacement`); `TimelinePlacementTests` fails if that
+reverts.
+
+**2. Anything that rebuilds the view tree mid-gesture kills the gesture.** A drag lives on a
+specific view; destroy that view and the drag stops silently — the preview sticks, `onEnded`
+never fires, nothing commits, and the host's model never changes. Two separate things hit
+this:
+
+- deciding a clip's lane by the *draft's* track index, which moved the clip's view to
+  another lane the instant a drag crossed a row;
+- a `@ViewBuilder` conditional such as `if clipping { view.clipped() } else { view }`,
+  whose two branches are different view *types*, so flipping the condition rebuilds
+  the subtree.
+
+So a clip's lane membership is keyed on its **own** `trackIndex` and never the draft's, and
+cross-track feedback is a **colour change on the destination lane** — a value update, not a
+structural one. Riding the clip across rows would require one of the two moves above.
 
 ## Under the hood
 

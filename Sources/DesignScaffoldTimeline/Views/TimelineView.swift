@@ -131,12 +131,24 @@ public struct TimelineView<Clip: TimelineClip, TrackID: Hashable, ClipBody: View
             geometry: geometry, theme: theme,
             isAlternate: index.isMultiple(of: 2),
             selection: selection, draft: draft,
+            isDropTarget: isDropTarget(track: index),
             onSelect: { id, additive in select(id, additive: additive) },
             onDragChanged: { clip, translation in dragChanged(clip, translation) },
             onDragEnded: { commitDraft() },
             onTrimChanged: { clip, edge, dx in trimChanged(clip, edge, dx) },
             onTrimEnded: { commitDraft() },
             clipBody: clipBody)
+    }
+
+    /// Whether `track` is the destination of a crossing drag — shown as a tint on that
+    /// lane. Deliberately the ONLY cross-track feedback during the gesture: anything that
+    /// moves the clip's view between lanes, or toggles a lane's clipping, rebuilds the view
+    /// tree and kills the drag (see `TimelineLane.visibleClips`).
+    private func isDropTarget(track index: Int) -> Bool {
+        guard let draft,
+              let origin = clips.first(where: { $0.id == draft.id })?.trackIndex
+        else { return false }
+        return draft.trackIndex != origin && draft.trackIndex == index
     }
 
     // MARK: Gestures → geometry-derived edits

@@ -16,9 +16,11 @@ struct TimelineLane<Clip: TimelineClip, TrackID: Hashable, Body: View>: View {
     let theme: TimelineTheme
     let isAlternate: Bool
     let selection: Set<Clip.ID>
-    /// In-flight edit owned by the parent, so a clip dragged onto another track renders in
-    /// the destination lane rather than being clipped by its origin lane.
+    /// In-flight edit owned by the parent.
     let draft: TimelineDraft<Clip.ID>?
+    /// True while this lane is the DESTINATION of a crossing drag, so it can show itself as
+    /// the drop target. A colour change only — never a structural one.
+    let isDropTarget: Bool
     let onSelect: (Clip.ID, Bool) -> Void
     let onDragChanged: (Clip, CGSize) -> Void
     let onDragEnded: () -> Void
@@ -43,15 +45,31 @@ struct TimelineLane<Clip: TimelineClip, TrackID: Hashable, Body: View>: View {
                     }
                 }
             }
+            // Highlight, not geometry: the drop target is shown by tinting the destination
+            // lane rather than flying the clip across rows. Riding the clip over means either
+            // moving its view between lanes or toggling this lane's clipping mid-drag, and
+            // BOTH rebuild the view tree and tear down the live gesture — measured twice.
+            .overlay(theme.selectionWash.opacity(isDropTarget ? 1 : 0).allowsHitTesting(false))
             .clipped()
     }
 
-    /// Clips that render in THIS lane: those belonging to it, minus one being dragged away,
-    /// plus one being dragged in. Virtualised against the viewport.
+    /// Clips that render in THIS lane.
+    ///
+    /// ⚠️ Membership is decided by the clip's OWN `trackIndex`, never the draft's. A clip
+    /// being dragged to another track stays rendered here for the whole gesture, displaced
+    /// vertically so it appears over its destination.
+    ///
+    /// Filtering on the draft's track instead — which is what this did until 0.6.2 —
+    /// removes the clip's view from this lane the instant a drag crosses a row boundary and
+    /// rebuilds it in the destination lane. SwiftUI tears down the gesture attached to the
+    /// destroyed view, so the drag silently stops: the preview sticks on the destination
+    /// row, `onEnded` never fires, nothing is committed, and the host's model never changes.
+    /// Observed exactly that way in interactive testing — the clip appeared to move and no
+    /// callback ever arrived.
     private var visibleClips: [Clip] {
         clips.filter { clip in
+            guard clip.trackIndex == trackIndex else { return false }
             let placed = resolved(clip)
-            guard placed.trackIndex == trackIndex else { return false }
             return geometry.isVisible(start: placed.start, duration: placed.duration)
         }
     }
