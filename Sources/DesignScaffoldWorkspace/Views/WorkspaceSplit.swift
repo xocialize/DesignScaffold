@@ -69,6 +69,7 @@ public struct WorkspaceSplit<Leading: View, Center: View, Trailing: View>: View 
                 trailing: hasTrailing ? theme.trailingWidth : 0,
                 centerMinimum: theme.centerMinimum)
 
+            let _ = Self.log(available: proxy.size.width, widths: widths)
             HStack(spacing: 0) {
                 leading
                     .frame(width: widths.leading)
@@ -86,6 +87,24 @@ public struct WorkspaceSplit<Leading: View, Center: View, Trailing: View>: View 
             }
             .frame(width: proxy.size.width, height: proxy.size.height)
         }
+    }
+}
+
+// MARK: - Diagnostics
+
+extension WorkspaceSplit {
+    /// Prints the width the split was offered and what it resolved to, when
+    /// `DESIGNSCAFFOLD_LAYOUT_LOG` is set in the environment.
+    ///
+    /// It exists because "the panes are the wrong size" is answerable only with the number the
+    /// component was actually GIVEN. A drawn-frame probe cannot supply it: a probe that guards
+    /// on a non-zero frame — as the fleet's does — silently reports the last non-zero value for
+    /// a pane that has collapsed to nothing, which is exactly the case worth seeing.
+    static func log(available: CGFloat, widths: WorkspaceMetrics.Resolved) {
+        guard ProcessInfo.processInfo.environment["DESIGNSCAFFOLD_LAYOUT_LOG"] != nil else { return }
+        print(String(format: "WORKSPACESPLIT offered=%.0f → %.0f | %.0f | %.0f",
+                     available, widths.leading, widths.center, widths.trailing))
+        fflush(stdout)
     }
 }
 

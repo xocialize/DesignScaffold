@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DA5C10000000000000000002 /* DesignScaffoldWorkspace in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C10000000000000000001 /* DesignScaffoldWorkspace */; };
 		DA5C00000000000000000002 /* DesignScaffoldCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C00000000000000000001 /* DesignScaffoldCalendar */; };
 		DA5C00000000000000000004 /* DesignScaffoldChips in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C00000000000000000003 /* DesignScaffoldChips */; };
 		DA5C00000000000000000006 /* DesignScaffoldLoading in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C00000000000000000005 /* DesignScaffoldLoading */; };
@@ -61,6 +62,7 @@
 			files = (
 				23E796DD3020E29000120F27 /* MLXEngineUI in Frameworks */,
 				239A3C72301DB4B50052AF6F /* DesignScaffold in Frameworks */,
+				DA5C10000000000000000002 /* DesignScaffoldWorkspace in Frameworks */,
 				DA5C00000000000000000002 /* DesignScaffoldCalendar in Frameworks */,
 				DA5C00000000000000000004 /* DesignScaffoldChips in Frameworks */,
 				DA5C00000000000000000006 /* DesignScaffoldLoading in Frameworks */,
@@ -120,6 +122,7 @@
 			name = DesignWorkspace;
 			packageProductDependencies = (
 				239A3C71301DB4B50052AF6F /* DesignScaffold */,
+				DA5C10000000000000000001 /* DesignScaffoldWorkspace */,
 				DA5C00000000000000000001 /* DesignScaffoldCalendar */,
 				DA5C00000000000000000003 /* DesignScaffoldChips */,
 				DA5C00000000000000000005 /* DesignScaffoldLoading */,
@@ -448,6 +451,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		DA5C10000000000000000001 /* DesignScaffoldWorkspace */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DesignScaffoldWorkspace;
+		};
 		DA5C00000000000000000001 /* DesignScaffoldCalendar */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = DesignScaffoldCalendar;

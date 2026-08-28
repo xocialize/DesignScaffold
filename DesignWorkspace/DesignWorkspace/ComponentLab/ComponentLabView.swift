@@ -40,6 +40,8 @@ struct ComponentLabView: View {
               blurb: "Which menu wins: one inside clipBody, or clipContextMenu? Mirrors the LTX Studio call site.") { TimelineMenuHarness() },
         .init(id: "timeline", title: "Timeline · gestures",
               blurb: "Drag, cross-track, trim, marquee, brackets, row resize.") { TimelineGestureHarness() },
+        .init(id: "workspace", title: "WorkspaceSplit",
+              blurb: "Which pane yields as the window narrows? Drawn frames vs the arithmetic.") { WorkspaceHarness() },
         .init(id: "chips", title: "ChipRow",
               blurb: "Single-select, wrapping. Clickability of a WRAPPED chip is unverified anywhere.") { ChipsHarness() },
         .init(id: "playlist", title: "PlaylistIterator",
