@@ -40,10 +40,20 @@ advance() {
   [[ "$before" != "$after" ]] || { echo "ABORT: control click did not change state ($before)"; exit 1; }
 }
 
+# ⚠️ SELECTION IS AN AXIS, not a detail. Menu precedence depended on it until 0.8.3, and the
+# bug survived for two days precisely because every harness clicked empty space between cases —
+# which deselects the clip and measures only the working half. Each cell is now run twice.
 cell() {
   local name=$(state)
-  act; "$D" rightclick ${=CLIP} >/dev/null; sleep 0.9; shot "$name"
+  # (a) clip NOT selected
   dismiss
+  act; "$D" rightclick ${=CLIP} >/dev/null; sleep 0.9; shot "$name--unselected"
+  dismiss
+  # (b) clip SELECTED first — the state a user is always in, because they clicked it
+  act; "$D" click ${=CLIP} >/dev/null; sleep 0.4
+  "$D" rightclick ${=CLIP} >/dev/null; sleep 0.9; shot "$name--selected"
+  dismiss
+  # positive control
   act; "$D" rightclick ${=GAP} >/dev/null; sleep 0.9; shot "$name--control"
   dismiss
 }

@@ -196,7 +196,7 @@ identity, and read the gap purely as geometry.
 
 ## Clip context menus
 
-Two ways to give a clip a right-click menu, and **`clipContextMenu` is the one to reach for**:
+Two ways to give a clip a right-click menu:
 
 ```swift
 .clipContextMenu { clip in
@@ -205,43 +205,54 @@ Two ways to give a clip a right-click menu, and **`clipContextMenu` is the one t
 }
 ```
 
-The component attaches it where a hit region is guaranteed and you supply only the items —
-the same split as `clipBody`. It costs nothing and it cannot be defeated by how you draw.
+The component attaches it where a hit region is guaranteed and you supply only the items — the
+same split as `clipBody`. A `.contextMenu` you attach inside `clipBody` also works, and if you
+attach both, **yours wins**: precedence runs innermost-first, and `clipContextMenu` answers
+only when your body has no menu of its own.
 
-A `.contextMenu` you attach inside `clipBody` also works, and if you attach both, **yours
-wins**. Precedence runs innermost-first: `clipContextMenu` answers only when your body has no
-menu of its own. Measured in a real app — `DesignWorkspace`'s Component Lab, driven by
-[`Tools/menu-matrix.sh`](../Tools/menu-matrix.sh), eight cells with a live positive control on
-each:
+### ⚠️ Before 0.8.3, that depended on whether the clip was selected
 
-| menu inside `clipBody` | `clipContextMenu` | opens |
-|---|---|---|
-| none | attached | `clipContextMenu` |
-| none | — | nothing |
-| outermost | attached | **yours** |
-| outermost | — | yours |
-| with an `.overlay` applied after it | attached | **yours** |
-| with an `.overlay` applied after it | — | yours |
-| a consumer's real clip body, transcribed verbatim | attached | **yours** |
-| same | — | yours |
+A real defect, fixed in **0.8.3**, and worth reading if you are on an earlier version or have
+old notes that say an inner menu "never presents".
 
-⚠️ **A previous version of this page said the opposite** — that a `.contextMenu` inside
-`clipBody` presents only where your content is "hit-testable", and that a transparent body
-loses its menu silently. **That is wrong.** It was measured in a scratchpad `NSHostingView`
-and refuted in a real app: an inner menu presents on an opaque gradient, on a body that is
-mostly empty under a greedy `.frame(maxWidth: .infinity, maxHeight: .infinity)`, and under an
-`allowsHitTesting(false)` overlay alike. If you built around that claim, you can stop.
+`clipView` tinted a selected clip with `.overlay { if isSelected { theme.selectionWash } }`.
+A `@ViewBuilder` `if` with no `else` yields a **different view type** selected versus not, and
+the restructured version answered the secondary click itself. So a `.contextMenu` inside
+`clipBody` stopped presenting **the moment a clip was selected** — and since nobody
+right-clicks a clip without clicking it first, it read as "the inner menu never works".
 
-`clipContextMenu` still exists and is still the recommendation — not because an inner menu
-fails, but because it removes the question from your call site entirely.
+The measurement, same binary, same clip, same point, one variable:
 
-**The clip is reported when an item is chosen, not when the menu opens.** So you cannot move a
-selection ring onto the right-clicked clip; there is no honest moment to do it. Targeting is
-correct regardless — an item acts on the clip under the pointer whether or not it was
-selected, which is the property that matters.
+| clip state when right-clicked | opens |
+|---|---|
+| not selected | the host's inner menu |
+| **selected** | **`clipContextMenu`** — or, with none attached, **nothing at all** |
+
+It cost two days across two teams, and it survived because **every instrument that could have
+caught it clicked empty space between cases**, which deselected the clip and measured only the
+working half. Two apps produced flatly contradictory results from the same source, and both
+were reporting honestly.
+
+The fix is the opacity form the drop-target highlight one line below had used all along, with
+the reasoning already written next to it:
+
+```swift
+.overlay(theme.selectionWash.opacity(isSelected ? 1 : 0).allowsHitTesting(false))
+```
+
+This is [Rule 2](#rule-2--during-a-gesture-change-values-never-structure-identity-or-the-frame-a-drag-is-measured-in)
+applied to a `@ViewBuilder` `if` that nobody thought of as a gesture concern. It is also the
+reason `clipContextMenu` remains the recommendation: it worked in every state, before and
+after, because it does not depend on what the host's body draws.
+
+### The clip is reported when an item is chosen
+
+Not when the menu opens — so you cannot move a selection ring onto the right-clicked clip;
+there is no honest moment to do it. Targeting is correct regardless: an item acts on the clip
+under the pointer whether or not it was selected.
 
 Gaps need no equivalent: nothing sits above `gapBody`, so a `.contextMenu` there behaves
-normally.
+normally — in every selection state, before the fix and after.
 
 ## Snapping — pluggable, and always in points
 

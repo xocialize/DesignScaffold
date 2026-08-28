@@ -139,7 +139,18 @@ struct TimelineLane<Clip: TimelineClip, TrackID: Hashable, Body: View, GapBody: 
         return clipBody(clip)
             .frame(width: width, height: track.resolvedHeight - theme.clipInset * 2)
             .background(theme.clipBackground)
-            .overlay { if isSelected { theme.selectionWash } }
+            // ⚠️ The opacity form, NOT `if isSelected { … }`. A `@ViewBuilder` `if` with no
+            // `else` yields a DIFFERENT VIEW TYPE selected vs not, restructuring the subtree
+            // directly above `clipBody` — and the restructured version answers the secondary
+            // click itself, so a `.contextMenu` the host attached inside `clipBody` stopped
+            // presenting THE MOMENT A CLIP WAS SELECTED. Since nobody right-clicks a clip
+            // without clicking it first, that read as "the inner menu never works", while
+            // every headless test and every harness that clicked empty space between cases
+            // saw it working. Measured both ways in two apps (AB-A-0031).
+            //
+            // This is the same rule the drop-target highlight below already follows, with the
+            // same reasoning written next to it. One line escaped it.
+            .overlay(theme.selectionWash.opacity(isSelected ? 1 : 0).allowsHitTesting(false))
             .clipShape(RoundedRectangle(cornerRadius: theme.clipRadius))
             .overlay(
                 RoundedRectangle(cornerRadius: theme.clipRadius)

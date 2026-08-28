@@ -544,27 +544,19 @@ public extension TimelineView {
     /// Right-click menu for a clip — the reliable way to give one, and the only way when the
     /// host's own body has no menu of its own.
     ///
-    /// ⚠️ **It does not shadow a menu the host attaches inside `clipBody`.** Precedence runs the
-    /// other way: a `.contextMenu` anywhere inside `clipBody` wins, and this one answers only
-    /// when the body has none. Measured in a real app (`DesignWorkspace`'s Component Lab,
-    /// `Tools/menu-matrix.sh`) against this exact source, eight cells, a positive control on
-    /// every one:
+    /// ⚠️ **It does not shadow a menu the host attaches inside `clipBody`.** Precedence runs
+    /// innermost-first: a `.contextMenu` inside `clipBody` wins, and this one answers only when
+    /// the body has none.
     ///
-    /// | menu inside `clipBody`           | this modifier | opens   |
-    /// |----------------------------------|---------------|---------|
-    /// | none                             | attached      | this one |
-    /// | none                             | —             | nothing |
-    /// | outermost                        | attached      | the host's |
-    /// | outermost                        | —             | the host's |
-    /// | with an `.overlay` applied after | attached      | the host's |
-    /// | with an `.overlay` applied after | —             | the host's |
+    /// ⚠️ **Before 0.8.3 that depended on selection state**, which is why this modifier exists
+    /// at all. `clipView` tinted a selected clip with `.overlay { if isSelected { … } }`; the
+    /// `@ViewBuilder` `if` restructured the subtree above `clipBody`, and the restructured
+    /// version answered the secondary click. A host's inner menu therefore stopped presenting
+    /// the moment a clip was selected — and nobody right-clicks a clip without clicking it
+    /// first. Fixed by using the opacity form. See `Docs/Timeline.md` and AB-A-0031.
     ///
-    /// ⚠️ **An earlier version of this comment claimed a clip body must be "hit-testable" for
-    /// its own menu to present, and that a transparent body loses the menu silently. That was
-    /// measured in a scratchpad `NSHostingView`, and it is wrong** — a menu inside `clipBody`
-    /// presents on an opaque gradient, on a greedy `.frame(maxWidth:maxHeight:)` body, and
-    /// under an `allowsHitTesting(false)` overlay alike. Attaching a menu here still costs
-    /// nothing and removes the question, which is why the modifier stays.
+    /// This modifier was unaffected in every state, before and after, because it does not
+    /// depend on what the host draws — which is still the reason to prefer it.
     ///
     /// ```swift
     /// .clipContextMenu { clip in

@@ -65,12 +65,17 @@ disagreed with a shipping app. `Tools/menu-matrix.sh` settled it in one run here
 
 ## What it has established so far
 
-- **Context-menu precedence** (`Tools/menu-matrix.sh`, 8 cells, control on each): a
-  `.contextMenu` anywhere inside `clipBody` wins; `.clipContextMenu` answers only when the
-  host's body has none. This **refuted** the shipped doc claim that a clip body must be
-  "hit-testable" for its own menu to present — measured with an opaque gradient, a greedy
-  frame, under an `allowsHitTesting(false)` overlay, and with a consumer's body transcribed
-  verbatim. See AB-A-0031, AB-L-0066.
+- **A real defect nobody could see: menu precedence depended on SELECTION STATE** (fixed in
+  0.8.3). `clipView`'s `.overlay { if isSelected { … } }` restructured the subtree above
+  `clipBody`, and the restructured version answered the secondary click — so a host's inner
+  `.contextMenu` stopped presenting the moment a clip was selected. Since nobody right-clicks a
+  clip without clicking it first, it read as "the inner menu never works".
+
+  **It survived two days across two teams because every instrument clicked empty space between
+  cases**, which deselected the clip and measured only the working half. Two apps reported
+  flatly contradictory results from identical source, and both were honest. Found by driving
+  the consumer's own app with the shared probe, then bisecting; selection is now an axis of
+  `Tools/menu-matrix.sh`. See AB-A-0031.
 - **A wrapped `ChipRow` is clickable on every row.** Chips on rows 1, 2 and 3 of a 240pt-wide
   row each registered as themselves — `ChipFlowLayout` places hit regions where it draws.
 - **`PlaylistIterator` drag-reorder commits correctly under a synthetic driver**: dragging
