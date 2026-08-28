@@ -32,6 +32,8 @@ let package = Package(
         .library(name: "DesignScaffoldStageStepper", targets: ["DesignScaffoldStageStepper"]),
         // Media-agnostic multi-track timeline (ruler · headers · clip lanes · playhead).
         .library(name: "DesignScaffoldTimeline", targets: ["DesignScaffoldTimeline"]),
+        // Capsule filter chips, single-select, wrapping.
+        .library(name: "DesignScaffoldChips", targets: ["DesignScaffoldChips"]),
     ],
     targets: [
         .target(name: "DesignScaffold", path: "Sources/DesignScaffold"),
@@ -72,9 +74,18 @@ let package = Package(
             name: "DesignScaffoldStageStepperTests",
             dependencies: ["DesignScaffoldStageStepper"]
         ),
+        .target(
+            name: "DesignScaffoldChips",
+            dependencies: ["DesignScaffold"],
+            path: "Sources/DesignScaffoldChips"
+        ),
         .testTarget(
             name: "DesignScaffoldTimelineTests",
             dependencies: ["DesignScaffoldTimeline"]
+        ),
+        .testTarget(
+            name: "DesignScaffoldChipsTests",
+            dependencies: ["DesignScaffoldChips"]
         ),
         .testTarget(
             name: "DesignScaffoldPlaylistTests",

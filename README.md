@@ -16,6 +16,7 @@ it, and how to request something new. Look there before building a macOS UI surf
 | `DesignScaffoldPlaylist` | `PlaylistIterator` — sortable playlist list (thumbnail · name · metadata, drag-reorder, active marker); re-exports `DesignScaffold` |
 | `DesignScaffoldLoading` | `LoadingCard` + `.loadingModal(...)` — model/product loading modal (hero percentage · status · fields · bar); re-exports `DesignScaffold` |
 | `DesignScaffoldStageStepper` | `StageStepper` — run-progress stepper for multi-phase operations (planned nodes · pulse · counters); re-exports `DesignScaffold` |
+| `DesignScaffoldChips` | `ChipRow` — capsule filter chips, single-select, wrapping; re-exports `DesignScaffold` |
 | `DesignScaffoldTimeline` | `TimelineView` — media-agnostic multi-track timeline (ruler · headers · clip lanes · playhead), generic over your clip model; re-exports `DesignScaffold` |
 
 In Xcode's package sheet, select only the libraries the app uses.
@@ -229,6 +230,22 @@ TimelineView(tracks: tracks, clips: clips,
              geometry: $geometry, playhead: $playhead, selection: $selection) { clip in
     Filmstrip(clip.asset)        // you draw the inside; the scaffold places it
 }
+```
+
+### Chip row — [Docs/ChipRow.md](Docs/ChipRow.md)
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="Docs/images/chips-dark.png">
+  <img src="Docs/images/chips-light.png" width="600" alt="Filter chips on one row, and the same component wrapping in a narrow sidebar">
+</picture>
+
+Capsule filter chips, single-select, generic over any `Identifiable` collection. Wraps via a
+real `Layout` rather than scrolling — a filter row that scrolls hides its own options.
+
+```swift
+import DesignScaffoldChips
+
+ChipRow(Kind.allCases, selection: $kind) { $0.rawValue.capitalized }
 ```
 
 ## Adopters
