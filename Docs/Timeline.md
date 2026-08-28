@@ -196,7 +196,7 @@ identity, and read the gap purely as geometry.
 
 ## Clip context menus
 
-Attach the menu through the component, not inside `clipBody`:
+Two ways to give a clip a right-click menu, and **`clipContextMenu` is the one to reach for**:
 
 ```swift
 .clipContextMenu { clip in
@@ -205,18 +205,43 @@ Attach the menu through the component, not inside `clipBody`:
 }
 ```
 
-⚠️ **A `.contextMenu` placed inside `clipBody` presents only where your own content is
-hit-testable.** A filmstrip with transparent regions, an image still loading, or anything
-carrying `allowsHitTesting(false)` has no hit region there, and the menu silently never
-appears.
+The component attaches it where a hit region is guaranteed and you supply only the items —
+the same split as `clipBody`. It costs nothing and it cannot be defeated by how you draw.
 
-The failure looks like the component's fault, because a **left** click at the same point still
-selects the clip — that is answered by the lane's `contentShape(Rectangle())`, which covers the
-whole rect regardless of what you drew. So you see a clip that selects but will not open a menu.
+A `.contextMenu` you attach inside `clipBody` also works, and if you attach both, **yours
+wins**. Precedence runs innermost-first: `clipContextMenu` answers only when your body has no
+menu of its own. Measured in a real app — `DesignWorkspace`'s Component Lab, driven by
+[`Tools/menu-matrix.sh`](../Tools/menu-matrix.sh), eight cells with a live positive control on
+each:
 
-Measured both ways: an opaque clip body shows the inner menu; the identical body with nothing
-hit-testable shows nothing, and `clipContextMenu` shows instead. Gaps need no equivalent —
-nothing sits above `gapBody`, so a `.contextMenu` there behaves normally.
+| menu inside `clipBody` | `clipContextMenu` | opens |
+|---|---|---|
+| none | attached | `clipContextMenu` |
+| none | — | nothing |
+| outermost | attached | **yours** |
+| outermost | — | yours |
+| with an `.overlay` applied after it | attached | **yours** |
+| with an `.overlay` applied after it | — | yours |
+| a consumer's real clip body, transcribed verbatim | attached | **yours** |
+| same | — | yours |
+
+⚠️ **A previous version of this page said the opposite** — that a `.contextMenu` inside
+`clipBody` presents only where your content is "hit-testable", and that a transparent body
+loses its menu silently. **That is wrong.** It was measured in a scratchpad `NSHostingView`
+and refuted in a real app: an inner menu presents on an opaque gradient, on a body that is
+mostly empty under a greedy `.frame(maxWidth: .infinity, maxHeight: .infinity)`, and under an
+`allowsHitTesting(false)` overlay alike. If you built around that claim, you can stop.
+
+`clipContextMenu` still exists and is still the recommendation — not because an inner menu
+fails, but because it removes the question from your call site entirely.
+
+**The clip is reported when an item is chosen, not when the menu opens.** So you cannot move a
+selection ring onto the right-clicked clip; there is no honest moment to do it. Targeting is
+correct regardless — an item acts on the clip under the pointer whether or not it was
+selected, which is the property that matters.
+
+Gaps need no equivalent: nothing sits above `gapBody`, so a `.contextMenu` there behaves
+normally.
 
 ## Snapping — pluggable, and always in points
 
@@ -315,6 +340,23 @@ So: lane membership is keyed on the clip's own `trackIndex`; cross-track feedbac
 hidden by **opacity**; and every drag is measured in a fixed named coordinate space on the
 lane. The general form of the last two is the same — **never let a value feed back into its
 own input.**
+
+### Rule 3 — a DRAWN rect is an upper bound on the HIT rect
+
+SwiftUI hit tests against what a view drew. Padding, a `.background`, and the empty space in a
+stack are all inside a view's reported frame and outside its target. A `.plain` `Button` whose
+label is a padded `VStack` is hit-testable only across its text.
+
+This bites two ways, and both were measured in the Component Lab rather than reasoned about:
+
+- **Driving it.** A control's reported frame spanned 48pt while only the middle 18pt answered
+  a click, so a driver aiming at the reported centre missed a control that looks obviously
+  clickable. A labelled `Toggle` is worse: its centre falls in the dead gap between text and
+  switch.
+- **Shipping it.** The same gap is what makes a user click a row and get nothing.
+
+`.contentShape(Rectangle())` makes the two rects coincide, which is why the component puts one
+on every clip and lane. **A probe cannot tell you the rects differ — only a click can.**
 
 ### The old Rule 1, in detail
 

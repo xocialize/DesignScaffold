@@ -44,9 +44,10 @@ struct TimelineLane<Clip: TimelineClip, TrackID: Hashable, Body: View, GapBody: 
     let onDragEnded: () -> Void
     let onTrimChanged: (Clip, TimelineEdge, CGFloat) -> Void
     let onTrimEnded: () -> Void
-    /// Context-menu items for a clip, supplied by the host. Attached HERE so the menu has a
-    /// hit region whatever the host draws — a `.contextMenu` inside `clipBody` presents only
-    /// where the host's own content is hit-testable. See `TimelineView.clipContextMenu`.
+    /// Context-menu items for a clip, supplied by the host. Attached HERE so a host gets a
+    /// menu without having to think about its own body — but it does NOT shadow one the host
+    /// attaches inside `clipBody`, which wins. See `TimelineView.clipContextMenu` for the
+    /// measured precedence table.
     let clipMenu: ((Clip) -> AnyView)?
     @ViewBuilder let clipBody: (Clip) -> Body
 

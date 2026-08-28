@@ -62,6 +62,10 @@ array — persist the new order there. The live-move rule is a pure, unit-tested
 op (`PlaylistReorder.liveMove`), so the visual behaviour and the array mutation cannot
 drift apart.
 
+Verified end to end under a real pointer as well as in unit tests: dragging row 1 onto row 3
+of a five-row list committed `2,3,1,4,5`, once. The `playlist` harness in
+[the Component Lab](../DesignWorkspace/README.md) is the fixture.
+
 ### Selection vs. active
 
 Two independent states, styled differently on purpose:

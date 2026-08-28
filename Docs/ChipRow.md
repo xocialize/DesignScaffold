@@ -48,6 +48,12 @@ own row rather than being dropped — clipping one long label is bad, losing it 
 The packing arithmetic (`ChipFlow`) is a pure function with unit tests, including the classic
 off-by-one: **spacing counts toward the width when deciding to wrap.**
 
+**A wrapped chip is clickable on every row** — verified under a pointer, not inferred from the
+layout. Six chips in a 240pt row wrap to three rows; a click on each row registered as that
+chip. This is worth stating because it is exactly the property a screenshot cannot show: a
+chip that wraps correctly and answers no clicks looks perfect in a render and in every unit
+test. Run it yourself with the `chips` harness in [the Component Lab](../DesignWorkspace/README.md).
+
 ## Theming
 
 `ChipRowTheme` follows the house pattern — initializer defaults are the token values, and

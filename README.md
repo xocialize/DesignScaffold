@@ -248,6 +248,22 @@ import DesignScaffoldChips
 ChipRow(Kind.allCases, selection: $kind) { $0.rawValue.capitalized }
 ```
 
+## Verifying a change — [Docs/Verification.md](Docs/Verification.md)
+
+Unit tests prove arithmetic and renders prove placement; **neither can reach hit testing or
+gesture lifetime, which is where every shipped defect in this library has been.** A real app
+lives in this repo for that — [`DesignWorkspace`](DesignWorkspace/README.md), the Component
+Lab, consuming the package by local path so it always exercises the working tree.
+
+```bash
+xcodebuild -project DesignWorkspace/DesignWorkspace.xcodeproj -scheme DesignWorkspace \
+  -configuration Debug -destination 'platform=macOS' build
+```
+
+Launch the built binary with `-ComponentLab`. Drive it with
+[`Tools/InputDriver`](Tools/README.md); `Tools/menu-matrix.sh` is a worked example that walks
+a behaviour matrix with a positive control on every cell.
+
 ## Adopters
 
 Detected, not hand-kept — see the **Who has adopted** section of
