@@ -71,8 +71,12 @@ struct DrawnFrameProbe: ViewModifier {
     }
 
     private func report(_ frame: CGRect) {
-        guard frame.width > 0, frame.height > 0,
-              let window = NSApp.keyWindow ?? NSApp.windows.first(where: \.isVisible),
+        // ⚠️ NO `frame.width > 0` GUARD. It used to be here, and it made the probe lie in the
+        // one case worth seeing: a pane that collapses to zero never reports again, so the
+        // probe keeps serving its last non-zero size and a correctly-collapsed pane reads as
+        // one that ignored its frame. Measured against WorkspaceSplit, where the arithmetic
+        // said `0` and the probe insisted on `103`.
+        guard let window = NSApp.keyWindow ?? NSApp.windows.first(where: \.isVisible),
               let mainScreen = NSScreen.screens.first
         else { return }
         // window.frame is bottom-left origin; flip its TOP into top-left screen space.
