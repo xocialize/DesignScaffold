@@ -59,6 +59,7 @@ public struct PlaylistIterator<Item: Identifiable, Thumbnail: View>: View {
     var showsIndex = true
     var showsDragHandles = true
     var onReorder: (([Item]) -> Void)?
+    var onPlace: ((PlaylistReorder.Placement<Item.ID>) -> Void)?
 
     @State private var draggingId: Item.ID?
 
@@ -105,7 +106,8 @@ public struct PlaylistIterator<Item: Identifiable, Thumbnail: View>: View {
                         }
                         .onDrop(of: [.text], delegate: RowDropDelegate(
                             targetId: item.id, items: $items, draggingId: $draggingId,
-                            onCommit: { onReorder?($0) }))
+                            onCommit: { onReorder?($0) },
+                            onPlace: { onPlace?($0) }))
                     Divider().overlay(theme.separator)
                 }
             }
@@ -248,6 +250,19 @@ public extension PlaylistIterator {
         return copy
     }
 
+    /// Called once per completed drag-reorder with the move expressed RELATIVE to its new
+    /// neighbour — "this row now follows that one", or follows nothing when it moved to the top.
+    ///
+    /// ⚠️ **Use this instead of ``onReorder(_:)`` whenever the list you pass in is FILTERED.**
+    /// An absolute order is only true of the whole list; a relative placement survives any
+    /// filter, because "X now follows Y" does not depend on what sits between them being
+    /// visible. Resolve it against your full model by moving X to just after Y there.
+    func onPlace(_ handler: @escaping (PlaylistReorder.Placement<Item.ID>) -> Void) -> PlaylistIterator {
+        var copy = self
+        copy.onPlace = handler
+        return copy
+    }
+
     /// Show or hide the 1-based position column.
     func showsIndex(_ shows: Bool = true) -> PlaylistIterator {
         var copy = self
@@ -263,8 +278,11 @@ public extension PlaylistIterator {
         return copy
     }
 
-    /// Called once per completed drag-reorder with the full re-ordered list —
-    /// persist the new order here.
+    /// Called once per completed drag-reorder with the full re-ordered list.
+    ///
+    /// ⚠️ **Only meaningful when the list shown is the WHOLE list.** If you filter the items you
+    /// pass in, the visible order says nothing about where the hidden rows sit, and applying it
+    /// to your backing array would discard their positions. Use ``onPlace(_:)`` there.
     func onReorder(_ handler: @escaping ([Item]) -> Void) -> PlaylistIterator {
         var copy = self
         copy.onReorder = handler
@@ -282,6 +300,7 @@ private struct RowDropDelegate<Item: Identifiable>: DropDelegate {
     @Binding var items: [Item]
     @Binding var draggingId: Item.ID?
     let onCommit: ([Item]) -> Void
+    let onPlace: (PlaylistReorder.Placement<Item.ID>) -> Void
 
     func dropUpdated(info: DropInfo) -> DropProposal? { DropProposal(operation: .move) }
 
@@ -293,8 +312,14 @@ private struct RowDropDelegate<Item: Identifiable>: DropDelegate {
     }
 
     func performDrop(info: DropInfo) -> Bool {
+        let moved = draggingId
         draggingId = nil
         onCommit(items)
+        // Reported alongside the absolute order, not instead of it: a host with an unfiltered
+        // list is well served by the array, and one with a filter needs this.
+        if let moved, let placement = PlaylistReorder.placement(items, moved: moved) {
+            onPlace(placement)
+        }
         return true
     }
 }

@@ -66,6 +66,27 @@ Verified end to end under a real pointer as well as in unit tests: dragging row 
 of a five-row list committed `2,3,1,4,5`, once. The `playlist` harness in
 [the Component Lab](../DesignWorkspace/README.md) is the fixture.
 
+### ⚠️ Reordering a FILTERED list
+
+`onReorder` hands back the visible array. That is the whole list only if you pass the whole
+list — and a playlist that gains filters is the normal direction of travel, not an edge case.
+Under a filter the visible order says **nothing** about where the hidden rows sit, and applying
+it to your backing array silently discards their positions.
+
+Use `onPlace` there. It reports the move **relative** to its new neighbour:
+
+```swift
+.onPlace { placement in
+    // "placement.moved now follows placement.after" — nil means it moved to the top
+    // of what is SHOWN. Resolve against your full model.
+    model.move(placement.moved, after: placement.after)
+}
+```
+
+A relative placement survives any filter, because "X now follows Y" does not depend on what
+sits between them being visible. Both callbacks fire, so an unfiltered list can keep using the
+array.
+
 ### Selection vs. active
 
 Two independent states, styled differently on purpose:
