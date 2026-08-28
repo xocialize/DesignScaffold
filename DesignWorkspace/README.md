@@ -55,6 +55,14 @@ disagreed with a shipping app. `Tools/menu-matrix.sh` settled it in one run here
 | `chips` | Wrapped `ChipRow` clickability, which no render or unit test can reach. |
 | `playlist` | Drag-reorder and selection. |
 
+## Launch flags
+
+| flag | what it does |
+|---|---|
+| `-ComponentLab` | the harness gallery |
+| `-MenuProbe` | `Tools/MenuPrecedenceProbe.swift`, the copy handed to consumers — dogfooded here so both sides run identical source |
+| `-MainMenu` | installs a hand-built menu bar transcribed from a consumer's `AppMenu.swift`, as an experimental variable |
+
 ## What it has established so far
 
 - **Context-menu precedence** (`Tools/menu-matrix.sh`, 8 cells, control on each): a
