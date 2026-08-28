@@ -44,6 +44,10 @@ struct TimelineLane<Clip: TimelineClip, TrackID: Hashable, Body: View, GapBody: 
     let onDragEnded: () -> Void
     let onTrimChanged: (Clip, TimelineEdge, CGFloat) -> Void
     let onTrimEnded: () -> Void
+    /// Context-menu items for a clip, supplied by the host. Attached HERE so the menu has a
+    /// hit region whatever the host draws — a `.contextMenu` inside `clipBody` presents only
+    /// where the host's own content is hit-testable. See `TimelineView.clipContextMenu`.
+    let clipMenu: ((Clip) -> AnyView)?
     @ViewBuilder let clipBody: (Clip) -> Body
 
     var body: some View {
@@ -157,6 +161,8 @@ struct TimelineLane<Clip: TimelineClip, TrackID: Hashable, Body: View, GapBody: 
                     .onEnded { _ in onDragEnded() }
             )
             .accessibilityAddTraits(isSelected ? .isSelected : [])
+            // Outermost, so the secondary click reaches it before anything below.
+            .modifier(OptionalContextMenu(items: clipMenu.map { $0(clip) }))
     }
 
     /// The 8pt edge handle from the spec. Its own drag gesture takes precedence over the
@@ -193,4 +199,25 @@ struct TimelineDraft<ID: Hashable>: Equatable {
     var trackIndex: Int
     /// Set when the current position is snapped, so the lane can show it.
     var snappedTo: TimeInterval?
+}
+
+
+/// Attaches a context menu only when the host supplied one — an empty `.contextMenu` would
+/// present an empty menu, which reads as a broken app.
+///
+/// The `if` here is a structural conditional, which is normally forbidden inside this
+/// component (it rebuilds the subtree and kills live gestures). It is safe *only* because
+/// whether a host supplies a menu is fixed for the view's lifetime and cannot flip
+/// mid-gesture. Do not extend this pattern to anything that varies at runtime.
+struct OptionalContextMenu<Items: View>: ViewModifier {
+    let items: Items?
+
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if let items {
+            content.contextMenu { items }
+        } else {
+            content
+        }
+    }
 }

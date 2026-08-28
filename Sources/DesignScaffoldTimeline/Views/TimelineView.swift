@@ -41,6 +41,8 @@ public struct TimelineView<Clip: TimelineClip, TrackID: Hashable, ClipBody: View
     var onResizeTrack: ((TimelineTrack<TrackID>, CGFloat) -> Void)?
     /// In/out brackets. `nil` hides them; dragging a bracket writes back through this.
     var inOut: Binding<ClosedRange<TimeInterval>?>?
+    /// Type-erased so adding a menu does not cost the view another generic parameter.
+    var clipMenu: ((Clip) -> AnyView)?
 
     let clipBody: (Clip) -> ClipBody
     let gapBody: (TimelineGap) -> GapBody
@@ -181,6 +183,7 @@ public struct TimelineView<Clip: TimelineClip, TrackID: Hashable, ClipBody: View
             onDragEnded: { commitDraft() },
             onTrimChanged: { clip, edge, dx in trimChanged(clip, edge, dx) },
             onTrimEnded: { commitDraft() },
+            clipMenu: clipMenu,
             clipBody: clipBody)
     }
 
@@ -535,6 +538,38 @@ public extension TimelineView {
     func inOut(_ binding: Binding<ClosedRange<TimeInterval>?>) -> TimelineView {
         var copy = self
         copy.inOut = binding
+        return copy
+    }
+
+    /// Right-click menu for a clip.
+    ///
+    /// This exists because a `.contextMenu` the host attaches inside `clipBody` presents only
+    /// when the host's own content is **hit-testable at the click point** — and a clip body
+    /// often is not (a filmstrip with transparent regions, an image still loading, anything
+    /// carrying `allowsHitTesting(false)`).
+    ///
+    /// The failure is silent and looks like the component's fault, because a LEFT click at the
+    /// same point still selects the clip: that is answered by the lane's own
+    /// `contentShape(Rectangle())`, which covers the whole rect no matter what the host drew.
+    /// So the host sees a clip that selects but will not show a menu.
+    ///
+    /// Measured, after a wrong first explanation: a clip body drawing an opaque fill shows the
+    /// host's inner menu; the identical body with nothing hit-testable shows nothing, and this
+    /// modifier's menu instead. Attaching here gives a guaranteed hit region regardless of what
+    /// the host draws, and the host supplies only the items — the same split as `clipBody`.
+    ///
+    /// ```swift
+    /// .clipContextMenu { clip in
+    ///     Button("Regenerate") { regenerate(clip) }
+    ///     Button("Delete", role: .destructive) { delete(clip) }
+    /// }
+    /// ```
+    ///
+    /// A menu inside `gapBody` is unaffected — nothing sits above gap content — so gaps need
+    /// no equivalent.
+    func clipContextMenu<Items: View>(@ViewBuilder _ items: @escaping (Clip) -> Items) -> TimelineView {
+        var copy = self
+        copy.clipMenu = { AnyView(items($0)) }
         return copy
     }
 

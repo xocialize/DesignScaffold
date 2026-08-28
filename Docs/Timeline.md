@@ -194,6 +194,30 @@ identity, and read the gap purely as geometry.
 - **Row-height resize** — `.onResizeTrack { track, height in … }`. The grip appears only when
   a host handles it, and the callback carries an absolute height, not a delta.
 
+## Clip context menus
+
+Attach the menu through the component, not inside `clipBody`:
+
+```swift
+.clipContextMenu { clip in
+    Button("Regenerate") { regenerate(clip) }
+    Button("Delete", role: .destructive) { delete(clip) }
+}
+```
+
+⚠️ **A `.contextMenu` placed inside `clipBody` presents only where your own content is
+hit-testable.** A filmstrip with transparent regions, an image still loading, or anything
+carrying `allowsHitTesting(false)` has no hit region there, and the menu silently never
+appears.
+
+The failure looks like the component's fault, because a **left** click at the same point still
+selects the clip — that is answered by the lane's `contentShape(Rectangle())`, which covers the
+whole rect regardless of what you drew. So you see a clip that selects but will not open a menu.
+
+Measured both ways: an opaque clip body shows the inner menu; the identical body with nothing
+hit-testable shows nothing, and `clipContextMenu` shows instead. Gaps need no equivalent —
+nothing sits above `gapBody`, so a `.contextMenu` there behaves normally.
+
 ## Snapping — pluggable, and always in points
 
 A snap source is just a closure returning candidate times for the visible range, so you
