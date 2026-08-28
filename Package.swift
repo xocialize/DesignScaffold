@@ -38,6 +38,8 @@ let package = Package(
         .library(name: "DesignScaffoldWorkspace", targets: ["DesignScaffoldWorkspace"]),
         // Opt-in pointer gate: report where a view DREW, and what a gesture actually did.
         .library(name: "DesignScaffoldProbe", targets: ["DesignScaffoldProbe"]),
+        // Findable selection list for large libraries (search · tag scoping · sort · multi-select).
+        .library(name: "DesignScaffoldPicker", targets: ["DesignScaffoldPicker"]),
     ],
     targets: [
         .target(name: "DesignScaffold", path: "Sources/DesignScaffold"),
@@ -79,6 +81,11 @@ let package = Package(
             dependencies: ["DesignScaffoldStageStepper"]
         ),
         .target(
+            name: "DesignScaffoldPicker",
+            dependencies: ["DesignScaffold", "DesignScaffoldChips"],
+            path: "Sources/DesignScaffoldPicker"
+        ),
+        .target(
             name: "DesignScaffoldProbe",
             dependencies: ["DesignScaffold"],
             path: "Sources/DesignScaffoldProbe"
@@ -96,6 +103,11 @@ let package = Package(
         .testTarget(
             name: "DesignScaffoldTimelineTests",
             dependencies: ["DesignScaffoldTimeline"]
+        ),
+        .testTarget(
+            name: "DesignScaffoldPickerTests",
+            dependencies: ["DesignScaffoldPicker"],
+            path: "Tests/DesignScaffoldPickerTests"
         ),
         .testTarget(
             name: "DesignScaffoldWorkspaceTests",

@@ -232,6 +232,18 @@ TimelineView(tracks: tracks, clips: clips,
 }
 ```
 
+### Searchable picker — [Docs/SearchablePicker.md](Docs/SearchablePicker.md)
+
+Search · tag scoping · sort · optional multi-select over a library of thousands. The host
+loads the items and owns what a selection does; the picker owns finding, and the find pipeline
+is a pure, unit-tested function.
+
+```swift
+import DesignScaffoldPicker
+
+SearchablePicker(items, addVerb: "Add") { ids in append(ids) }
+```
+
 ### Workspace split — [Docs/WorkspaceSplit.md](Docs/WorkspaceSplit.md)
 
 The three-panel app shell — navigation rail · work area · inspector — with hairlines built

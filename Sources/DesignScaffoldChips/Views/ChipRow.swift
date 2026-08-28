@@ -20,17 +20,39 @@ import SwiftUI
 /// inventing an interaction nobody has asked for.
 public struct ChipRow<Item: Identifiable, Label: StringProtocol>: View {
 
+    /// One selected chip, or several. Both spellings share the layout, the theme and the
+    /// wrapping — only what a tap does differs.
+    enum Mode {
+        case single(Binding<Item.ID>)
+        case multiple(Binding<Set<Item.ID>>)
+    }
+
     let items: [Item]
-    @Binding var selection: Item.ID
+    let mode: Mode
     let label: (Item) -> Label
     var themeOverride: ChipRowTheme?
 
     var theme: ChipRowTheme { themeOverride ?? .scaffold }
 
+    /// Single-select: exactly one chip is on.
     public init(_ items: [Item], selection: Binding<Item.ID>,
                 label: @escaping (Item) -> Label) {
         self.items = items
-        self._selection = selection
+        self.mode = .single(selection)
+        self.label = label
+    }
+
+    /// Multi-select: any number of chips are on, and tapping one toggles it.
+    ///
+    /// Added for tag scoping in ``SearchablePicker``, which had grown its own horizontally
+    /// SCROLLING chip strip — the exact shape this component's documentation argues against,
+    /// since a filter row that scrolls hides its own options. Wrapping is the whole point,
+    /// so the fix was to give this type the mode rather than let a second implementation
+    /// stand.
+    public init(_ items: [Item], selection: Binding<Set<Item.ID>>,
+                label: @escaping (Item) -> Label) {
+        self.items = items
+        self.mode = .multiple(selection)
         self.label = label
     }
 
@@ -42,9 +64,31 @@ public struct ChipRow<Item: Identifiable, Label: StringProtocol>: View {
         }
     }
 
+    private func isSelected(_ item: Item) -> Bool {
+        switch mode {
+        case .single(let binding):   return item.id == binding.wrappedValue
+        case .multiple(let binding): return binding.wrappedValue.contains(item.id)
+        }
+    }
+
+    private func toggle(_ item: Item) {
+        switch mode {
+        case .single(let binding):
+            binding.wrappedValue = item.id
+        case .multiple(let binding):
+            // Toggle, not set: with several chips on, a tap that could only ever ADD would
+            // leave no way to narrow a filter back down.
+            if binding.wrappedValue.contains(item.id) {
+                binding.wrappedValue.remove(item.id)
+            } else {
+                binding.wrappedValue.insert(item.id)
+            }
+        }
+    }
+
     private func chip(_ item: Item) -> some View {
-        let isSelected = item.id == selection
-        return Button { selection = item.id } label: {
+        let isSelected = isSelected(item)
+        return Button { toggle(item) } label: {
             Text(label(item))
                 .font(theme.font)
                 .foregroundStyle(isSelected ? theme.selectedText : theme.text)
