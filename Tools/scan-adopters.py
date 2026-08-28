@@ -17,6 +17,18 @@ ROOTS = [Path("/Volumes/Satechi/Development"), Path("/Volumes/DEV_VOL1")]
 SELF = Path("/Volumes/Satechi/Development/DesignScaffold")
 SKIP = re.compile(r"/\.build/|/\.git/|/DerivedData/|AgentBridge-Store/retired/|/checkouts/")
 
+# Vocabularies that are NOT ours and must stop being reported as forks. An anomaly needs a
+# disposition, never a re-flag ignored forever (AB-L-0038) — so each entry carries its reason
+# and is printed as sanctioned rather than silently dropped.
+SANCTIONED_FORKS = {
+    "fleetlock-selfservice": (
+        "A different product's design system, not a copy of ours: a 1:1 mapping of the "
+        "Figma file `hz46ViMGoMIpwBUKnjZhrQ` (\"FleetLock Self-Service\"), hex copied from "
+        "that source, on the off-corpus volume. AB-D-0042 governs this fleet's macOS apps; "
+        "it does not reach another product with its own design authority. (AB-T-0087)"
+    ),
+}
+
 def rel(p: Path) -> str:
     for r in ROOTS:
         try:
@@ -52,6 +64,20 @@ def repo_of(p: Path):
             return parent
     return None
 
+def scope_root(manifest_dir: Path) -> Path:
+    """The directory a Package.resolved actually governs.
+
+    An Xcode pin lives at `<root>/Foo.xcworkspace/xcshareddata/swiftpm/Package.resolved` —
+    four levels below the root it serves — so testing containment against the manifest's own
+    directory makes every workspace pin look orphaned. Climb out past the OUTERMOST
+    `.xcworkspace`/`.xcodeproj` bundle; a plain SwiftPM manifest governs its own directory.
+    """
+    parts = manifest_dir.parts
+    for i, part in enumerate(parts):
+        if part.endswith(".xcworkspace") or part.endswith(".xcodeproj"):
+            return Path(*parts[:i])
+    return manifest_dir
+
 def project_of(p: Path) -> str:
     parts = rel(p).split("/")
     return parts[0] if parts else "?"
@@ -65,7 +91,7 @@ def app_of(p: Path) -> str:
     return p.parent.name
 
 def scan():
-    pins, imports, forks = {}, {}, []
+    pins, imports, forks, exact_pins = {}, {}, [], []
     for root in ROOTS:
         if not root.exists():
             continue
@@ -79,7 +105,8 @@ def scan():
                 continue
             for pin in data.get("pins", []):
                 if "designscaffold" in pin.get("identity", "").lower():
-                    pins[app_of(f)] = (pin["state"].get("version", "?"), rel(f), project_of(f))
+                    pins[app_of(f)] = (pin["state"].get("version", "?"), rel(f),
+                                       project_of(f), scope_root(f.parent))
         # source imports (ground truth) + vocabulary forks
         for f in root.rglob("*.swift"):
             s = str(f)
@@ -99,19 +126,39 @@ def scan():
                 imports[key]["paths"].append(f)
             if re.search(r"^\s*(public )?enum Tokens\b", text, re.M):
                 forks.append((app_of(f), rel(f), project_of(f), len(text.splitlines())))
-    return pins, imports, forks
+            # exact pins are the only version drift that does NOT self-correct
+            if re.search(r'exactVersion|\.exact\(', text) and "DesignScaffold" in text:
+                exact_pins.append(rel(f))
+    return pins, imports, forks, exact_pins
 
 def main():
     tag = latest_tag()
-    pins, imports, forks = scan()
+    pins, imports, forks, exact_pins = scan()
     lines = []
 
     lines.append("| Adopter | Project | Products used | Files | Pin | |")
     lines.append("|---|---|---|---|---|---|")
     pins_by_norm = {norm(k): v for k, v in pins.items()}
+
+    def pin_covers(root: Path, info) -> bool:
+        """A pin serves an adopter when an importing file lives beneath the root it governs."""
+        for p in info["paths"]:
+            try:
+                p.relative_to(root)
+                return True
+            except ValueError:
+                continue
+        return False
     for app in sorted(imports):
         info = imports[app]
-        version, _, _ = pins_by_norm.get(norm(app), ("—", "", ""))
+        matched = pins_by_norm.get(norm(app))
+        if matched is None:
+            # fall back to containment: workspace pins sit above the project that imports
+            for candidate in pins.values():
+                if pin_covers(candidate[3], info):
+                    matched = candidate
+                    break
+        version = matched[0] if matched else "—"
         # in-flight adoption must not read as shipped
         uncommitted = False
         repo = repo_of(info["paths"][0]) if info["paths"] else None
@@ -123,20 +170,35 @@ def main():
         elif version == tag:
             drift = "✅"
         elif version != "—":
-            drift = f"⚠️ {tag} available"
+            drift = f"behind ({tag})"
         else:
-            drift = "⚠️ no pin found"
+            drift = "no pin found"
         mods = ", ".join(f"`{m}`" for m in sorted(info["mods"]))
         lines.append(f"| **{app}** | {info['project']} | {mods} | {info['files']} | {version} | {drift} |")
     if not imports:
         lines.append("| _none detected_ | | | | | |")
 
     imported_norms = {norm(a) for a in imports}
-    linked_only = sorted(a for a in pins if norm(a) not in imported_norms)
+    linked_only = sorted(
+        app for app, meta in pins.items()
+        if norm(app) not in imported_norms
+        and not any(pin_covers(meta[3], info) for info in imports.values()))
     if linked_only:
         lines.append("")
         lines.append("**Linked but unused** (a pin with no import — dead dependency): "
                      + ", ".join(f"`{a}`" for a in linked_only))
+
+    lines.append("")
+    if exact_pins:
+        lines.append("⚠️ **Exact pins** (these do NOT resolve forward): "
+                     + ", ".join(f"`{p}`" for p in sorted(exact_pins)))
+    else:
+        lines.append("_A version behind the latest is a resolved snapshot, not a defect: no "
+                     "adopter declares an exact pin, so every one moves forward on its next "
+                     "resolve._")
+
+    sanctioned = [f for f in forks if f[0] in SANCTIONED_FORKS]
+    forks = [f for f in forks if f[0] not in SANCTIONED_FORKS]
 
     if forks:
         lines.append("")
@@ -150,10 +212,18 @@ def main():
         for app, path, project, n in sorted(forks):
             lines.append(f"| {app} | {project} | `{path}` | {n} |")
 
+    if sanctioned:
+        lines.append("")
+        lines.append("### Sanctioned — not ours, and deliberately not flagged")
+        lines.append("")
+        for app, path, project, _ in sorted(sanctioned):
+            lines.append(f"- **{app}** (`{path}`) — {SANCTIONED_FORKS[app]}")
+
     body = "\n".join(lines)
     (SELF / "Docs" / "component-adopters.md").write_text(
         f"<!-- Generated by Tools/scan-adopters.py — do not hand-edit. Release {tag}. -->\n\n{body}\n")
-    print(f"adopters: {len(imports)} · linked-only: {len(linked_only)} · forks: {len(forks)}")
+    print(f"adopters: {len(imports)} · linked-only: {len(linked_only)} · "
+          f"forks: {len(forks)} · sanctioned: {len(sanctioned)} · exact pins: {len(exact_pins)}")
 
 if __name__ == "__main__":
     sys.exit(main())

@@ -96,7 +96,8 @@ public enum Tokens {
         public static let working = SwiftUI.Color.orange
         /// Figma `Accents/Red` #ff4245.
         public static let failure = SwiftUI.Color(red: 0xff / 255, green: 0x42 / 255, blue: 0x45 / 255)
-        /// Audio level in a healthy range (see `Tokens.Audio.healthyFloorDBFS`).
+        /// Audio level in a healthy range. (The dBFS thresholds themselves are audio-domain
+        /// constants, not design vocabulary — they belong to the app that measures levels.)
         public static let levelHealthy = SwiftUI.Color.green
         /// Audio level present but low.
         public static let levelLow = SwiftUI.Color.yellow
