@@ -34,6 +34,8 @@ let package = Package(
         .library(name: "DesignScaffoldTimeline", targets: ["DesignScaffoldTimeline"]),
         // Capsule filter chips, single-select, wrapping.
         .library(name: "DesignScaffoldChips", targets: ["DesignScaffoldChips"]),
+        // Three-panel app shell (navigation rail · work area · inspector) with hairlines.
+        .library(name: "DesignScaffoldWorkspace", targets: ["DesignScaffoldWorkspace"]),
     ],
     targets: [
         .target(name: "DesignScaffold", path: "Sources/DesignScaffold"),
@@ -75,6 +77,11 @@ let package = Package(
             dependencies: ["DesignScaffoldStageStepper"]
         ),
         .target(
+            name: "DesignScaffoldWorkspace",
+            dependencies: ["DesignScaffold"],
+            path: "Sources/DesignScaffoldWorkspace"
+        ),
+        .target(
             name: "DesignScaffoldChips",
             dependencies: ["DesignScaffold"],
             path: "Sources/DesignScaffoldChips"
@@ -82,6 +89,11 @@ let package = Package(
         .testTarget(
             name: "DesignScaffoldTimelineTests",
             dependencies: ["DesignScaffoldTimeline"]
+        ),
+        .testTarget(
+            name: "DesignScaffoldWorkspaceTests",
+            dependencies: ["DesignScaffoldWorkspace"],
+            path: "Tests/DesignScaffoldWorkspaceTests"
         ),
         .testTarget(
             name: "DesignScaffoldChipsTests",

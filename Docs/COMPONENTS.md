@@ -1,7 +1,7 @@
 # DesignScaffold components — the fleet catalog
 
 **Generated from `Package.swift` by `Tools/generate-components-catalog.py` — do not hand-edit.**
-Current release: **0.8.3** · `https://github.com/xocialize/DesignScaffold` (public, MIT).
+Current release: **0.9.0** · `https://github.com/xocialize/DesignScaffold` (public, MIT).
 
 > **Before building any macOS UI surface, look here first.** DesignScaffold is the fleet's
 > single design authority (AB-D-0040 / AB-D-0042): the token vocabulary and every shared
@@ -20,6 +20,7 @@ Current release: **0.8.3** · `https://github.com/xocialize/DesignScaffold` (pub
 | [DesignScaffoldStageStepper](StageStepper.md) | Run-progress stepper for multi-phase operations (planned nodes · pulse · counters) |
 | [DesignScaffoldTimeline](Timeline.md) | Media-agnostic multi-track timeline (ruler · headers · clip lanes · playhead) |
 | `DesignScaffoldChips` | Capsule filter chips, single-select, wrapping |
+| `DesignScaffoldWorkspace` | Three-panel app shell (navigation rail · work area · inspector) with hairlines |
 
 Every component product re-exports `DesignScaffold`, so one import brings `Tokens` and
 `cardSurface()` along. Each wears the scaffold look **by default** — no theme call at the

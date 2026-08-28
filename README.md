@@ -232,6 +232,31 @@ TimelineView(tracks: tracks, clips: clips,
 }
 ```
 
+### Workspace split — [Docs/WorkspaceSplit.md](Docs/WorkspaceSplit.md)
+
+The three-panel app shell — navigation rail · work area · inspector — with hairlines built
+in. Four apps had written this independently with two different hairline idioms and, in one,
+a doc comment describing a separator the layout never drew. It also fixes the bug every
+hand-rolled copy shared: fixed side panes plus a flexible center means **the work area is what
+collapses** when the window narrows. Here the center keeps its minimum and the inspector
+yields first.
+
+```swift
+import DesignScaffoldWorkspace
+
+WorkspaceSplit {
+    Sidebar()
+} center: {
+    WorkArea()
+} trailing: {
+    Inspector()
+}
+.paneWidths(leading: 350, trailing: 300)
+```
+
+`Separator(.horizontal)` / `Separator(.vertical)` live in the base product for rules
+elsewhere.
+
 ### Chip row — [Docs/ChipRow.md](Docs/ChipRow.md)
 
 <picture>
