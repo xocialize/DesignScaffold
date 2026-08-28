@@ -72,6 +72,12 @@ The intake bar — all four of these, drawn from the accepted AB-A-0017:
 A fifth signal short-circuits debate: **two independent apps want it.** If a candidate
 below matches something you need, say so on its ask — that is the strongest evidence there is.
 
+**Two independent *surfaces* can substitute for two apps** when the component's values are
+already derived from this area's tokens or artboards (AB-D-0049). Recurrence proves the shape
+has settled; authority-derived values cover the idiosyncrasy risk that a second app would
+otherwise cover. Recurrence itself is not negotiable — a single surface, however well
+specified, is not yet a component.
+
 ## Candidates — observed, not yet settled
 
 | Candidate | Origin | Status |
