@@ -16,10 +16,12 @@ LOG="$OUT/lab.log"
 pkill -f "DesignWorkspace.app/Contents/MacOS/DesignWorkspace" 2>/dev/null || true
 sleep 0.5
 mkdir -p "$OUT"; rm -f "$LOG"
-"$APP/Contents/MacOS/DesignWorkspace" -ComponentLab "${EXTRA[@]}" > "$LOG" 2>&1 &
+DESIGNSCAFFOLD_PROBE=1 "$APP/Contents/MacOS/DesignWorkspace" -ComponentLab "${EXTRA[@]}" > "$LOG" 2>&1 &
 sleep 2.5
 
-probe() { grep "PROBE $1 " "$LOG" | tail -1 | sed -E 's/.*centre=\(([0-9-]+),([0-9-]+)\).*/\1 \2/'; }
+# DesignScaffoldProbe's format: `PROBE TARGET <name> centre X Y size WxH`, emitted as one
+# coalesced flush per settled layout rather than a line per geometry change.
+probe() { grep "PROBE TARGET $1 " "$LOG" | tail -1 | sed -E 's/.*centre ([0-9-]+) ([0-9-]+) .*/\1 \2/'; }
 state() { grep '^STATE ' "$LOG" | tail -1 | sed 's/^STATE //;s/ /_/g'; }
 act()   { "$D" activate DesignWorkspace >/dev/null; sleep 0.7; }
 shot()  { screencapture -x -R"$SHOT_RECT" "$OUT/$1.png"; }

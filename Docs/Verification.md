@@ -7,7 +7,7 @@ defects this library actually ships**, so a component is not done when they pass
 |---|---|---|
 | unit tests | arithmetic — packing, snapping, reorder, timecode | anything about a view |
 | `NSHostingView` renders | placement, theming, light/dark, wrapping | hit testing, gestures |
-| **the Component Lab** | what a pointer does in a real app | nothing yet |
+| **the Component Lab** + the probe | what a pointer does in a real app | nothing yet |
 
 ## Why the first two are not enough
 
@@ -40,6 +40,20 @@ xcodebuild -project DesignWorkspace/DesignWorkspace.xcodeproj -scheme DesignWork
 Launch the built binary with `-ComponentLab`. Add a harness by dropping a file into
 `ComponentLab/Harnesses/` — the target uses a synchronised file group, so there is no project
 file to edit — and adding a row to `ComponentLabView.harnesses`.
+
+## The probe
+
+[`DesignScaffoldProbe`](HitTestProbe.md) — an **opt-in product**, so an app links it
+deliberately and every entry point is inert unless enabled:
+
+```swift
+ClipView(clip).hitTestProbe("clip-\(clip.id)")
+```
+
+It reports where a view was DRAWN, in the top-left space `CGEvent` uses, plus the outcome
+vocabulary a gate needs — `selection`, `activation`, `menuItem`, `commit`. It is the union of
+two implementations that grew independently in ML[X] LTX Studio and DesignWorkspace, each of
+which had learned something the other had not.
 
 ## Driving it
 

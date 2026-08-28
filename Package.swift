@@ -36,6 +36,8 @@ let package = Package(
         .library(name: "DesignScaffoldChips", targets: ["DesignScaffoldChips"]),
         // Three-panel app shell (navigation rail · work area · inspector) with hairlines.
         .library(name: "DesignScaffoldWorkspace", targets: ["DesignScaffoldWorkspace"]),
+        // Opt-in pointer gate: report where a view DREW, and what a gesture actually did.
+        .library(name: "DesignScaffoldProbe", targets: ["DesignScaffoldProbe"]),
     ],
     targets: [
         .target(name: "DesignScaffold", path: "Sources/DesignScaffold"),
@@ -75,6 +77,11 @@ let package = Package(
         .testTarget(
             name: "DesignScaffoldStageStepperTests",
             dependencies: ["DesignScaffoldStageStepper"]
+        ),
+        .target(
+            name: "DesignScaffoldProbe",
+            dependencies: ["DesignScaffold"],
+            path: "Sources/DesignScaffoldProbe"
         ),
         .target(
             name: "DesignScaffoldWorkspace",
