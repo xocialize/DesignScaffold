@@ -134,7 +134,10 @@ struct TimelineMenuHarness: View {
     /// One canonical line naming BOTH switches, so a capture is named from what the app
     /// reported rather than from what the driver believes it clicked.
     private func announce() {
-        LabLog.shared.note("STATE outer=\(outerAttached ? "attached" : "detached") inner=\(inner.rawValue.replacingOccurrences(of: " ", with: "-"))")
+        // The menu-bar state rides along so a capture's FILENAME carries every variable in
+        // play. A run compared against another run is only as trustworthy as its labels.
+        let menu = NSApp.mainMenu == nil ? "none" : "installed"
+        LabLog.shared.note("STATE outer=\(outerAttached ? "attached" : "detached") inner=\(inner.rawValue.replacingOccurrences(of: " ", with: "-")) menubar=\(menu)")
     }
 
     private var timeline: some View {

@@ -9,14 +9,14 @@
 #   3. Name each capture from the STATE line the APP printed, never from the loop variable.
 #      A control click that misses leaves the loop confident and every later file mislabelled.
 set -e
-APP="$1"; OUT="$2"
+APP="$1"; OUT="$2"; shift 2; EXTRA=("$@")   # extra app launch args, e.g. -MainMenu
 D="$(dirname "$0")/InputDriver/.build/release/inputdriver"
 LOG="$OUT/lab.log"
 
 pkill -f "DesignWorkspace.app/Contents/MacOS/DesignWorkspace" 2>/dev/null || true
 sleep 0.5
 mkdir -p "$OUT"; rm -f "$LOG"
-"$APP/Contents/MacOS/DesignWorkspace" -ComponentLab > "$LOG" 2>&1 &
+"$APP/Contents/MacOS/DesignWorkspace" -ComponentLab "${EXTRA[@]}" > "$LOG" 2>&1 &
 sleep 2.5
 
 probe() { grep "PROBE $1 " "$LOG" | tail -1 | sed -E 's/.*centre=\(([0-9-]+),([0-9-]+)\).*/\1 \2/'; }

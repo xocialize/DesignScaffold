@@ -22,6 +22,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             LabWindowController.present()
             return
         }
+        // `-MenuProbe` runs Tools/MenuPrecedenceProbe.swift, the copy handed to consumers.
+        // Dogfooding it here is the point: a diagnostic that has only ever run on one side
+        // proves nothing about the other, and this file's whole value is being identical.
+        if CommandLine.arguments.contains("-MenuProbe") {
+            MenuPrecedenceProbe.present()
+            return
+        }
         // Insert code here to initialize your application
         let appManager = AppManager.shared()
          // This is the actual main application initialization kickoff after appManager is initialized

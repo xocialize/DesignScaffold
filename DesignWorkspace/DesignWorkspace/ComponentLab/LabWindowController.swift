@@ -23,6 +23,7 @@ final class LabWindowController: NSWindowController {
             existing.window?.makeKeyAndOrderFront(nil)
             return
         }
+        if LabMenu.requested { LabMenu.install() }
         let window = NSWindow(
             contentRect: NSRect(x: 0, y: 0, width: 1180, height: 760),
             styleMask: [.titled, .closable, .miniaturizable, .resizable],
@@ -43,6 +44,6 @@ final class LabWindowController: NSWindowController {
         shared = controller
         window.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
-        LabLog.shared.note("LAB READY")
+        LabLog.shared.note("LAB READY mainMenu=\(NSApp.mainMenu == nil ? "none" : "installed")")
     }
 }
