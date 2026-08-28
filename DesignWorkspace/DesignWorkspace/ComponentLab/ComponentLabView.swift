@@ -100,8 +100,17 @@ struct ComponentLabView: View {
                                 RoundedRectangle(cornerRadius: Tokens.Radius.control)
                                     .fill(selected == harness.id
                                           ? Tokens.Color.selectionWash : .clear))
+                            // ⚠️ Load-bearing. A `.plain` Button's hit region is its label's
+                            // DRAWN content — the two Text lines — not the padded row a probe
+                            // reports. Measured: this row's probe said y 609…657 while only
+                            // 632…650 answered a click, so a driver aiming at the reported
+                            // centre missed a control that looks obviously clickable.
+                            .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
+                        // Probed like everything else a driver clicks: the sidebar is not
+                        // exempt from the rule just because it is chrome.
+                        .drawnFrameProbe("nav-\(harness.id)")
                     }
                 }
                 .padding(.horizontal, Tokens.Space.s)

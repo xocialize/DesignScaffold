@@ -48,6 +48,14 @@ final class LabLog: ObservableObject {
 ///
 /// It must never intercept a hit: a probe that swallowed clicks would be a hit-testing bug
 /// inside the hit-testing instrument.
+///
+/// ⚠️ **A drawn frame is an upper bound on the hit region, not the hit region.** SwiftUI hit
+/// tests against what a view DREW, so padding, a `.background`, and the empty space in a stack
+/// are all inside the reported rect and outside the target. Measured in this lab: a sidebar
+/// row reported y 609…657 while only 632…650 answered a click, and a labelled `Toggle`'s
+/// reported centre landed in the dead gap between its text and its switch. Give anything a
+/// driver clicks an explicit `.contentShape(Rectangle())` so the two rects coincide — the
+/// probe cannot tell you they differ, only a click can.
 struct DrawnFrameProbe: ViewModifier {
     let name: String
 
