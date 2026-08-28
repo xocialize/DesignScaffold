@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DA5C00000000000000000002 /* DesignScaffoldCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C00000000000000000001 /* DesignScaffoldCalendar */; };
+		DA5C00000000000000000004 /* DesignScaffoldChips in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C00000000000000000003 /* DesignScaffoldChips */; };
+		DA5C00000000000000000006 /* DesignScaffoldLoading in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C00000000000000000005 /* DesignScaffoldLoading */; };
+		DA5C00000000000000000008 /* DesignScaffoldPlaylist in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C00000000000000000007 /* DesignScaffoldPlaylist */; };
+		DA5C0000000000000000000A /* DesignScaffoldStageStepper in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C00000000000000000009 /* DesignScaffoldStageStepper */; };
+		DA5C0000000000000000000C /* DesignScaffoldTimeline in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C0000000000000000000B /* DesignScaffoldTimeline */; };
 		239A3C72301DB4B50052AF6F /* DesignScaffold in Frameworks */ = {isa = PBXBuildFile; productRef = 239A3C71301DB4B50052AF6F /* DesignScaffold */; };
 		23E796B53020E1BF00120F27 /* LoggingKit in Frameworks */ = {isa = PBXBuildFile; productRef = 23E796B43020E1BF00120F27 /* LoggingKit */; };
 		23E796B83020E20B00120F27 /* MetalToolBox in Frameworks */ = {isa = PBXBuildFile; productRef = 23E796B73020E20B00120F27 /* MetalToolBox */; };
@@ -55,6 +61,12 @@
 			files = (
 				23E796DD3020E29000120F27 /* MLXEngineUI in Frameworks */,
 				239A3C72301DB4B50052AF6F /* DesignScaffold in Frameworks */,
+				DA5C00000000000000000002 /* DesignScaffoldCalendar in Frameworks */,
+				DA5C00000000000000000004 /* DesignScaffoldChips in Frameworks */,
+				DA5C00000000000000000006 /* DesignScaffoldLoading in Frameworks */,
+				DA5C00000000000000000008 /* DesignScaffoldPlaylist in Frameworks */,
+				DA5C0000000000000000000A /* DesignScaffoldStageStepper in Frameworks */,
+				DA5C0000000000000000000C /* DesignScaffoldTimeline in Frameworks */,
 				23E796E33020E29000120F27 /* MLXRetrievalKitContracts in Frameworks */,
 				23E796BA3020E20B00120F27 /* TextureCompositorEngine in Frameworks */,
 				23E796E53020E29000120F27 /* MLXServeConformance in Frameworks */,
@@ -108,6 +120,12 @@
 			name = DesignWorkspace;
 			packageProductDependencies = (
 				239A3C71301DB4B50052AF6F /* DesignScaffold */,
+				DA5C00000000000000000001 /* DesignScaffoldCalendar */,
+				DA5C00000000000000000003 /* DesignScaffoldChips */,
+				DA5C00000000000000000005 /* DesignScaffoldLoading */,
+				DA5C00000000000000000007 /* DesignScaffoldPlaylist */,
+				DA5C00000000000000000009 /* DesignScaffoldStageStepper */,
+				DA5C0000000000000000000B /* DesignScaffoldTimeline */,
 				23E796B43020E1BF00120F27 /* LoggingKit */,
 				23E796B73020E20B00120F27 /* MetalToolBox */,
 				23E796B93020E20B00120F27 /* TextureCompositorEngine */,
@@ -152,7 +170,7 @@
 			mainGroup = 239A3C56301DB4920052AF6F;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				239A3C70301DB4B50052AF6F /* XCLocalSwiftPackageReference "../DesignScaffold" */,
+				239A3C70301DB4B50052AF6F /* XCLocalSwiftPackageReference ".." */,
 				23E796B33020E1BF00120F27 /* XCRemoteSwiftPackageReference "LoggingKit" */,
 				23E796B63020E20B00120F27 /* XCRemoteSwiftPackageReference "MetalToolBox" */,
 				23E796D93020E29000120F27 /* XCRemoteSwiftPackageReference "mlx-engine-swift" */,
@@ -396,9 +414,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		239A3C70301DB4B50052AF6F /* XCLocalSwiftPackageReference "../DesignScaffold" */ = {
+		239A3C70301DB4B50052AF6F /* XCLocalSwiftPackageReference ".." */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = ../DesignScaffold;
+			relativePath = "..";
 		};
 /* End XCLocalSwiftPackageReference section */
 
@@ -430,6 +448,30 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		DA5C00000000000000000001 /* DesignScaffoldCalendar */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DesignScaffoldCalendar;
+		};
+		DA5C00000000000000000003 /* DesignScaffoldChips */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DesignScaffoldChips;
+		};
+		DA5C00000000000000000005 /* DesignScaffoldLoading */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DesignScaffoldLoading;
+		};
+		DA5C00000000000000000007 /* DesignScaffoldPlaylist */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DesignScaffoldPlaylist;
+		};
+		DA5C00000000000000000009 /* DesignScaffoldStageStepper */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DesignScaffoldStageStepper;
+		};
+		DA5C0000000000000000000B /* DesignScaffoldTimeline */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DesignScaffoldTimeline;
+		};
 		239A3C71301DB4B50052AF6F /* DesignScaffold */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = DesignScaffold;

@@ -541,22 +541,30 @@ public extension TimelineView {
         return copy
     }
 
-    /// Right-click menu for a clip.
+    /// Right-click menu for a clip — the reliable way to give one, and the only way when the
+    /// host's own body has no menu of its own.
     ///
-    /// This exists because a `.contextMenu` the host attaches inside `clipBody` presents only
-    /// when the host's own content is **hit-testable at the click point** — and a clip body
-    /// often is not (a filmstrip with transparent regions, an image still loading, anything
-    /// carrying `allowsHitTesting(false)`).
+    /// ⚠️ **It does not shadow a menu the host attaches inside `clipBody`.** Precedence runs the
+    /// other way: a `.contextMenu` anywhere inside `clipBody` wins, and this one answers only
+    /// when the body has none. Measured in a real app (`DesignWorkspace`'s Component Lab,
+    /// `Tools/menu-matrix.sh`) against this exact source, eight cells, a positive control on
+    /// every one:
     ///
-    /// The failure is silent and looks like the component's fault, because a LEFT click at the
-    /// same point still selects the clip: that is answered by the lane's own
-    /// `contentShape(Rectangle())`, which covers the whole rect no matter what the host drew.
-    /// So the host sees a clip that selects but will not show a menu.
+    /// | menu inside `clipBody`           | this modifier | opens   |
+    /// |----------------------------------|---------------|---------|
+    /// | none                             | attached      | this one |
+    /// | none                             | —             | nothing |
+    /// | outermost                        | attached      | the host's |
+    /// | outermost                        | —             | the host's |
+    /// | with an `.overlay` applied after | attached      | the host's |
+    /// | with an `.overlay` applied after | —             | the host's |
     ///
-    /// Measured, after a wrong first explanation: a clip body drawing an opaque fill shows the
-    /// host's inner menu; the identical body with nothing hit-testable shows nothing, and this
-    /// modifier's menu instead. Attaching here gives a guaranteed hit region regardless of what
-    /// the host draws, and the host supplies only the items — the same split as `clipBody`.
+    /// ⚠️ **An earlier version of this comment claimed a clip body must be "hit-testable" for
+    /// its own menu to present, and that a transparent body loses the menu silently. That was
+    /// measured in a scratchpad `NSHostingView`, and it is wrong** — a menu inside `clipBody`
+    /// presents on an opaque gradient, on a greedy `.frame(maxWidth:maxHeight:)` body, and
+    /// under an `allowsHitTesting(false)` overlay alike. Attaching a menu here still costs
+    /// nothing and removes the question, which is why the modifier stays.
     ///
     /// ```swift
     /// .clipContextMenu { clip in
@@ -564,6 +572,10 @@ public extension TimelineView {
     ///     Button("Delete", role: .destructive) { delete(clip) }
     /// }
     /// ```
+    ///
+    /// The clip is reported when an item is CHOSEN, not when the menu opens, so a host cannot
+    /// move a selection ring onto the right-clicked clip. Targeting is still correct: the item
+    /// acts on the clip under the pointer whether or not it was selected.
     ///
     /// A menu inside `gapBody` is unaffected — nothing sits above gap content — so gaps need
     /// no equivalent.
