@@ -74,6 +74,17 @@ public enum Tokens {
         /// elevated-fill semantic: `controlColor` renders pure white in light (invisible
         /// as a fill) and `unemphasizedSelectedContentBackgroundColor` reads as a
         /// *selection*, which its name would also make a lie at the call site.
+        ///
+        /// ⚠️ **Foreground pairing, and the disabled-button trap.** Like `selectionWash`, this
+        /// is a low-opacity fill, not a solid one — so a hardcoded `.white` label that a dark
+        /// custom fill (#3C3C3C and friends) supported becomes illegible on it in LIGHT
+        /// appearance. Measured in MarqueeStudio: a disabled "Select items to add" button was
+        /// invisible after the swap, and looked perfect in dark.
+        ///
+        /// ⚠️ And do NOT reach for a de-emphasized foreground on a `.disabled()` control.
+        /// `.disabled()` already dims its content; specifying `tertiaryLabel` as well dims
+        /// twice and lands at roughly a third of the contrast macOS's own disabled buttons
+        /// carry. Use `label` and let the modifier do it once.
         public static let fillElevated = label.opacity(0.08)
 
         /// Fill for an editable field or input well sitting on a surface.
