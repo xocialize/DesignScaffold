@@ -233,6 +233,15 @@ caught it clicked empty space between cases**, which deselected the clip and mea
 working half. Two apps produced flatly contradictory results from the same source, and both
 were reporting honestly.
 
+The defect, in a consumer's app — same binary, same clip, same point, the only difference being
+a left click first:
+
+![Before: right-clicking an unselected clip opens the host's menu; right-clicking a selected one opens clipContextMenu instead](images/menu-precedence-selection-bug.png)
+
+The same two states on 0.8.3:
+
+![After: the host's menu opens in both states, and the selection ring still renders](images/menu-precedence-selection-fixed.png)
+
 The fix is the opacity form the drop-target highlight one line below had used all along, with
 the reasoning already written next to it:
 
