@@ -40,6 +40,8 @@ let package = Package(
         .library(name: "DesignScaffoldProbe", targets: ["DesignScaffoldProbe"]),
         // Findable selection list for large libraries (search · tag scoping · sort · multi-select).
         .library(name: "DesignScaffoldPicker", targets: ["DesignScaffoldPicker"]),
+        // Status pill: a dot, a label, a capsule — idle · working · ready · failed.
+        .library(name: "DesignScaffoldStatus", targets: ["DesignScaffoldStatus"]),
     ],
     targets: [
         .target(name: "DesignScaffold", path: "Sources/DesignScaffold"),
@@ -81,6 +83,11 @@ let package = Package(
             dependencies: ["DesignScaffoldStageStepper"]
         ),
         .target(
+            name: "DesignScaffoldStatus",
+            dependencies: ["DesignScaffold"],
+            path: "Sources/DesignScaffoldStatus"
+        ),
+        .target(
             name: "DesignScaffoldPicker",
             dependencies: ["DesignScaffold", "DesignScaffoldChips"],
             path: "Sources/DesignScaffoldPicker"
@@ -103,6 +110,11 @@ let package = Package(
         .testTarget(
             name: "DesignScaffoldTimelineTests",
             dependencies: ["DesignScaffoldTimeline"]
+        ),
+        .testTarget(
+            name: "DesignScaffoldStatusTests",
+            dependencies: ["DesignScaffoldStatus"],
+            path: "Tests/DesignScaffoldStatusTests"
         ),
         .testTarget(
             name: "DesignScaffoldPickerTests",

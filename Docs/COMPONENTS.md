@@ -1,7 +1,7 @@
 # DesignScaffold components — the fleet catalog
 
 **Generated from `Package.swift` by `Tools/generate-components-catalog.py` — do not hand-edit.**
-Current release: **0.11.1** · `https://github.com/xocialize/DesignScaffold` (public, MIT).
+Current release: **0.12.0** · `https://github.com/xocialize/DesignScaffold` (public, MIT).
 
 > **Before building any macOS UI surface, look here first.** DesignScaffold is the fleet's
 > single design authority (AB-D-0040 / AB-D-0042): the token vocabulary and every shared
@@ -23,6 +23,7 @@ Current release: **0.11.1** · `https://github.com/xocialize/DesignScaffold` (pu
 | `DesignScaffoldWorkspace` | Three-panel app shell (navigation rail · work area · inspector) with hairlines |
 | `DesignScaffoldProbe` | Opt-in pointer gate: report where a view DREW, and what a gesture actually did |
 | `DesignScaffoldPicker` | Findable selection list for large libraries (search · tag scoping · sort · multi-select) |
+| `DesignScaffoldStatus` | Status pill: a dot, a label, a capsule — idle · working · ready · failed |
 
 Every component product re-exports `DesignScaffold`, so one import brings `Tokens` and
 `cardSurface()` along. Each wears the scaffold look **by default** — no theme call at the

@@ -204,6 +204,27 @@ public enum Tokens {
         public static let groupPadding: CGFloat = 10
     }
 
+    // MARK: - Motion
+
+    /// Timings for the fleet's animated affordances.
+    ///
+    /// PROMOTED from ``StageStepperTheme``, which had them first and shipped with them. They
+    /// moved here when a second component needed a pulse and picked its own numbers: ML[X]
+    /// Audio Studio's activity pill breathes at 0.6s to 0.3 opacity against the stepper's 0.9s
+    /// to 0.15. Two rhythms for the same idea — "work is in flight" — in two windows a user may
+    /// have open at once, which is exactly what one vocabulary exists to prevent.
+    public enum Motion {
+        /// One breath, in seconds. The affordance eases between ``pulseMinOpacity`` and full.
+        public static let pulseDuration: Double = 0.9
+        /// How faint a pulse goes at the bottom of its cycle.
+        public static let pulseMinOpacity: Double = 0.15
+        /// The steady opacity a pulsing affordance holds under Reduce Motion.
+        ///
+        /// ⚠️ Not full opacity: the affordance still has to read as ACTIVE when it cannot
+        /// breathe, and a pulse that simply stops is indistinguishable from one that finished.
+        public static let reducedMotionOpacity: Double = 0.8
+    }
+
     // MARK: - Symbols
     //
     // Centralized so the icon set is auditable in one place and swappable for exported

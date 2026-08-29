@@ -232,6 +232,19 @@ TimelineView(tracks: tracks, clips: clips,
 }
 ```
 
+### Status pill — [Docs/StatusPill.md](Docs/StatusPill.md)
+
+A dot, a label, a capsule: idle · working · ready · failed, with an optional live elapsed
+readout. Promoted from **eight** copies across the fleet — two of them byte-identical to each
+other. Status-driven rather than colour-driven, because four of those copies took a `Color`
+from the call site, which is how a fleet acquires several greens that all mean "ready".
+
+```swift
+import DesignScaffoldStatus
+
+StatusPill("Streaming", status: .working(elapsed: seconds))
+```
+
 ### Searchable picker — [Docs/SearchablePicker.md](Docs/SearchablePicker.md)
 
 Search · tag scoping · sort · optional multi-select over a library of thousands. The host
