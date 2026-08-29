@@ -42,6 +42,8 @@ struct ComponentLabView: View {
               blurb: "Drag, cross-track, trim, marquee, brackets, row resize.") { TimelineGestureHarness() },
         .init(id: "workspace", title: "WorkspaceSplit",
               blurb: "Which pane yields as the window narrows? Drawn frames vs the arithmetic.") { WorkspaceHarness() },
+        .init(id: "audio-pill", title: "AudioActivityPill (AB-A-0036)",
+              blurb: "Does the pulse restart after playing → streaming? Verbatim from ML[X] Audio Studio.") { AudioPillHarness() },
         .init(id: "chips", title: "ChipRow",
               blurb: "Single-select, wrapping. Clickability of a WRAPPED chip is unverified anywhere.") { ChipsHarness() },
         .init(id: "playlist", title: "PlaylistIterator",
