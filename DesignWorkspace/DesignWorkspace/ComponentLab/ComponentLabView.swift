@@ -42,6 +42,8 @@ struct ComponentLabView: View {
               blurb: "Drag, cross-track, trim, marquee, brackets, row resize.") { TimelineGestureHarness() },
         .init(id: "workspace", title: "WorkspaceSplit",
               blurb: "Which pane yields as the window narrows? Drawn frames vs the arithmetic.") { WorkspaceHarness() },
+        .init(id: "waveform", title: "Audio waveform",
+              blurb: "Live meter, track view at three widths, and inside a timeline clip under zoom.") { WaveformHarness() },
         .init(id: "status-pill", title: "StatusPill",
               blurb: "The promoted pill: every state, plus a live ticking one.") { StatusPillHarness() },
         .init(id: "audio-pill", title: "AudioActivityPill (AB-A-0036)",

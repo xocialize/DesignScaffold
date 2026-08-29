@@ -42,6 +42,8 @@ let package = Package(
         .library(name: "DesignScaffoldPicker", targets: ["DesignScaffoldPicker"]),
         // Status pill: a dot, a label, a capsule — idle · working · ready · failed.
         .library(name: "DesignScaffoldStatus", targets: ["DesignScaffoldStatus"]),
+        // Audio waveform: a live input level meter and a track visualiser, one Canvas renderer.
+        .library(name: "DesignScaffoldWaveform", targets: ["DesignScaffoldWaveform"]),
     ],
     targets: [
         .target(name: "DesignScaffold", path: "Sources/DesignScaffold"),
@@ -83,6 +85,11 @@ let package = Package(
             dependencies: ["DesignScaffoldStageStepper"]
         ),
         .target(
+            name: "DesignScaffoldWaveform",
+            dependencies: ["DesignScaffold"],
+            path: "Sources/DesignScaffoldWaveform"
+        ),
+        .target(
             name: "DesignScaffoldStatus",
             dependencies: ["DesignScaffold"],
             path: "Sources/DesignScaffoldStatus"
@@ -110,6 +117,11 @@ let package = Package(
         .testTarget(
             name: "DesignScaffoldTimelineTests",
             dependencies: ["DesignScaffoldTimeline"]
+        ),
+        .testTarget(
+            name: "DesignScaffoldWaveformTests",
+            dependencies: ["DesignScaffoldWaveform"],
+            path: "Tests/DesignScaffoldWaveformTests"
         ),
         .testTarget(
             name: "DesignScaffoldStatusTests",

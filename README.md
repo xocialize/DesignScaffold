@@ -232,6 +232,20 @@ TimelineView(tracks: tracks, clips: clips,
 }
 ```
 
+### Audio waveform — [Docs/Waveform.md](Docs/Waveform.md)
+
+A live input level meter and a track visualiser, over one `Canvas` renderer that re-buckets to
+whatever width it is given — so the same peaks stay honest inside a timeline clip at any zoom.
+Max-bucketed rather than averaged, because averaging smears the transients someone is trimming
+to.
+
+```swift
+import DesignScaffoldWaveform
+
+AudioLevelMeter(levels: capture.levels, isActive: capture.isRecording)
+AudioTrackWaveform(peaks: peaks).theme(.track)      // inside a timeline clipBody
+```
+
 ### Status pill — [Docs/StatusPill.md](Docs/StatusPill.md)
 
 A dot, a label, a capsule: idle · working · ready · failed, with an optional live elapsed
