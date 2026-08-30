@@ -44,6 +44,8 @@ let package = Package(
         .library(name: "DesignScaffoldStatus", targets: ["DesignScaffoldStatus"]),
         // Audio waveform: a live input level meter and a track visualiser, one Canvas renderer.
         .library(name: "DesignScaffoldWaveform", targets: ["DesignScaffoldWaveform"]),
+        // Metric tile and grid: one headline measurement — value · unit · label · caption.
+        .library(name: "DesignScaffoldMetrics", targets: ["DesignScaffoldMetrics"]),
     ],
     targets: [
         .target(name: "DesignScaffold", path: "Sources/DesignScaffold"),
@@ -83,6 +85,11 @@ let package = Package(
         .testTarget(
             name: "DesignScaffoldStageStepperTests",
             dependencies: ["DesignScaffoldStageStepper"]
+        ),
+        .target(
+            name: "DesignScaffoldMetrics",
+            dependencies: ["DesignScaffold"],
+            path: "Sources/DesignScaffoldMetrics"
         ),
         .target(
             name: "DesignScaffoldWaveform",

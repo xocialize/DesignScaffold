@@ -232,6 +232,21 @@ TimelineView(tracks: tracks, clips: clips,
 }
 ```
 
+### Metric tile — [Docs/MetricTile.md](Docs/MetricTile.md)
+
+One headline measurement — value · unit · label · caption — and a grid that wraps at the width
+two tiles need inside an inspector. Promoted from four copies, into tokens that had been
+waiting for it: `metricValue`, `metricLabel` and `metricTileMinWidth` were already in the
+vocabulary for a component nobody had built.
+
+```swift
+import DesignScaffoldMetrics
+
+MetricGrid {
+    MetricTile("0.31", label: "Time to first audio", unit: "s").carded()
+}
+```
+
 ### Audio waveform — [Docs/Waveform.md](Docs/Waveform.md)
 
 A live input level meter and a track visualiser, over one `Canvas` renderer that re-buckets to

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DA5C50000000000000000002 /* DesignScaffoldMetrics in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C50000000000000000001 /* DesignScaffoldMetrics */; };
 		DA5C40000000000000000002 /* DesignScaffoldWaveform in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C40000000000000000001 /* DesignScaffoldWaveform */; };
 		DA5C30000000000000000002 /* DesignScaffoldStatus in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C30000000000000000001 /* DesignScaffoldStatus */; };
 		DA5C20000000000000000002 /* DesignScaffoldProbe in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C20000000000000000001 /* DesignScaffoldProbe */; };
@@ -65,6 +66,7 @@
 			files = (
 				23E796DD3020E29000120F27 /* MLXEngineUI in Frameworks */,
 				239A3C72301DB4B50052AF6F /* DesignScaffold in Frameworks */,
+				DA5C50000000000000000002 /* DesignScaffoldMetrics in Frameworks */,
 				DA5C40000000000000000002 /* DesignScaffoldWaveform in Frameworks */,
 				DA5C30000000000000000002 /* DesignScaffoldStatus in Frameworks */,
 				DA5C20000000000000000002 /* DesignScaffoldProbe in Frameworks */,
@@ -128,6 +130,7 @@
 			name = DesignWorkspace;
 			packageProductDependencies = (
 				239A3C71301DB4B50052AF6F /* DesignScaffold */,
+				DA5C50000000000000000001 /* DesignScaffoldMetrics */,
 				DA5C40000000000000000001 /* DesignScaffoldWaveform */,
 				DA5C30000000000000000001 /* DesignScaffoldStatus */,
 				DA5C20000000000000000001 /* DesignScaffoldProbe */,
@@ -460,6 +463,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		DA5C50000000000000000001 /* DesignScaffoldMetrics */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DesignScaffoldMetrics;
+		};
 		DA5C40000000000000000001 /* DesignScaffoldWaveform */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = DesignScaffoldWaveform;
