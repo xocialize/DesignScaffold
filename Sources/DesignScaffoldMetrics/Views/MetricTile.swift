@@ -66,9 +66,15 @@ public struct MetricTile: View {
                     Text(unit).font(theme.unitFont).foregroundStyle(theme.label)
                 }
             }
-            Text(theme.uppercasesLabel ? label.uppercased() : label)
+            // `.textCase`, not `.uppercased()` — the same rule `SectionHeader` documents.
+            // `.uppercased()` with no locale maps `i` to `İ` in Turkish, and it mutates the
+            // string a screen reader would otherwise read as written. The explicit
+            // `accessibilityLabel` below already protects VoiceOver here; this keeps the
+            // visible text locale-safe and stops the next component copying the wrong idiom.
+            Text(label)
                 .font(theme.labelFont)
                 .foregroundStyle(theme.label)
+                .textCase(theme.uppercasesLabel ? .uppercase : nil)
             if let caption {
                 Text(caption)
                     .font(theme.captionFont)
@@ -93,8 +99,11 @@ public extension MetricTile {
         return copy
     }
 
-    /// The carded treatment. Separate from the tile so a host can place bare tiles in its own
-    /// container — which is what the inline theme is for.
+    /// Wrap the tile in the house card surface.
+    ///
+    /// Opt-in rather than built into ``MetricTileTheme/scaffold``, so a host can place bare
+    /// tiles in a container of its own — which is what ``MetricTileTheme/inline`` is for.
+    /// A carded grid is `MetricGrid { MetricTile(…).carded(); … }`.
     func carded() -> some View { self.cardSurface() }
 }
 

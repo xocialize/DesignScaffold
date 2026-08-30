@@ -50,7 +50,8 @@ public struct MetricTileTheme: Sendable {
 }
 
 public extension MetricTileTheme {
-    /// The house style, and the default — a carded tile.
+    /// The house style, and the default. Pair with ``MetricTile/carded()`` for the card —
+    /// the surface is applied by the host, not by the theme.
     static let scaffold = MetricTileTheme()
 
     /// No card, tighter type: for a metric sitting inside chrome that already has a surface,
