@@ -45,7 +45,6 @@ public struct StatusPill: View {
     var themeOverride: StatusPillTheme?
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var breathing = false
 
     var theme: StatusPillTheme { themeOverride ?? .scaffold }
 
@@ -77,30 +76,22 @@ public struct StatusPill: View {
     }
 
     private var dot: some View {
-        Circle()
-            .fill(theme.color(for: status))
-            .frame(width: theme.dotSize, height: theme.dotSize)
-            // ⚠️ Under Reduce Motion the dot holds a STEADY, slightly-faded opacity rather than
-            // full: it still has to read as active when it cannot breathe, and a pulse that
-            // simply stops is indistinguishable from one that finished.
-            .opacity(pulseOpacity)
-            .animation(shouldPulse
-                       ? .easeInOut(duration: theme.pulseDuration).repeatForever(autoreverses: true)
-                       : .default,
-                       value: breathing)
-            // Keyed on `shouldPulse`, NOT `onAppear`. A pill whose status changes in place —
-            // which is the normal case, since a host binds one pill to a changing value — may
-            // not be rebuilt, and an `onAppear`-only pulse would never start.
-            .onChange(of: shouldPulse, initial: true) { _, pulsing in
-                breathing = pulsing
-            }
-    }
-
-    private var shouldPulse: Bool { status.pulses && !reduceMotion }
-
-    private var pulseOpacity: Double {
-        if status.pulses && reduceMotion { return theme.reducedMotionOpacity }
-        return shouldPulse && breathing ? theme.pulseMinOpacity : 1
+        // ⚠️ NO implicit animation here, and never add one — see ``Pulse``. The previous
+        // version breathed via `.easeInOut(…).repeatForever(autoreverses: true)`, which
+        // swept the dot's POSITION into the repeating animation the first time the pill's
+        // container relaid out. The dot left the pill and slid up and down the window for
+        // as long as it was open.
+        TimelineView(Pulse.schedule(active: status.pulses, reduceMotion: reduceMotion)) { context in
+            Circle()
+                .fill(theme.color(for: status))
+                .frame(width: theme.dotSize, height: theme.dotSize)
+                .opacity(Pulse.opacity(at: context.date,
+                                       active: status.pulses,
+                                       reduceMotion: reduceMotion,
+                                       duration: theme.pulseDuration,
+                                       minOpacity: theme.pulseMinOpacity,
+                                       reducedMotionOpacity: theme.reducedMotionOpacity))
+        }
     }
 }
 

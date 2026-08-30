@@ -33,9 +33,14 @@ public struct StageStepperTheme: Sendable {
     public var ringLineWidth: CGFloat
     public var connectorHeight: CGFloat
     public var connectorMinLength: CGFloat
-    /// One pulse cycle. The ring breathes between ``pulseMinOpacity`` and full.
+    /// One pulse cycle. The ring breathes between ``pulseMinOpacity`` and
+    /// ``ringRestOpacity``.
     public var pulseDuration: Double
     public var pulseMinOpacity: Double
+    /// The top of the ring's breath. Slightly under full, which is how it has always
+    /// rendered — this was a bare `0.9` in the view, and the comment above it claimed
+    /// "full". The behaviour is kept and the vocabulary corrected, not the other way round.
+    public var ringRestOpacity: Double
     /// Ring opacity when Reduce Motion is on — steady, never animated.
     public var reducedMotionRingOpacity: Double
     /// How long a node must be live before the elapsed timer appears.
@@ -64,6 +69,7 @@ public struct StageStepperTheme: Sendable {
         connectorMinLength: CGFloat = Tokens.Space.l,
         pulseDuration: Double = Tokens.Motion.pulseDuration,
         pulseMinOpacity: Double = Tokens.Motion.pulseMinOpacity,
+        ringRestOpacity: Double = 0.9,
         reducedMotionRingOpacity: Double = Tokens.Motion.reducedMotionOpacity,
         livenessDelay: TimeInterval = 5,
         currentTitleFont: Font = Tokens.Font.sectionTitle,
@@ -87,6 +93,7 @@ public struct StageStepperTheme: Sendable {
         self.connectorMinLength = connectorMinLength
         self.pulseDuration = pulseDuration
         self.pulseMinOpacity = pulseMinOpacity
+        self.ringRestOpacity = ringRestOpacity
         self.reducedMotionRingOpacity = reducedMotionRingOpacity
         self.livenessDelay = livenessDelay
         self.currentTitleFont = currentTitleFont

@@ -29,7 +29,6 @@ public struct StageStepper: View {
     var themeOverride: StageStepperTheme?
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var pulse = false
 
     /// Resolved theme — the override if set, otherwise the scaffold house style.
     var theme: StageStepperTheme { themeOverride ?? .scaffold }
@@ -43,7 +42,6 @@ public struct StageStepper: View {
             track
             liveDetail
         }
-        .onAppear { if !reduceMotion { pulse = true } }
     }
 
     // MARK: Track
@@ -67,15 +65,22 @@ public struct StageStepper: View {
                     .fill(state == .upcoming ? theme.pending : theme.reached)
                     .frame(width: theme.dotSize, height: theme.dotSize)
                 if state == .current {
-                    Circle()
-                        .strokeBorder(theme.reached, lineWidth: theme.ringLineWidth)
-                        .frame(width: theme.currentRingSize, height: theme.currentRingSize)
-                        .opacity(reduceMotion ? theme.reducedMotionRingOpacity
-                                              : (pulse ? theme.pulseMinOpacity : 0.9))
-                        .animation(reduceMotion ? nil
-                                   : .easeInOut(duration: theme.pulseDuration)
-                                       .repeatForever(autoreverses: true),
-                                   value: pulse)
+                    // ⚠️ NO implicit animation here, and never add one — see ``Pulse``.
+                    // This ring carried the same `repeatForever(autoreverses:)` defect
+                    // ``StatusPill`` did, and a stepper reflows more than a pill does:
+                    // every node shifts when a title changes or a stage is added.
+                    TimelineView(Pulse.schedule(active: true, reduceMotion: reduceMotion)) { context in
+                        Circle()
+                            .strokeBorder(theme.reached, lineWidth: theme.ringLineWidth)
+                            .frame(width: theme.currentRingSize, height: theme.currentRingSize)
+                            .opacity(Pulse.opacity(at: context.date,
+                                                   active: true,
+                                                   reduceMotion: reduceMotion,
+                                                   duration: theme.pulseDuration,
+                                                   minOpacity: theme.pulseMinOpacity,
+                                                   maxOpacity: theme.ringRestOpacity,
+                                                   reducedMotionOpacity: theme.reducedMotionRingOpacity))
+                    }
                 }
             }
             .frame(height: theme.currentRingSize)
