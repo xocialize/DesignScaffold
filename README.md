@@ -232,6 +232,22 @@ TimelineView(tracks: tracks, clips: clips,
 }
 ```
 
+### Section header
+
+In the base product beside `cardSurface()` and `Separator`, because it is vocabulary rather
+than a component. Promoted from **twelve** copies — including three separate private
+`sectionHeader(_:)` functions inside MLXEngineUI alone.
+
+```swift
+SectionHeader("Provenance")
+SectionHeader("Takes", trailing: "28 kept")
+SectionHeader("Model storage").theme(.sentenceCase)
+```
+
+⚠️ It uppercases with `.textCase(.uppercase)`, not `.uppercased()`. Every copy did it in the
+string, which changes what **VoiceOver reads** — an uppercased acronym is often spelled out
+letter by letter — and which maps `i` to `İ` in Turkish.
+
 ### Metric tile — [Docs/MetricTile.md](Docs/MetricTile.md)
 
 One headline measurement — value · unit · label · caption — and a grid that wraps at the width

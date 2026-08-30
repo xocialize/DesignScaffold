@@ -42,6 +42,8 @@ struct ComponentLabView: View {
               blurb: "Drag, cross-track, trim, marquee, brackets, row resize.") { TimelineGestureHarness() },
         .init(id: "workspace", title: "WorkspaceSplit",
               blurb: "Which pane yields as the window narrows? Drawn frames vs the arithmetic.") { WorkspaceHarness() },
+        .init(id: "section-header", title: "SectionHeader",
+              blurb: "Default, sentence-case theme, and the textCase accessibility case.") { SectionHeaderHarness() },
         .init(id: "metrics", title: "MetricTile + MetricGrid",
               blurb: "Wrapping at the inspector width, a verdict value, and a number too long for its tile.") { MetricHarness() },
         .init(id: "waveform", title: "Audio waveform",

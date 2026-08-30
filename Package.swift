@@ -126,6 +126,11 @@ let package = Package(
             dependencies: ["DesignScaffoldTimeline"]
         ),
         .testTarget(
+            name: "DesignScaffoldTests",
+            dependencies: ["DesignScaffold"],
+            path: "Tests/DesignScaffoldTests"
+        ),
+        .testTarget(
             name: "DesignScaffoldWaveformTests",
             dependencies: ["DesignScaffoldWaveform"],
             path: "Tests/DesignScaffoldWaveformTests"
