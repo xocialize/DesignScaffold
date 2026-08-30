@@ -46,6 +46,14 @@ let package = Package(
         .library(name: "DesignScaffoldWaveform", targets: ["DesignScaffoldWaveform"]),
         // Metric tile and grid: one headline measurement — value · unit · label · caption.
         .library(name: "DesignScaffoldMetrics", targets: ["DesignScaffoldMetrics"]),
+        // Labeled form controls: a parameter slider with a live readout.
+        //
+        // Named for the topic rather than for `LabeledSlider` alone, matching how the other
+        // products are scoped (Status holds Status + StatusFormat + StatusPill; Waveform
+        // holds three views and a bucketer). A labeled toggle and a labeled stepper are the
+        // obvious neighbours if the evidence for them ever arrives — and this way they do
+        // not force a product rename, which would break every adopter's import.
+        .library(name: "DesignScaffoldControls", targets: ["DesignScaffoldControls"]),
     ],
     targets: [
         .target(name: "DesignScaffold", path: "Sources/DesignScaffold"),
@@ -149,6 +157,16 @@ let package = Package(
             name: "DesignScaffoldWorkspaceTests",
             dependencies: ["DesignScaffoldWorkspace"],
             path: "Tests/DesignScaffoldWorkspaceTests"
+        ),
+        .target(
+            name: "DesignScaffoldControls",
+            dependencies: ["DesignScaffold"],
+            path: "Sources/DesignScaffoldControls"
+        ),
+        .testTarget(
+            name: "DesignScaffoldControlsTests",
+            dependencies: ["DesignScaffoldControls"],
+            path: "Tests/DesignScaffoldControlsTests"
         ),
         .testTarget(
             name: "DesignScaffoldChipsTests",
