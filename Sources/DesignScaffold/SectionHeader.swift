@@ -75,17 +75,34 @@ public extension SectionHeader where Trailing == EmptyView {
     }
 }
 
-public extension SectionHeader where Trailing == Text {
+/// The styled trailing string of a ``SectionHeader``.
+///
+/// ⚠️ A concrete type rather than `Trailing == Text`, and the reason is portability. The
+/// `Text`-returning overload of `foregroundStyle(_:)` only exists from **iOS 17 / macOS 14**;
+/// below that it resolves to the `View` overload and `some View` will not satisfy
+/// `Trailing == Text`. Constraining on `Text` therefore pinned the whole package's iOS floor
+/// to 17 for the sake of one convenience initializer — found by compiling for iOS, not by
+/// reading availability tables. Applying the modifiers inside a `body` costs nothing and
+/// leaves the floor where the tokens actually put it.
+public struct SectionHeaderTrailing: View {
+    private let text: String
+
+    public init(_ text: String) { self.text = text }
+
+    public var body: some View {
+        Text(text)
+            .font(SectionHeaderTheme.scaffold.trailingFont)
+            .foregroundStyle(SectionHeaderTheme.scaffold.trailingColor)
+    }
+}
+
+public extension SectionHeader where Trailing == SectionHeaderTrailing {
     /// A title and a plain trailing string — a count, a total, a unit.
     ///
     /// Promoted from Qwen Image's copy, the only one of the twelve that had it, and the shape
     /// ML[X] Audio Studio's design needs for "Takes · 28 kept".
     init(_ title: String, trailing: String) {
-        self.init(title) {
-            Text(trailing)
-                .font(SectionHeaderTheme.scaffold.trailingFont)
-                .foregroundStyle(SectionHeaderTheme.scaffold.trailingColor)
-        }
+        self.init(title) { SectionHeaderTrailing(trailing) }
     }
 }
 

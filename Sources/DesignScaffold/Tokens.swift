@@ -38,10 +38,10 @@ public enum Tokens {
         /// Supporting text: captions, units, secondary metrics.
         public static let secondaryLabel = SwiftUI.Color.secondary
         /// De-emphasized text: placeholders, disabled affordances.
-        public static let tertiaryLabel = SwiftUI.Color(nsColor: .tertiaryLabelColor)
+        public static let tertiaryLabel = PlatformSemantics.tertiaryLabel
         /// Weakest legible text: disabled dates, watermarks. (Added for the calendar
         /// component — the kit's opacity-on-secondary stand-in maps to this semantic.)
-        public static let quaternaryLabel = SwiftUI.Color(nsColor: .quaternaryLabelColor)
+        public static let quaternaryLabel = PlatformSemantics.quaternaryLabel
 
         /// Figma `Accents/Blue` #0091ff. Uses the system accent so the user's chosen accent
         /// and accessibility settings still apply — the kit value is the default-blue stand-in.
@@ -49,7 +49,7 @@ public enum Tokens {
         /// The kit's literal blue, for surfaces that must match the design exactly.
         public static let accentFigma = SwiftUI.Color(red: 0x00 / 255, green: 0x91 / 255, blue: 0xff / 255)
         /// Hairlines and card borders.
-        public static let separator = SwiftUI.Color(nsColor: .separatorColor)
+        public static let separator = PlatformSemantics.separator
 
         /// The wash behind a selected row or an in-range span — the accent at low opacity.
         ///
@@ -95,12 +95,12 @@ public enum Tokens {
         /// *darker* in dark mode, which is the adaptation working rather than a
         /// regression. If a distinctly raised well is genuinely wanted, that is a separate
         /// `fillElevated` token — ask for it rather than reaching for a literal.
-        public static let fieldFill = SwiftUI.Color(nsColor: .textBackgroundColor)
+        public static let fieldFill = PlatformSemantics.fieldFill
 
         /// Panel/card fill that sits on top of a window material.
-        public static let surface = SwiftUI.Color(nsColor: .controlBackgroundColor)
+        public static let surface = PlatformSemantics.surface
         /// A subtler fill for nested content (metric tiles inside a card).
-        public static let surfaceElevated = SwiftUI.Color(nsColor: .windowBackgroundColor)
+        public static let surfaceElevated = PlatformSemantics.surfaceElevated
 
         // Status — used by the engine-state pill and metric validity marks.
         public static let ready = SwiftUI.Color.green

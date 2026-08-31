@@ -1,3 +1,10 @@
+//
+//  ⚠️ macOS-only, and only because `@Previewable` is iOS 17+. This is DEVELOPMENT code —
+//  guarding it keeps the package's iOS floor at 16, where the SHIPPING code actually sits,
+//  instead of letting a preview macro set the floor for every consumer. See Docs/PLATFORMS.md.
+//
+#if os(macOS)
+
 //  LoadingCard+Previews.swift
 //  Canvas gallery for the loading card. No theme calls: the scaffold look IS the default.
 
@@ -46,3 +53,5 @@ private let warmup = LoadingProgress(
         .padding(Tokens.Space.xl)
         .preferredColorScheme(.dark)
 }
+
+#endif

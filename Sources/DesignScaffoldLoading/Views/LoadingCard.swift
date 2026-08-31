@@ -88,7 +88,12 @@ public struct LoadingCard<Background: View>: View {
                 Text("\(progress.percent)")
                     .font(theme.percentFont)
                     .foregroundStyle(theme.percentText)
-                    .contentTransition(.numericText(value: Double(progress.percent)))
+                    // ⚠️ Progressive enhancement, gated rather than required.
+                    // `.numericText(value:)` is macOS 14 / iOS 17; requiring it would have
+                    // pushed the PACKAGE's iOS floor to 17 for one rolling-digit animation,
+                    // and the card reads correctly without it. Below the floor the number
+                    // simply changes instead of rolling.
+                    .modifier(RollingDigits(value: Double(progress.percent)))
                 Text(verbatim: "%")
                     .font(theme.percentSymbolFont)
                     .foregroundStyle(theme.percentSymbol)
@@ -209,5 +214,18 @@ public extension View {
             isPresented: isPresented,
             backdrop: theme.backdrop,
             card: LoadingCard(progress: progress, title: title).theme(theme)))
+    }
+}
+
+/// Rolls the percentage's digits where the platform can, and does nothing where it cannot.
+private struct RollingDigits: ViewModifier {
+    let value: Double
+
+    func body(content: Content) -> some View {
+        if #available(macOS 14, iOS 17, *) {
+            content.contentTransition(.numericText(value: value))
+        } else {
+            content
+        }
     }
 }

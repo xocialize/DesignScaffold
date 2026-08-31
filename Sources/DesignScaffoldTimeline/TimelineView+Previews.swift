@@ -1,3 +1,18 @@
+//
+//  ⚠️ macOS-only, and only because `@Previewable` is iOS 17+. This is DEVELOPMENT code —
+//  guarding it keeps the package's iOS floor at 16, where the SHIPPING code actually sits,
+//  instead of letting a preview macro set the floor for every consumer. See Docs/PLATFORMS.md.
+//
+#if os(macOS)
+
+//
+//  ⚠️ macOS-only. This target is wrapped in `#if os(macOS)` because it is built on AppKit
+//  API with no iOS equivalent — see `Docs/PLATFORMS.md`. On iOS the module compiles to
+//  nothing, so an app that adds this product by mistake gets "cannot find X in scope"
+//  rather than a wall of AppKit errors, and the package as a whole still builds.
+//
+#if os(macOS)
+
 //  TimelineView+Previews.swift
 //  Canvas gallery. No theme calls: the scaffold look IS the default.
 
@@ -76,3 +91,7 @@ private struct DemoBody: View {
     .padding(Tokens.Space.xl)
     .preferredColorScheme(.dark)
 }
+
+#endif
+
+#endif

@@ -17,7 +17,9 @@ import PackageDescription
 
 let package = Package(
     name: "DesignScaffold",
-    platforms: [.macOS(.v26)],
+    // iOS added 2026-08-31 for MarqueeSurface (AB-A-0042). The floor is deliberately LOW
+    // and was found by compiling, not by reading availability tables — see the ask thread.
+    platforms: [.macOS(.v26), .iOS(.v16)],
     products: [
         // The design vocabulary itself: Tokens (colour · type · spacing · radii · layout)
         // + cardSurface(). Zero dependencies; every component product re-exports it.
