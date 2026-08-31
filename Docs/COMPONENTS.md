@@ -26,6 +26,7 @@ Current release: **0.16.0** · `https://github.com/xocialize/DesignScaffold` (pu
 | `DesignScaffoldStatus` | Status pill: a dot, a label, a capsule — idle · working · ready · failed |
 | [DesignScaffoldWaveform](Waveform.md) | Audio waveform: a live input level meter and a track visualiser, one Canvas renderer |
 | `DesignScaffoldMetrics` | Metric tile and grid: one headline measurement — value · unit · label · caption |
+| `DesignScaffoldMedia` | Media well: a drop target that also opens a file panel, with the decode removed |
 | `DesignScaffoldControls` | products are scoped (Status holds Status + StatusFormat + StatusPill; Waveform holds three views and a bucketer). A labeled toggle and a labeled stepper are the obvious neighbours if the evidence for them ever arrives — and this way they do not force a product rename, which would break every adopter's import |
 
 Every component product re-exports `DesignScaffold`, so one import brings `Tokens` and
@@ -115,25 +116,19 @@ source `import`; the pin column shows version drift.
 | Adopter | Project | Products used | Files | Pin | |
 |---|---|---|---|---|---|
 | **Audio8 Demo** | Demos | `DesignScaffold`, `DesignScaffoldControls`, `DesignScaffoldMetrics`, `DesignScaffoldStatus` | 9 | 0.16.0 | ✅ |
+| **Gepard Demo** | Demos | `DesignScaffold`, `DesignScaffoldControls` | 1 | 0.16.0 | ✅ |
+| **Liquid LFM 2.5 Demo** | Demos | `DesignScaffold`, `DesignScaffoldControls` | 6 | 0.16.0 | ✅ |
 | **ML[X] Audio Studio** | ml(x) | `DesignScaffold`, `DesignScaffoldPlaylist`, `DesignScaffoldStatus`, `DesignScaffoldWaveform`, `DesignScaffoldWorkspace` | 19 | 0.14.0 | behind (0.16.0) |
 | **ML[X] LTX Studio** | ml(x) | `DesignScaffold`, `DesignScaffoldChips`, `DesignScaffoldLoading`, `DesignScaffoldStageStepper`, `DesignScaffoldTimeline` | 10 | 0.8.3 | behind (0.16.0) |
 | **ML[X] Media Optimizer** | ml(x) | `DesignScaffold` | 3 | 0.2.0 | behind (0.16.0) |
 | **MarqueeStudio** | MVSCollective | `DesignScaffold`, `DesignScaffoldCalendar`, `DesignScaffoldPicker`, `DesignScaffoldPlaylist`, `DesignScaffoldWorkspace` | 10 | 0.11.0 | behind (0.16.0) |
+| **Moebius Demo** | Demos | `DesignScaffold`, `DesignScaffoldControls` | 5 | 0.16.0 | ✅ |
 | **SenseNova-U1.5 Demo** | Demos | `DesignScaffold`, `DesignScaffoldControls` | 7 | 0.16.0 | ✅ |
 | **mlx-engine-swift** | MLXEngine | `DesignScaffold` | 5 | 0.4.2 | behind (0.16.0) |
 
-**Linked but unused** (a pin with no import — dead dependency): `Gepard Demo.xcodeproj`, `mlx-gepard-swift`, `sensenova-u1-swift`
+**Linked but unused** (a pin with no import — dead dependency): `mlx-gepard-swift`, `sensenova-u1-swift`
 
 _A version behind the latest is a resolved snapshot, not a defect: no adopter declares an exact pin, so every one moves forward on its next resolve._
-
-### ⚠️ Vocabulary forks — a second design authority in the making
-
-A local `enum Tokens` outside this package. Per AB-D-0042 these should adopt
-the package; anything genuinely missing gets added to `Tokens` here by ask.
-
-| Where | Project | File | Lines |
-|---|---|---|---|
-| Moebius Demo | mlxengine-image | `mlxengine-image/PROD/Moebius/Moebius Demo/Moebius Demo/UI/Tokens.swift` | 202 |
 
 ### Sanctioned — not ours, and deliberately not flagged
 

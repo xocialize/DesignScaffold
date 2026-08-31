@@ -50,6 +50,8 @@ struct ComponentLabView: View {
               blurb: "Live meter, track view at three widths, and inside a timeline clip under zoom.") { WaveformHarness() },
         .init(id: "status-pill", title: "StatusPill",
               blurb: "Every state, a live ticking one, and the regression: does the dot stay in the capsule when the pill MOVES while pulsing?") { StatusPillHarness() },
+        .init(id: "media-well", title: "MediaWell",
+              blurb: "Drop or click. Does it refuse a file it should not take, and say so?") { MediaWellHarness() },
         .init(id: "labeled-slider", title: "LabeledSlider",
               blurb: "Every initializer. Does an Int binding stay whole, and does the readout ever disagree with the track?") { LabeledSliderHarness() },
         .init(id: "audio-pill", title: "AudioActivityPill (AB-A-0036)",

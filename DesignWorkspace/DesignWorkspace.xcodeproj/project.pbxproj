@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		DA5C50000000000000000002 /* DesignScaffoldMetrics in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C50000000000000000001 /* DesignScaffoldMetrics */; };
 		DA5C90000000000000000002 /* DesignScaffoldControls in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C90000000000000000001 /* DesignScaffoldControls */; };
+		DA5CA0000000000000000002 /* DesignScaffoldMedia in Frameworks */ = {isa = PBXBuildFile; productRef = DA5CA0000000000000000001 /* DesignScaffoldMedia */; };
 		DA5C40000000000000000002 /* DesignScaffoldWaveform in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C40000000000000000001 /* DesignScaffoldWaveform */; };
 		DA5C30000000000000000002 /* DesignScaffoldStatus in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C30000000000000000001 /* DesignScaffoldStatus */; };
 		DA5C20000000000000000002 /* DesignScaffoldProbe in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C20000000000000000001 /* DesignScaffoldProbe */; };
@@ -69,6 +70,7 @@
 				239A3C72301DB4B50052AF6F /* DesignScaffold in Frameworks */,
 				DA5C50000000000000000002 /* DesignScaffoldMetrics in Frameworks */,
 				DA5C90000000000000000002 /* DesignScaffoldControls in Frameworks */,
+				DA5CA0000000000000000002 /* DesignScaffoldMedia in Frameworks */,
 				DA5C40000000000000000002 /* DesignScaffoldWaveform in Frameworks */,
 				DA5C30000000000000000002 /* DesignScaffoldStatus in Frameworks */,
 				DA5C20000000000000000002 /* DesignScaffoldProbe in Frameworks */,
@@ -134,6 +136,7 @@
 				239A3C71301DB4B50052AF6F /* DesignScaffold */,
 				DA5C50000000000000000001 /* DesignScaffoldMetrics */,
 				DA5C90000000000000000001 /* DesignScaffoldControls */,
+				DA5CA0000000000000000001 /* DesignScaffoldMedia */,
 				DA5C40000000000000000001 /* DesignScaffoldWaveform */,
 				DA5C30000000000000000001 /* DesignScaffoldStatus */,
 				DA5C20000000000000000001 /* DesignScaffoldProbe */,
@@ -473,6 +476,10 @@
 		DA5C90000000000000000001 /* DesignScaffoldControls */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = DesignScaffoldControls;
+		};
+		DA5CA0000000000000000001 /* DesignScaffoldMedia */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DesignScaffoldMedia;
 		};
 		DA5C40000000000000000001 /* DesignScaffoldWaveform */ = {
 			isa = XCSwiftPackageProductDependency;

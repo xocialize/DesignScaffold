@@ -46,6 +46,8 @@ let package = Package(
         .library(name: "DesignScaffoldWaveform", targets: ["DesignScaffoldWaveform"]),
         // Metric tile and grid: one headline measurement — value · unit · label · caption.
         .library(name: "DesignScaffoldMetrics", targets: ["DesignScaffoldMetrics"]),
+        // Media well: a drop target that also opens a file panel, with the decode removed.
+        .library(name: "DesignScaffoldMedia", targets: ["DesignScaffoldMedia"]),
         // Labeled form controls: a parameter slider with a live readout.
         //
         // Named for the topic rather than for `LabeledSlider` alone, matching how the other
@@ -157,6 +159,16 @@ let package = Package(
             name: "DesignScaffoldWorkspaceTests",
             dependencies: ["DesignScaffoldWorkspace"],
             path: "Tests/DesignScaffoldWorkspaceTests"
+        ),
+        .target(
+            name: "DesignScaffoldMedia",
+            dependencies: ["DesignScaffold"],
+            path: "Sources/DesignScaffoldMedia"
+        ),
+        .testTarget(
+            name: "DesignScaffoldMediaTests",
+            dependencies: ["DesignScaffoldMedia"],
+            path: "Tests/DesignScaffoldMediaTests"
         ),
         .target(
             name: "DesignScaffoldControls",
