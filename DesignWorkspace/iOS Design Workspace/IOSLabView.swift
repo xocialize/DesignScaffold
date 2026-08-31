@@ -5,9 +5,12 @@
 
 import Combine
 import DesignScaffold
+import DesignScaffoldCalendar
 import DesignScaffoldChips
 import DesignScaffoldControls
 import DesignScaffoldMetrics
+import DesignScaffoldPicker
+import DesignScaffoldPlaylist
 import DesignScaffoldStageStepper
 import DesignScaffoldStatus
 import DesignScaffoldWaveform
@@ -16,11 +19,19 @@ import SwiftUI
 struct IOSLabView: View {
     @State private var showBands = true
     @State private var measured: [String: CGFloat] = [:]
+    private let kinds: [String: TapTargetKind] = [
+        "slider track": .control, "chip row": .control,
+        "picker list": .container, "playlist list": .container, "calendar": .container,
+    ]
 
     @State private var temperature = 0.8
     @State private var steps = 20
     @State private var chip = "b"
     @State private var elapsed: TimeInterval = 0
+    @State private var day: Date?
+    @State private var pickedID: String?
+    @State private var tracks = ["One", "Two", "Three"].map(Track.init)
+    @State private var trackSel: String?
 
     private let tick = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
     private let chips = ["a", "b", "c", "d", "e"].map(Chip.init)
@@ -57,14 +68,17 @@ struct IOSLabView: View {
                 .fixedSize(horizontal: false, vertical: true)
 
             ForEach(measured.keys.sorted(), id: \.self) { key in
-                let h = measured[key] ?? 0
+                let reading = TapTargetReading(height: measured[key] ?? 0,
+                                               kind: kinds[key] ?? .control)
                 HStack {
                     Text(key).font(Tokens.Font.caption)
                     Spacer()
-                    Text("\(h, specifier: "%.0f")pt")
+                    Text("\(reading.height, specifier: "%.0f")pt · \(reading.verdict)")
                         .font(Tokens.Font.metricInline)
-                        .foregroundStyle(h >= TapTarget.minimum
-                                         ? Tokens.Color.ready : Tokens.Color.failure)
+                        .foregroundStyle(reading.kind == .container
+                                         ? Tokens.Color.tertiaryLabel
+                                         : (reading.height >= TapTarget.minimum
+                                            ? Tokens.Color.ready : Tokens.Color.failure))
                 }
             }
             if measured.isEmpty {
@@ -94,7 +108,7 @@ struct IOSLabView: View {
             .padding(Tokens.Space.m)
             .cardSurface()
 
-            VStack(alignment: .leading, spacing: Tokens.Space.xs) {
+            VStack(alignment: .leading, spacing: Tokens.Space.m) {
                 Text("ChipRow — single select").font(Tokens.Font.caption)
                     .foregroundStyle(Tokens.Color.tertiaryLabel)
                 ChipRow(chips, selection: $chip) { $0.id.uppercased() }
@@ -103,8 +117,54 @@ struct IOSLabView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(Tokens.Space.m)
             .cardSurface()
+
+            VStack(alignment: .leading, spacing: Tokens.Space.m) {
+                Text("SearchablePicker").font(Tokens.Font.caption)
+                    .foregroundStyle(Tokens.Color.tertiaryLabel)
+                SearchablePicker(Self.pickerItems, selected: pickedID) { pickedID = $0 }
+                    .frame(height: 220)
+                    .tapTargetBand("picker list", .container, show: showBands, measured: $measured)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(Tokens.Space.m)
+            .cardSurface()
+
+            VStack(alignment: .leading, spacing: Tokens.Space.m) {
+                Text("PlaylistIterator — drag-reorder is a MOUSE idiom; on touch it needs a "
+                     + "long press. Try reordering.").font(Tokens.Font.caption)
+                    .foregroundStyle(Tokens.Color.tertiaryLabel)
+                    .fixedSize(horizontal: false, vertical: true)
+                PlaylistIterator(items: $tracks, selection: $trackSel,
+                                 name: \.name,
+                                 metadata: { [PlaylistMetadatum("id", $0.id)] }) { _ in
+                    RoundedRectangle(cornerRadius: Tokens.Radius.control)
+                        .fill(Tokens.Color.fillElevated)
+                }
+                .tapTargetBand("playlist list", .container, show: showBands, measured: $measured)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(Tokens.Space.m)
+            .cardSurface()
+
+            VStack(alignment: .leading, spacing: Tokens.Space.m) {
+                Text("CalendarView — day cells come off the same 24pt control height Chips "
+                     + "does.").font(Tokens.Font.caption)
+                    .foregroundStyle(Tokens.Color.tertiaryLabel)
+                    .fixedSize(horizontal: false, vertical: true)
+                CalendarView(selection: $day)
+                    .tapTargetBand("calendar", .container, show: showBands, measured: $measured)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(Tokens.Space.m)
+            .cardSurface()
         }
     }
+
+    private static let pickerItems: [PickerItem<String>] = [
+        .init(id: "a", name: "Ocean take 1", tags: ["ocean"]),
+        .init(id: "b", name: "Ocean take 2", tags: ["ocean"]),
+        .init(id: "c", name: "Forest ambience", tags: ["forest"]),
+    ]
 
     // MARK: Tier 1 — declared portable
 
@@ -157,3 +217,9 @@ struct IOSLabView: View {
 }
 
 private struct Chip: Identifiable { let id: String }
+
+private struct Track: Identifiable {
+    let id: String
+    var name: String { id }
+    init(_ id: String) { self.id = id }
+}

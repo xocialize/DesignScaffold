@@ -64,7 +64,11 @@ public struct CalendarTheme: Sendable {
         weekNumberText: Color = Tokens.Color.tertiaryLabel,
         cellCornerRadius: CGFloat = Tokens.Radius.control,
         cellSpacing: CGFloat = Tokens.Space.xs,
-        cellMinSize: CGFloat = Tokens.Layout.controlHeight,
+        // ⚠️ FLOORED to the platform hit minimum. On macOS `minimumHitTarget` is
+        // `controlHeight`, so this is the same 24 it always was; on iOS it becomes 44,
+        // because a 24pt day cell is not reliably tappable with a finger.
+        cellMinSize: CGFloat = max(Tokens.Layout.controlHeight,
+                                   Tokens.Layout.minimumHitTarget),
         titleFont: Font = Tokens.Font.sectionTitle,
         dayFont: Font = Tokens.Font.body,
         weekdaySymbolFont: Font = Tokens.Font.caption.weight(.semibold)

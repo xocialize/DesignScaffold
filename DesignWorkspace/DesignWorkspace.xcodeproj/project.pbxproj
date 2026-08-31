@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		23A6000000000000000002 /* DesignScaffoldCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = 23A6000000000000000001 /* DesignScaffoldCalendar */; };
+		23A6010000000000000002 /* DesignScaffoldPicker in Frameworks */ = {isa = PBXBuildFile; productRef = 23A6010000000000000001 /* DesignScaffoldPicker */; };
+		23A6020000000000000002 /* DesignScaffoldPlaylist in Frameworks */ = {isa = PBXBuildFile; productRef = 23A6020000000000000001 /* DesignScaffoldPlaylist */; };
 		23A5000000000000000002 /* DesignScaffold in Frameworks */ = {isa = PBXBuildFile; productRef = 23A5000000000000000001 /* DesignScaffold */; };
 		23A5010000000000000002 /* DesignScaffoldChips in Frameworks */ = {isa = PBXBuildFile; productRef = 23A5010000000000000001 /* DesignScaffoldChips */; };
 		23A5020000000000000002 /* DesignScaffoldControls in Frameworks */ = {isa = PBXBuildFile; productRef = 23A5020000000000000001 /* DesignScaffoldControls */; };
@@ -123,6 +126,9 @@
 			isa = PBXFrameworksBuildPhase;
 			files = (
 				23A5000000000000000002 /* DesignScaffold in Frameworks */,
+				23A6000000000000000002 /* DesignScaffoldCalendar in Frameworks */,
+				23A6010000000000000002 /* DesignScaffoldPicker in Frameworks */,
+				23A6020000000000000002 /* DesignScaffoldPlaylist in Frameworks */,
 				23A5010000000000000002 /* DesignScaffoldChips in Frameworks */,
 				23A5020000000000000002 /* DesignScaffoldControls in Frameworks */,
 				23A5030000000000000002 /* DesignScaffoldMetrics in Frameworks */,
@@ -219,6 +225,9 @@
 			name = "iOS Design Workspace";
 			packageProductDependencies = (
 				23A5000000000000000001 /* DesignScaffold */,
+				23A6000000000000000001 /* DesignScaffoldCalendar */,
+				23A6010000000000000001 /* DesignScaffoldPicker */,
+				23A6020000000000000001 /* DesignScaffoldPlaylist */,
 				23A5010000000000000001 /* DesignScaffoldChips */,
 				23A5020000000000000001 /* DesignScaffoldControls */,
 				23A5030000000000000001 /* DesignScaffoldMetrics */,
@@ -622,6 +631,21 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		23A6000000000000000001 /* DesignScaffoldCalendar */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 239A3C70301DB4B50052AF6F /* XCLocalSwiftPackageReference ".." */;
+			productName = DesignScaffoldCalendar;
+		};
+		23A6010000000000000001 /* DesignScaffoldPicker */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 239A3C70301DB4B50052AF6F /* XCLocalSwiftPackageReference ".." */;
+			productName = DesignScaffoldPicker;
+		};
+		23A6020000000000000001 /* DesignScaffoldPlaylist */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 239A3C70301DB4B50052AF6F /* XCLocalSwiftPackageReference ".." */;
+			productName = DesignScaffoldPlaylist;
+		};
 		23A5000000000000000001 /* DesignScaffold */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 239A3C70301DB4B50052AF6F /* XCLocalSwiftPackageReference ".." */;

@@ -202,6 +202,35 @@ public enum Tokens {
         public static let buttonPaddingHorizontal: CGFloat = 16
         /// Figma form-group horizontal padding.
         public static let groupPadding: CGFloat = 10
+
+        /// The smallest comfortable hit area on this platform.
+        ///
+        /// ## ⚠️ Not a design value — a platform floor
+        ///
+        /// Every other number in `Layout` came from the Figma macOS kit and describes how
+        /// something should LOOK. This one describes what a finger can reliably hit, and it
+        /// comes from Apple's HIG rather than from the design.
+        ///
+        /// ⚠️ **Zero on macOS**, and that is the point: a pointer is precise, so there is no
+        /// floor to impose and existing layouts must not move. The first cut of this returned
+        /// `controlHeight` (24) on macOS "so nothing changes" — which was wrong, and only
+        /// arithmetic caught it: chips render at **21pt**, so a 24pt floor would have grown
+        /// every macOS chip row by 3pt while the comment claimed bit-identical output.
+        ///
+        /// On iOS it is 44. Measured in the iOS Component Lab: `ChipRow` rendered at **21pt**
+        /// on a phone — under half the minimum — and `CalendarView`'s day cells take their
+        /// size from `controlHeight` (24), so they were heading the same way.
+        ///
+        /// A component should apply this as a FLOOR (`max(designSize, minimumHitTarget)`),
+        /// never as the size itself. The design value still governs appearance everywhere it
+        /// is already big enough.
+        public static let minimumHitTarget: CGFloat = {
+            #if os(iOS)
+            44
+            #else
+            0
+            #endif
+        }()
     }
 
     // MARK: - Motion

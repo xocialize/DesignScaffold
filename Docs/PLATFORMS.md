@@ -87,19 +87,44 @@ file.
 
 ### What the iOS lab settled, and what it did not
 
-| product | measured | verdict |
-|---|---|---|
-| `Controls` (LabeledSlider) | **49pt** | ✅ passes — promote to Tier 1 once `Picker` and `Calendar` are checked in the same pass |
-| `Chips` (ChipRow) | **21pt** | ❌ fails — needs a platform-conditional minimum |
-| `Picker`, `Calendar`, `Playlist`, `Workspace` | — | not yet rendered on device |
+Measured on an iPhone 15 Pro, by drawing the 44pt band behind a control and reporting what it
+actually renders.
 
-**The `Chips` fix is a design decision, not a patch.** Giving chips a 44pt minimum on touch
-changes their density, and the macOS appearance must not move — so it belongs in
-`ChipRowTheme` as a platform-conditional default, not a hardcoded `.frame(minHeight:)`.
-Raised rather than quietly applied.
+| product | before | after | how |
+|---|---|---|---|
+| `Controls` (LabeledSlider) | **49pt** ✅ | — | passes untouched; SwiftUI's `Slider` supplies its own hit area |
+| `Chips` (ChipRow) | **21pt** ❌ | **44pt** ✅ | hit area floored |
+| `Calendar` day cell | 24pt (source) | 44pt | floored; container grew 245 → 365pt, which is +20pt × 6 week rows — the cross-check that the cell fix landed |
+| `Picker`, `Playlist` rows | — | — | **still unmeasured** — see below |
+| `Workspace` | — | — | not rendered on device |
 
-**Dark mode was verified on device** and the platform-semantic bridge adapts correctly —
-surfaces, labels and status colours all invert. That was previously an assertion.
+### ⚠️ The instrument reported three false passes before it was fixed
+
+Its first version put the band around whatever view it was attached to. For a multi-row
+component that is the CONTAINER, so it cheerfully reported "calendar 245pt ✅", "picker 220pt
+✅", "playlist 176pt ✅" — none of which is any element's hit area, and all of which look like
+verdicts. A 44pt band centred on a 220pt list even lands across a random row, so it *looks*
+like it is measuring one.
+
+It now takes an explicit `TapTargetKind` and **refuses a verdict on a container**, reporting
+"container — no verdict" instead. That is why `Picker` and `Playlist` rows are listed above as
+unmeasured rather than passing: the band cannot reach inside a component, and saying so is the
+instrument's job.
+
+Source-derived, and labelled as such because it is NOT measured: `PlaylistTheme.thumbnailSize`
+is `Tokens.Layout.rowHeight` (42), two points under the minimum. `SearchablePicker` sets no row
+height at all and sizes from content.
+
+### How the floor works
+
+``Tokens/Layout/minimumHitTarget`` — **0 on macOS, 44 on iOS**. A component applies it as a
+FLOOR (`max(designSize, minimumHitTarget)` or `.frame(minHeight:)`), never as the size, so the
+design value still governs appearance wherever it is already big enough.
+
+⚠️ It returns **zero** on macOS, not `controlHeight`. The first cut returned `controlHeight`
+(24) "so nothing changes on macOS" — and that was wrong: chips render at 21pt, so a 24pt floor
+would have grown every macOS chip row by 3pt while the comment claimed bit-identical output.
+Caught by arithmetic, not by a test, because no test measures a chip's height.
 
 ### Tier 3 — macOS-only, and should stay so
 

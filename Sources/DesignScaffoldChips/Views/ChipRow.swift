@@ -95,7 +95,15 @@ public struct ChipRow<Item: Identifiable, Label: StringProtocol>: View {
                 .padding(.vertical, theme.verticalPadding)
                 .padding(.horizontal, theme.horizontalPadding)
                 .background(isSelected ? theme.selectedFill : Color.clear, in: Capsule())
-                .contentShape(Capsule())
+                // ⚠️ The hit area is floored to the platform minimum WITHOUT resizing the
+                // drawn capsule: the frame grows around the visual, and `contentShape` takes
+                // the grown frame. On macOS the floor is ZERO, so this is a no-op and nothing
+                // moves; on iOS the chip stays the same size and becomes reliably tappable.
+                //
+                // Measured, not assumed: the iOS Component Lab rendered this row at 21pt —
+                // under half the 44pt minimum — before this line existed.
+                .frame(minHeight: theme.minimumHitTarget)
+                .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text(String(label(item))))

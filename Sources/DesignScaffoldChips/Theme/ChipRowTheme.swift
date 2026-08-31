@@ -21,6 +21,10 @@ public struct ChipRowTheme: Sendable {
     public var horizontalPadding: CGFloat
     /// Gap between chips, and between wrapped rows.
     public var spacing: CGFloat
+    /// The floor for a chip's HIT area — not its drawn size. See
+    /// ``Tokens/Layout/minimumHitTarget``: zero on macOS, so nothing moves; 44 on iOS,
+    /// where the tap area grows around the capsule without resizing it.
+    public var minimumHitTarget: CGFloat
 
     public init(
         selectedText: Color = Tokens.Color.accent,
@@ -29,7 +33,8 @@ public struct ChipRowTheme: Sendable {
         font: Font = Tokens.Font.caption,
         verticalPadding: CGFloat = Tokens.Space.xs,
         horizontalPadding: CGFloat = Tokens.Space.s,
-        spacing: CGFloat = Tokens.Space.xs
+        spacing: CGFloat = Tokens.Space.xs,
+        minimumHitTarget: CGFloat = Tokens.Layout.minimumHitTarget
     ) {
         self.selectedText = selectedText
         self.selectedFill = selectedFill
@@ -38,6 +43,7 @@ public struct ChipRowTheme: Sendable {
         self.verticalPadding = verticalPadding
         self.horizontalPadding = horizontalPadding
         self.spacing = spacing
+        self.minimumHitTarget = minimumHitTarget
     }
 }
 
