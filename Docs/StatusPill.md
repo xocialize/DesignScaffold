@@ -9,6 +9,7 @@ StatusPill("Ready · q4", status: .ready)
 StatusPill("Preparing…", status: .working())
 StatusPill("Streaming", status: .working(elapsed: seconds))   // → "Streaming — 4.0 s"
 StatusPill("Failed", status: .failed)
+StatusPill("Offline — playing cache", status: .degraded)
 ```
 
 ## Promoted from eight copies
@@ -68,3 +69,34 @@ indistinguishable from one that finished.
 in proportional digits jitter as they tick, and the movement reads as instability in the thing
 being measured rather than in the label. A negative elapsed is clamped to zero, because a host
 subtracting timestamps across a pause should not render `-0.4 s`.
+
+## `degraded` — working, but not on the good path
+
+Added in 0.20.0, promoted from two independent needs that both had to say it without help:
+
+- **MarqueeSurface**'s connection state has an `.offline` meaning *amber, still playing* —
+  last-known-good cached content, explicitly neither idle nor failed. `ready` lies green,
+  `failed` lies dead, `idle` loses the amber, so it kept an app-composed pill and filed
+  AB-A-0042 rather than inventing one.
+- **ModelSheetStudio** independently grew `Availability.degraded(whyNot:fallback:)`, which
+  reports `isUsable: true` and renders amber. Same semantic, unrelated domain.
+
+⚠️ **It does not pulse.** Degraded is a *settled* state — the system is not working toward
+anything, it has arrived somewhere worse. A pulse says "hold on"; the honest message is "this
+is how it is now".
+
+⚠️ **It does not borrow `working`'s orange.** `Tokens.Color.degraded` is yellow — the classic
+health middle of green / yellow / red. Sharing orange would leave the pulse as the only
+difference between "in flight" and "degraded", and a pulse is precisely what is lost in a
+still screenshot, a support ticket, or a glance — which are exactly the moments someone asks
+"is this working or broken?".
+
+**Any reason belongs in the label**, which the host owns. ModelSheetStudio's
+`whyNot`/`fallback` payload feeds a tooltip rather than the badge text, which is why the case
+carries nothing.
+
+### ⚠️ Source-breaking for exhaustive switches
+
+Adding an enum case breaks any `switch` over `Status` without a `default`. Consumers that only
+*construct* a `Status` and hand it to `StatusPill` — which is all of them today — are
+unaffected.

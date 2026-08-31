@@ -33,6 +33,7 @@ struct StatusPillHarness: View {
                 HStack(spacing: Tokens.Space.m) {
                     StatusPill("Not loaded", status: .idle)
                     StatusPill("Preparing…", status: .working())
+                    StatusPill("Offline — cache", status: .degraded)
                     StatusPill("Ready · q4", status: .ready)
                     StatusPill("Failed", status: .failed)
                 }

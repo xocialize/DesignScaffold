@@ -42,8 +42,26 @@ final class StatusTests: XCTestCase {
     /// eight promoted copies needed replacing.
     func testEveryStatusResolvesADistinctColor() {
         let theme = StatusPillTheme.scaffold
-        let colors = [Status.idle, .working(), .ready, .failed].map { theme.color(for: $0) }
-        XCTAssertEqual(Set(colors.map(String.init(describing:))).count, 4)
+        let all: [Status] = [.idle, .working(), .degraded, .ready, .failed]
+        let colors = all.map { theme.color(for: $0) }
+        XCTAssertEqual(Set(colors.map(String.init(describing:))).count, all.count)
+    }
+
+    /// ⚠️ `degraded` must not borrow `working`'s orange. The pulse is not enough to separate
+    /// them: a still screenshot, a support ticket and a glance all lose it, and those are
+    /// exactly the situations where "is this working or broken?" gets asked.
+    func testDegradedDoesNotShareWorkingsColour() {
+        let theme = StatusPillTheme.scaffold
+        XCTAssertNotEqual(String(describing: theme.color(for: .degraded)),
+                          String(describing: theme.color(for: .working())))
+    }
+
+    /// Degraded is a SETTLED state — the system has arrived somewhere worse, it is not
+    /// working toward anything. A pulse would say "hold on".
+    func testDegradedDoesNotPulse() {
+        XCTAssertFalse(Status.degraded.pulses)
+        XCTAssertNil(Status.degraded.elapsed)
+        XCTAssertTrue(Status.working().pulses)
     }
 
     /// The fleet's one rhythm. If these drift apart again, a pulsing dot and a pulsing stepper

@@ -105,6 +105,14 @@ public enum Tokens {
         // Status — used by the engine-state pill and metric validity marks.
         public static let ready = SwiftUI.Color.green
         public static let working = SwiftUI.Color.orange
+        /// Working, but not on the good path — serving cached content, or running on a
+        /// fallback. The classic health middle: green / **yellow** / red.
+        ///
+        /// ⚠️ Deliberately NOT ``working``. Sharing orange would make a degraded state
+        /// indistinguishable from an in-flight one in any still screenshot, leaving the pulse
+        /// as the only difference — and a pulse is exactly what a reader cannot see in a
+        /// screenshot, a support ticket, or a glance.
+        public static let degraded = SwiftUI.Color.yellow
         /// Figma `Accents/Red` #ff4245.
         public static let failure = SwiftUI.Color(red: 0xff / 255, green: 0x42 / 255, blue: 0x45 / 255)
         /// Audio level in a healthy range. (The dBFS thresholds themselves are audio-domain

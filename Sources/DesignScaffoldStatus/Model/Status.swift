@@ -17,6 +17,26 @@ public enum Status: Equatable, Sendable {
     case working(elapsed: TimeInterval? = nil)
     /// Done, loaded, connected.
     case ready
+    /// Working, but not on the good path — and the user should know.
+    ///
+    /// ## Promoted from two independent needs, both of which had to say it without help
+    ///
+    /// **MarqueeSurface** has a connection state whose `.offline` means *amber, still
+    /// playing*: last-known-good cached content, explicitly neither idle nor failed. It kept
+    /// an app-composed pill rather than lie with `ready` (green), `failed` (dead) or `idle`
+    /// (loses the amber) — and filed AB-A-0042 rather than inventing one.
+    ///
+    /// **ModelSheetStudio** independently grew `Availability.degraded(whyNot:fallback:)`,
+    /// which reports `isUsable: true` and renders amber. Same semantic, different domain.
+    ///
+    /// ⚠️ It does NOT pulse. Degraded is a settled state — the system is not working toward
+    /// anything, it has arrived somewhere worse. A pulse would say "hold on", and the honest
+    /// message is "this is how it is now".
+    ///
+    /// Any *reason* belongs in the label, which the host owns. ModelSheetStudio's
+    /// `whyNot`/`fallback` payload feeds a tooltip, not the badge text, which is why this
+    /// case carries nothing.
+    case degraded
     /// It went wrong.
     case failed
 

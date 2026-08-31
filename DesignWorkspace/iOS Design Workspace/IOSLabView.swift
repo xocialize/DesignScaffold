@@ -175,6 +175,7 @@ struct IOSLabView: View {
             VStack(alignment: .leading, spacing: Tokens.Space.s) {
                 StatusPill("Idle", status: .idle)
                 StatusPill("Working", status: .working(elapsed: elapsed))
+                StatusPill("Offline — playing cache", status: .degraded)
                 StatusPill("Ready", status: .ready)
                 StatusPill("Failed", status: .failed)
             }

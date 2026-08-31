@@ -23,6 +23,7 @@ public struct StatusPillTheme: Sendable {
     public var idle: Color
     public var working: Color
     public var ready: Color
+    public var degraded: Color
     public var failed: Color
     /// One breath. Shared with ``StageStepper`` via `Tokens.Motion`.
     public var pulseDuration: Double
@@ -41,6 +42,7 @@ public struct StatusPillTheme: Sendable {
         idle: Color = Tokens.Color.tertiaryLabel,
         working: Color = Tokens.Color.working,
         ready: Color = Tokens.Color.ready,
+        degraded: Color = Tokens.Color.degraded,
         failed: Color = Tokens.Color.failure,
         pulseDuration: Double = Tokens.Motion.pulseDuration,
         pulseMinOpacity: Double = Tokens.Motion.pulseMinOpacity,
@@ -56,6 +58,7 @@ public struct StatusPillTheme: Sendable {
         self.idle = idle
         self.working = working
         self.ready = ready
+        self.degraded = degraded
         self.failed = failed
         self.pulseDuration = pulseDuration
         self.pulseMinOpacity = pulseMinOpacity
@@ -67,7 +70,8 @@ public struct StatusPillTheme: Sendable {
         switch status {
         case .idle:    return idle
         case .working: return working
-        case .ready:   return ready
+        case .ready:    return ready
+        case .degraded: return degraded
         case .failed:  return failed
         }
     }
