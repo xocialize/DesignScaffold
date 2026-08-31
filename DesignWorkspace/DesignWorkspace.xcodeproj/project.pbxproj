@@ -7,19 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		DA5C50000000000000000002 /* DesignScaffoldMetrics in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C50000000000000000001 /* DesignScaffoldMetrics */; };
-		DA5C90000000000000000002 /* DesignScaffoldControls in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C90000000000000000001 /* DesignScaffoldControls */; };
-		DA5CA0000000000000000002 /* DesignScaffoldMedia in Frameworks */ = {isa = PBXBuildFile; productRef = DA5CA0000000000000000001 /* DesignScaffoldMedia */; };
-		DA5C40000000000000000002 /* DesignScaffoldWaveform in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C40000000000000000001 /* DesignScaffoldWaveform */; };
-		DA5C30000000000000000002 /* DesignScaffoldStatus in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C30000000000000000001 /* DesignScaffoldStatus */; };
-		DA5C20000000000000000002 /* DesignScaffoldProbe in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C20000000000000000001 /* DesignScaffoldProbe */; };
-		DA5C10000000000000000002 /* DesignScaffoldWorkspace in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C10000000000000000001 /* DesignScaffoldWorkspace */; };
-		DA5C00000000000000000002 /* DesignScaffoldCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C00000000000000000001 /* DesignScaffoldCalendar */; };
-		DA5C00000000000000000004 /* DesignScaffoldChips in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C00000000000000000003 /* DesignScaffoldChips */; };
-		DA5C00000000000000000006 /* DesignScaffoldLoading in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C00000000000000000005 /* DesignScaffoldLoading */; };
-		DA5C00000000000000000008 /* DesignScaffoldPlaylist in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C00000000000000000007 /* DesignScaffoldPlaylist */; };
-		DA5C0000000000000000000A /* DesignScaffoldStageStepper in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C00000000000000000009 /* DesignScaffoldStageStepper */; };
-		DA5C0000000000000000000C /* DesignScaffoldTimeline in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C0000000000000000000B /* DesignScaffoldTimeline */; };
+		23A5000000000000000002 /* DesignScaffold in Frameworks */ = {isa = PBXBuildFile; productRef = 23A5000000000000000001 /* DesignScaffold */; };
+		23A5010000000000000002 /* DesignScaffoldChips in Frameworks */ = {isa = PBXBuildFile; productRef = 23A5010000000000000001 /* DesignScaffoldChips */; };
+		23A5020000000000000002 /* DesignScaffoldControls in Frameworks */ = {isa = PBXBuildFile; productRef = 23A5020000000000000001 /* DesignScaffoldControls */; };
+		23A5030000000000000002 /* DesignScaffoldMetrics in Frameworks */ = {isa = PBXBuildFile; productRef = 23A5030000000000000001 /* DesignScaffoldMetrics */; };
+		23A5040000000000000002 /* DesignScaffoldStageStepper in Frameworks */ = {isa = PBXBuildFile; productRef = 23A5040000000000000001 /* DesignScaffoldStageStepper */; };
+		23A5050000000000000002 /* DesignScaffoldStatus in Frameworks */ = {isa = PBXBuildFile; productRef = 23A5050000000000000001 /* DesignScaffoldStatus */; };
+		23A5060000000000000002 /* DesignScaffoldWaveform in Frameworks */ = {isa = PBXBuildFile; productRef = 23A5060000000000000001 /* DesignScaffoldWaveform */; };
 		239A3C72301DB4B50052AF6F /* DesignScaffold in Frameworks */ = {isa = PBXBuildFile; productRef = 239A3C71301DB4B50052AF6F /* DesignScaffold */; };
 		23E796B53020E1BF00120F27 /* LoggingKit in Frameworks */ = {isa = PBXBuildFile; productRef = 23E796B43020E1BF00120F27 /* LoggingKit */; };
 		23E796B83020E20B00120F27 /* MetalToolBox in Frameworks */ = {isa = PBXBuildFile; productRef = 23E796B73020E20B00120F27 /* MetalToolBox */; };
@@ -35,10 +29,24 @@
 		23E796E73020E29000120F27 /* MLXServeConformanceNN in Frameworks */ = {isa = PBXBuildFile; productRef = 23E796E63020E29000120F27 /* MLXServeConformanceNN */; };
 		23E796E93020E29000120F27 /* MLXServeCore in Frameworks */ = {isa = PBXBuildFile; productRef = 23E796E83020E29000120F27 /* MLXServeCore */; };
 		23E796EB3020E29000120F27 /* MLXToolKit in Frameworks */ = {isa = PBXBuildFile; productRef = 23E796EA3020E29000120F27 /* MLXToolKit */; };
+		DA5C00000000000000000002 /* DesignScaffoldCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C00000000000000000001 /* DesignScaffoldCalendar */; };
+		DA5C00000000000000000004 /* DesignScaffoldChips in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C00000000000000000003 /* DesignScaffoldChips */; };
+		DA5C00000000000000000006 /* DesignScaffoldLoading in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C00000000000000000005 /* DesignScaffoldLoading */; };
+		DA5C00000000000000000008 /* DesignScaffoldPlaylist in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C00000000000000000007 /* DesignScaffoldPlaylist */; };
+		DA5C0000000000000000000A /* DesignScaffoldStageStepper in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C00000000000000000009 /* DesignScaffoldStageStepper */; };
+		DA5C0000000000000000000C /* DesignScaffoldTimeline in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C0000000000000000000B /* DesignScaffoldTimeline */; };
+		DA5C10000000000000000002 /* DesignScaffoldWorkspace in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C10000000000000000001 /* DesignScaffoldWorkspace */; };
+		DA5C20000000000000000002 /* DesignScaffoldProbe in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C20000000000000000001 /* DesignScaffoldProbe */; };
+		DA5C30000000000000000002 /* DesignScaffoldStatus in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C30000000000000000001 /* DesignScaffoldStatus */; };
+		DA5C40000000000000000002 /* DesignScaffoldWaveform in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C40000000000000000001 /* DesignScaffoldWaveform */; };
+		DA5C50000000000000000002 /* DesignScaffoldMetrics in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C50000000000000000001 /* DesignScaffoldMetrics */; };
+		DA5C90000000000000000002 /* DesignScaffoldControls in Frameworks */ = {isa = PBXBuildFile; productRef = DA5C90000000000000000001 /* DesignScaffoldControls */; };
+		DA5CA0000000000000000002 /* DesignScaffoldMedia in Frameworks */ = {isa = PBXBuildFile; productRef = DA5CA0000000000000000001 /* DesignScaffoldMedia */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		239A3C5F301DB4920052AF6F /* DesignWorkspace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DesignWorkspace.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		23A57FCC30460BC8002F413D /* iOS Design Workspace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iOS Design Workspace.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -49,6 +57,13 @@
 			);
 			target = 239A3C5E301DB4920052AF6F /* DesignWorkspace */;
 		};
+		23A57FDF30460BC9002F413D /* Exceptions for "iOS Design Workspace" folder in "iOS Design Workspace" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 23A57FCB30460BC8002F413D /* iOS Design Workspace */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -58,6 +73,14 @@
 				2396C93E302629A900943CCC /* Exceptions for "DesignWorkspace" folder in "DesignWorkspace" target */,
 			);
 			path = DesignWorkspace;
+			sourceTree = "<group>";
+		};
+		23A57FCD30460BC8002F413D /* iOS Design Workspace */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				23A57FDF30460BC9002F413D /* Exceptions for "iOS Design Workspace" folder in "iOS Design Workspace" target */,
+			);
+			path = "iOS Design Workspace";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -96,6 +119,18 @@
 				23E796B53020E1BF00120F27 /* LoggingKit in Frameworks */,
 			);
 		};
+		23A57FC930460BC8002F413D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+				23A5000000000000000002 /* DesignScaffold in Frameworks */,
+				23A5010000000000000002 /* DesignScaffoldChips in Frameworks */,
+				23A5020000000000000002 /* DesignScaffoldControls in Frameworks */,
+				23A5030000000000000002 /* DesignScaffoldMetrics in Frameworks */,
+				23A5040000000000000002 /* DesignScaffoldStageStepper in Frameworks */,
+				23A5050000000000000002 /* DesignScaffoldStatus in Frameworks */,
+				23A5060000000000000002 /* DesignScaffoldWaveform in Frameworks */,
+			);
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -103,6 +138,7 @@
 			isa = PBXGroup;
 			children = (
 				239A3C61301DB4920052AF6F /* DesignWorkspace */,
+				23A57FCD30460BC8002F413D /* iOS Design Workspace */,
 				239A3C60301DB4920052AF6F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -111,6 +147,7 @@
 			isa = PBXGroup;
 			children = (
 				239A3C5F301DB4920052AF6F /* DesignWorkspace.app */,
+				23A57FCC30460BC8002F413D /* iOS Design Workspace.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -166,6 +203,33 @@
 			productReference = 239A3C5F301DB4920052AF6F /* DesignWorkspace.app */;
 			productType = "com.apple.product-type.application";
 		};
+		23A57FCB30460BC8002F413D /* iOS Design Workspace */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 23A57FE030460BC9002F413D /* Build configuration list for PBXNativeTarget "iOS Design Workspace" */;
+			buildPhases = (
+				23A57FC830460BC8002F413D /* Sources */,
+				23A57FC930460BC8002F413D /* Frameworks */,
+				23A57FCA30460BC8002F413D /* Resources */,
+			);
+			buildRules = (
+			);
+			fileSystemSynchronizedGroups = (
+				23A57FCD30460BC8002F413D /* iOS Design Workspace */,
+			);
+			name = "iOS Design Workspace";
+			packageProductDependencies = (
+				23A5000000000000000001 /* DesignScaffold */,
+				23A5010000000000000001 /* DesignScaffoldChips */,
+				23A5020000000000000001 /* DesignScaffoldControls */,
+				23A5030000000000000001 /* DesignScaffoldMetrics */,
+				23A5040000000000000001 /* DesignScaffoldStageStepper */,
+				23A5050000000000000001 /* DesignScaffoldStatus */,
+				23A5060000000000000001 /* DesignScaffoldWaveform */,
+			);
+			productName = "iOS Design Workspace";
+			productReference = 23A57FCC30460BC8002F413D /* iOS Design Workspace.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -177,6 +241,9 @@
 				LastUpgradeCheck = 2700;
 				TargetAttributes = {
 					239A3C5E301DB4920052AF6F = {
+						CreatedOnToolsVersion = 27.0;
+					};
+					23A57FCB30460BC8002F413D = {
 						CreatedOnToolsVersion = 27.0;
 					};
 				};
@@ -202,6 +269,7 @@
 			projectRoot = "";
 			targets = (
 				239A3C5E301DB4920052AF6F /* DesignWorkspace */,
+				23A57FCB30460BC8002F413D /* iOS Design Workspace */,
 			);
 		};
 /* End PBXProject section */
@@ -212,10 +280,20 @@
 			files = (
 			);
 		};
+		23A57FCA30460BC8002F413D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		239A3C5B301DB4920052AF6F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+		23A57FC830460BC8002F413D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
 			);
@@ -413,6 +491,73 @@
 			};
 			name = Release;
 		};
+		23A57FDD30460BC9002F413D /* Debug configuration for PBXNativeTarget "iOS Design Workspace" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KAYUBDM9GG;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS Design Workspace/Info.plist";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.3;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.xocialize.iOS-Design-Workspace";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		23A57FDE30460BC9002F413D /* Release configuration for PBXNativeTarget "iOS Design Workspace" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KAYUBDM9GG;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS Design Workspace/Info.plist";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.3;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.xocialize.iOS-Design-Workspace";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -432,12 +577,20 @@
 			);
 			defaultConfigurationName = Release;
 		};
+		23A57FE030460BC9002F413D /* Build configuration list for PBXNativeTarget "iOS Design Workspace" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				23A57FDD30460BC9002F413D /* Debug configuration for PBXNativeTarget "iOS Design Workspace" */,
+				23A57FDE30460BC9002F413D /* Release configuration for PBXNativeTarget "iOS Design Workspace" */,
+			);
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
 		239A3C70301DB4B50052AF6F /* XCLocalSwiftPackageReference ".." */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = "..";
+			relativePath = ..;
 		};
 /* End XCLocalSwiftPackageReference section */
 
@@ -469,57 +622,40 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		DA5C50000000000000000001 /* DesignScaffoldMetrics */ = {
+		23A5000000000000000001 /* DesignScaffold */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = DesignScaffoldMetrics;
+			package = 239A3C70301DB4B50052AF6F /* XCLocalSwiftPackageReference ".." */;
+			productName = DesignScaffold;
 		};
-		DA5C90000000000000000001 /* DesignScaffoldControls */ = {
+		23A5010000000000000001 /* DesignScaffoldChips */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = DesignScaffoldControls;
-		};
-		DA5CA0000000000000000001 /* DesignScaffoldMedia */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = DesignScaffoldMedia;
-		};
-		DA5C40000000000000000001 /* DesignScaffoldWaveform */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = DesignScaffoldWaveform;
-		};
-		DA5C30000000000000000001 /* DesignScaffoldStatus */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = DesignScaffoldStatus;
-		};
-		DA5C20000000000000000001 /* DesignScaffoldProbe */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = DesignScaffoldProbe;
-		};
-		DA5C10000000000000000001 /* DesignScaffoldWorkspace */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = DesignScaffoldWorkspace;
-		};
-		DA5C00000000000000000001 /* DesignScaffoldCalendar */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = DesignScaffoldCalendar;
-		};
-		DA5C00000000000000000003 /* DesignScaffoldChips */ = {
-			isa = XCSwiftPackageProductDependency;
+			package = 239A3C70301DB4B50052AF6F /* XCLocalSwiftPackageReference ".." */;
 			productName = DesignScaffoldChips;
 		};
-		DA5C00000000000000000005 /* DesignScaffoldLoading */ = {
+		23A5020000000000000001 /* DesignScaffoldControls */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = DesignScaffoldLoading;
+			package = 239A3C70301DB4B50052AF6F /* XCLocalSwiftPackageReference ".." */;
+			productName = DesignScaffoldControls;
 		};
-		DA5C00000000000000000007 /* DesignScaffoldPlaylist */ = {
+		23A5030000000000000001 /* DesignScaffoldMetrics */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = DesignScaffoldPlaylist;
+			package = 239A3C70301DB4B50052AF6F /* XCLocalSwiftPackageReference ".." */;
+			productName = DesignScaffoldMetrics;
 		};
-		DA5C00000000000000000009 /* DesignScaffoldStageStepper */ = {
+		23A5040000000000000001 /* DesignScaffoldStageStepper */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = 239A3C70301DB4B50052AF6F /* XCLocalSwiftPackageReference ".." */;
 			productName = DesignScaffoldStageStepper;
 		};
-		DA5C0000000000000000000B /* DesignScaffoldTimeline */ = {
+		23A5050000000000000001 /* DesignScaffoldStatus */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = DesignScaffoldTimeline;
+			package = 239A3C70301DB4B50052AF6F /* XCLocalSwiftPackageReference ".." */;
+			productName = DesignScaffoldStatus;
+		};
+		23A5060000000000000001 /* DesignScaffoldWaveform */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 239A3C70301DB4B50052AF6F /* XCLocalSwiftPackageReference ".." */;
+			productName = DesignScaffoldWaveform;
 		};
 		239A3C71301DB4B50052AF6F /* DesignScaffold */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -594,6 +730,58 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 23E796D93020E29000120F27 /* XCRemoteSwiftPackageReference "mlx-engine-swift" */;
 			productName = MLXToolKit;
+		};
+		DA5C00000000000000000001 /* DesignScaffoldCalendar */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DesignScaffoldCalendar;
+		};
+		DA5C00000000000000000003 /* DesignScaffoldChips */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DesignScaffoldChips;
+		};
+		DA5C00000000000000000005 /* DesignScaffoldLoading */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DesignScaffoldLoading;
+		};
+		DA5C00000000000000000007 /* DesignScaffoldPlaylist */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DesignScaffoldPlaylist;
+		};
+		DA5C00000000000000000009 /* DesignScaffoldStageStepper */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DesignScaffoldStageStepper;
+		};
+		DA5C0000000000000000000B /* DesignScaffoldTimeline */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DesignScaffoldTimeline;
+		};
+		DA5C10000000000000000001 /* DesignScaffoldWorkspace */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DesignScaffoldWorkspace;
+		};
+		DA5C20000000000000000001 /* DesignScaffoldProbe */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DesignScaffoldProbe;
+		};
+		DA5C30000000000000000001 /* DesignScaffoldStatus */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DesignScaffoldStatus;
+		};
+		DA5C40000000000000000001 /* DesignScaffoldWaveform */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DesignScaffoldWaveform;
+		};
+		DA5C50000000000000000001 /* DesignScaffoldMetrics */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DesignScaffoldMetrics;
+		};
+		DA5C90000000000000000001 /* DesignScaffoldControls */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DesignScaffoldControls;
+		};
+		DA5CA0000000000000000001 /* DesignScaffoldMedia */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DesignScaffoldMedia;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

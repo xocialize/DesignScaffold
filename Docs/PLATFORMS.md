@@ -64,8 +64,16 @@ touch. **These are the ones an iOS app can adopt today.**
 
 They build. What is unresolved is whether they are *right*:
 
-- **`Controls`, `Chips`, `Picker`, `Calendar`** all size their hit areas from
-  `Tokens.Layout.controlHeight` (24) or similar. On touch that is roughly half the minimum.
+- ⚠️ **`Chips` measures 21pt on a phone — under half the minimum.** Confirmed in the iOS
+  Component Lab, which draws the 44pt band behind a control and reports what it actually
+  renders.
+- ✅ **`Controls` measures 49pt and passes.** I originally wrote here that Controls, Chips,
+  Picker and Calendar *all* size their hit areas from `Tokens.Layout.controlHeight` (24).
+  **That was wrong for `LabeledSlider`**, which never sets a height — SwiftUI's iOS `Slider`
+  supplies its own generous hit area regardless of what the token says. Derived from reading
+  the token; corrected by measuring the render.
+- **`Picker`, `Calendar`** still unmeasured. Calendar's day cells are the likeliest failure —
+  they are sized from the same 24pt control height that Chips is.
   They need an iOS theme, not a recompile.
 - **`Playlist`** drag-reorders. On macOS a drag begins immediately; on touch it begins after a
   long press, and the affordance for "this is draggable" is different. Same code, different
@@ -74,7 +82,24 @@ They build. What is unresolved is whether they are *right*:
 
 **Marked unverified rather than supported** until they have been driven on a device. Building
 is not seeing — that distinction has cost this package a shipped bug already (`Pulse`,
-AB-L-0077).
+AB-L-0077), and within an hour of the iOS lab existing it corrected a claim in this very
+file.
+
+### What the iOS lab settled, and what it did not
+
+| product | measured | verdict |
+|---|---|---|
+| `Controls` (LabeledSlider) | **49pt** | ✅ passes — promote to Tier 1 once `Picker` and `Calendar` are checked in the same pass |
+| `Chips` (ChipRow) | **21pt** | ❌ fails — needs a platform-conditional minimum |
+| `Picker`, `Calendar`, `Playlist`, `Workspace` | — | not yet rendered on device |
+
+**The `Chips` fix is a design decision, not a patch.** Giving chips a 44pt minimum on touch
+changes their density, and the macOS appearance must not move — so it belongs in
+`ChipRowTheme` as a platform-conditional default, not a hardcoded `.frame(minHeight:)`.
+Raised rather than quietly applied.
+
+**Dark mode was verified on device** and the platform-semantic bridge adapts correctly —
+surfaces, labels and status colours all invert. That was previously an assertion.
 
 ### Tier 3 — macOS-only, and should stay so
 
