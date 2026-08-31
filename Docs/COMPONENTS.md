@@ -1,7 +1,7 @@
 # DesignScaffold components — the fleet catalog
 
 **Generated from `Package.swift` by `Tools/generate-components-catalog.py` — do not hand-edit.**
-Current release: **0.16.0** · `https://github.com/xocialize/DesignScaffold` (public, MIT).
+Current release: **0.17.0** · `https://github.com/xocialize/DesignScaffold` (public, MIT).
 
 > **Before building any macOS UI surface, look here first.** DesignScaffold is the fleet's
 > single design authority (AB-D-0040 / AB-D-0042): the token vocabulary and every shared
