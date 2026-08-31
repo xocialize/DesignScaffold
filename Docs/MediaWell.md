@@ -84,3 +84,17 @@ it, and `==` would reject every real file.
 `.scaffold` (180pt, the median of the six), `.tall` (260, Trellis2's hero panel),
 `.compact` (150, BiRefNet's thumbnail). Height, symbol and prompt were the three things the
 copies disagreed on and none of the disagreements meant anything.
+
+## Verified
+
+| path | how |
+|---|---|
+| click → panel → `onPick` | Component Lab, image chosen through the panel |
+| panel leak → `onReject` | Component Lab, ⌘⇧G past an `[.audio]` filter with a PNG |
+| **Finder drag → `onPick`** | **operator, 2026-08-30 — dropped `TB_Karmel James.png`** |
+| acceptance / partition | 11 unit tests |
+
+⚠️ The drag was the one path I could not drive myself — computer-use cannot originate a
+Finder drag — and I said so rather than implying it was covered. It was then verified by
+hand, on a filename **containing a space**: the exact case I had wrongly claimed was broken
+in Qwen Image's decoder. `.dropDestination(for: URL.self)` handles it, as it should.
