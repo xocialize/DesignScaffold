@@ -31,6 +31,12 @@ echo "on disk: $(find "<app>" -name '*.swift' -not -path '*/.git/*' | wc -l)"
   `git add -A` and confirm git reports **renames, not deletions**, before committing.
 - **No `.gitignore`** → copy a sibling demo's.
 
+⚠️ **Scope the count to the root git is counting.** The MarqueeSurface seat hit a false alarm
+here — 41 tracked vs 28 on disk, which looks exactly like the Gepard case — because its `find`
+covered two of the repo's several source roots. Actual: 41 = 41, clean. A partial `find`
+manufactures a catastrophe that is not there, which is a good way to lose trust in the one
+check that has twice found a real one.
+
 ---
 
 ## 1. Tokens
