@@ -147,3 +147,89 @@ PlaylistIterator(items: $clips, name: { $0.title })
 > **Snapshotting note:** SwiftUI's `ImageRenderer` does not realize `LazyVStack`
 > children, so headless captures of this component come out blank. Snapshot through an
 > `NSHostingView` (a real AppKit hosting pass) instead.
+
+## Row state, interaction hooks and the trailing column (0.21.0)
+
+Asked for by MarqueeStudio (AB-A-0045) once its Editor rail sat in front of a real
+sequencer — one that skips rows the resolver refuses — and the rail could not show which
+rows those were. The split the operator ratified: **the package owns ordering and the house
+style; the app owns row content and interaction.** Everything below is additive and
+default-off: a 0.20.0 call site compiles unchanged and renders identically.
+
+```swift
+PlaylistIterator(items: $rows, selection: $selected, active: nowPlaying, name: \.title)
+    .rowState { $0.hasFile ? .normal : .unavailable(reason: "No file for landscape") }
+    .onActivate { take($0) }
+    .rowContextMenu { row in
+        Button("Take") { take(row) }
+        Button("Reveal in Finder") { reveal(row) }
+    }
+    .rowActions { row in
+        [ .toggle("Favourite", symbol: "star", isOn: row.favourite) { toggleFavourite(row) },
+          .action("Export", symbol: "square.and.arrow.up")          { export(row) },
+          .destructive("Delete", symbol: "trash")                   { delete(row) } ]
+    }
+```
+
+### `rowState` — what the *player* will do, not what the list allows
+
+Two visual states with app-defined meaning: `.unavailable(reason:)` dims name and metadata;
+`.disabled(reason:)` dims and strikes the name. `reason` becomes the row's tooltip and is
+spoken by VoiceOver — "unavailable, no file for landscape" — so a screen reader hears *why*
+rather than that something is grey.
+
+⚠️ **Rows stay selectable and draggable in every state.** The order is the operator's; the
+state says what the sequencer will skip. A struck-through row that could not be dragged out
+of the way would be actively in the way.
+
+### `onActivate` — and the double-click that used to un-select
+
+The row's single tap *toggles* selection. So before 0.21.0 a double-click selected the row
+and then cleared it, which is the wrong thing to happen on the way to "Take". With
+`onActivate` set, a double-click **selects the row and then activates it** — the Finder and
+Mail convention — so a host binding it to Take or Open acts on the row the user just picked.
+Unset, the row is byte-for-byte 0.20.0 — a plain `onTapGesture` with no double-tap wait
+added to the single tap.
+
+⚠️ The first cut claimed selection was "left as the first click set it". Driving the lab
+showed `ACTIVATE` firing with no `SELECT` at all: `exclusively(before:)` swallows the first
+click of a double-click entirely, so the row was activated without ever being selected.
+
+### `rowActions` — declarative, and why
+
+The trailing column could have been a bare `ViewBuilder`. There is one — `rowAccessory` —
+for the genuinely custom case, but it is not the primary API, because **every real row-icon
+set on the volume turned out to be the same three things.** ML[X] Audio Studio's take row is
+a toggle (favourite), an action (export) and a destructive one (delete). MarqueeStudio asked
+for icon buttons. The operator expects every Forge iterator to want them.
+
+⚠️ **And Audio Studio had already paid for the column's absence, three times.** Its three
+`PlaylistIterator` call sites all read `name: { ($0.favorite ? "★ " : "") + $0.title }` —
+the toggle's *state* smuggled into the name string because the list had nowhere else to show
+it. A screen reader announces that star as part of the title; the row cannot tint it; and it
+is not actionable, so the row displays state it cannot change.
+
+Given intent, the component owns what an app would otherwise re-decide: the button style,
+the on/destructive tints (`actionOnTint` is amber because that is what Audio Studio's star
+chose — promoted, not invented), the tooltip, the accessibility label and selected trait,
+and the **44pt hit floor on iOS** via `Tokens.Layout.minimumHitTarget`, applied to the hit
+area rather than the drawn glyph, exactly as `ChipRow` does.
+
+`.toggle` follows the SF Symbols `.fill` convention when no `onSymbol` is given:
+`star` → `star.fill`, `heart` → `heart.fill`.
+
+### Three structural changes the column needed, all invisible to a 0.20.0 caller
+
+The row used to be one hit target and one VoiceOver element. A button placed inside that
+would have fought the drag, toggled selection on its way to being pressed, and been
+**swallowed by `accessibilityElement(children: .combine)`** so a screen reader never found it.
+Gestures, `onDrag` and the combined element now live on the *content* region; the trailing
+column sits beside it with its own focusable buttons; the row groups them with `.contain`.
+`onDrop` stays on the whole row — dropping onto any part of it is fine.
+
+### Not added
+
+An "up next" marker. One need (Marquee), and the app can draw it in the thumbnail well it
+already owns. It gets promoted when a second app asks — the same rule that kept the leading
+icon out of `SectionHeader`.
+

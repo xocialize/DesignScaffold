@@ -22,6 +22,7 @@ struct IOSLabView: View {
     private let kinds: [String: TapTargetKind] = [
         "slider track": .control, "chip row": .control,
         "picker list": .container, "playlist list": .container, "calendar": .container,
+        "row action button": .control,
     ]
 
     @State private var temperature = 0.8
@@ -32,6 +33,7 @@ struct IOSLabView: View {
     @State private var pickedID: String?
     @State private var tracks = ["One", "Two", "Three"].map(Track.init)
     @State private var trackSel: String?
+    @State private var favourites: Set<String> = ["Two"]
 
     private let tick = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
     private let chips = ["a", "b", "c", "d", "e"].map(Chip.init)
@@ -140,7 +142,22 @@ struct IOSLabView: View {
                     RoundedRectangle(cornerRadius: Tokens.Radius.control)
                         .fill(Tokens.Color.fillElevated)
                 }
+                .rowActions { track in
+                    [ .toggle("Favourite", symbol: "star", isOn: favourites.contains(track.id)) {
+                          if favourites.contains(track.id) { favourites.remove(track.id) }
+                          else { favourites.insert(track.id) }
+                      },
+                      .destructive("Delete", symbol: "trash") { } ]
+                }
                 .tapTargetBand("playlist list", .container, show: showBands, measured: $measured)
+
+                // ⚠️ The band cannot reach inside the list, so the BUTTON is measured on its
+                // own — which is why PlaylistActionButton is public. This is the reading
+                // that answers the ask's "an accessory row measures ≥44pt on iOS".
+                Text("One action button, standalone — the hit area the list's column uses:")
+                    .font(Tokens.Font.caption).foregroundStyle(Tokens.Color.tertiaryLabel)
+                PlaylistActionButton(.toggle("Favourite", symbol: "star", isOn: true) { })
+                    .tapTargetBand("row action button", show: showBands, measured: $measured)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(Tokens.Space.m)

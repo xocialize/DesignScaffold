@@ -35,6 +35,19 @@ public struct PlaylistTheme: Sendable {
     /// Hairline between rows.
     public var separator: Color
     public var emptyText: Color
+    /// Name and metadata of a row whose ``PlaylistRowState`` is not `.normal`.
+    public var dimmedText: Color
+
+    // Trailing action column — see ``PlaylistRowAction``.
+    public var actionTint: Color
+    /// A toggle that is ON. Amber, which is what ML[X] Audio Studio's favourite star chose
+    /// before the column existed — promoted, not invented.
+    public var actionOnTint: Color
+    public var actionDestructiveTint: Color
+    /// The drawn glyph area. The HIT area is this floored to `Tokens.Layout.minimumHitTarget`.
+    public var actionSize: CGFloat
+    public var actionSpacing: CGFloat
+    public var actionFont: Font
 
     // Metrics
     /// Thumbnail square edge.
@@ -74,7 +87,14 @@ public struct PlaylistTheme: Sendable {
         indexFont: Font = Tokens.Font.caption,
         metadataLabelFont: Font = Tokens.Font.metricLabel,
         metadataValueFont: Font = Tokens.Font.mono,
-        emptyFont: Font = Tokens.Font.caption
+        emptyFont: Font = Tokens.Font.caption,
+        dimmedText: Color = Tokens.Color.tertiaryLabel,
+        actionTint: Color = Tokens.Color.secondaryLabel,
+        actionOnTint: Color = Tokens.Color.working,
+        actionDestructiveTint: Color = Tokens.Color.failure,
+        actionSize: CGFloat = Tokens.Layout.controlHeight,
+        actionSpacing: CGFloat = Tokens.Space.xs,
+        actionFont: Font = Tokens.Font.body
     ) {
         self.selectionWash = selectionWash
         self.activeRing = activeRing
@@ -96,6 +116,13 @@ public struct PlaylistTheme: Sendable {
         self.metadataLabelFont = metadataLabelFont
         self.metadataValueFont = metadataValueFont
         self.emptyFont = emptyFont
+        self.dimmedText = dimmedText
+        self.actionTint = actionTint
+        self.actionOnTint = actionOnTint
+        self.actionDestructiveTint = actionDestructiveTint
+        self.actionSize = actionSize
+        self.actionSpacing = actionSpacing
+        self.actionFont = actionFont
     }
 }
 

@@ -61,6 +61,15 @@ public struct PlaylistIterator<Item: Identifiable, Thumbnail: View>: View {
     var onReorder: (([Item]) -> Void)?
     var onPlace: ((PlaylistReorder.Placement<Item.ID>) -> Void)?
 
+    // Added in 0.21.0 (AB-A-0045). Every one defaults to "absent", so a 0.20.0 call site
+    // compiles unchanged and renders identically — the row only changes shape when a host
+    // asks it to.
+    var rowState: (Item) -> PlaylistRowState = { _ in .normal }
+    var onActivate: ((Item) -> Void)?
+    var rowContextMenu: ((Item) -> AnyView)?
+    var rowActions: ((Item) -> [PlaylistRowAction])?
+    var rowAccessory: ((Item) -> AnyView)?
+
     @State private var draggingId: Item.ID?
 
     /// Resolved theme — the override if set, otherwise the scaffold house style.
@@ -100,10 +109,6 @@ public struct PlaylistIterator<Item: Identifiable, Thumbnail: View>: View {
             LazyVStack(spacing: 0) {
                 ForEach(Array(items.enumerated()), id: \.element.id) { offset, item in
                     row(item, number: offset + 1)
-                        .onDrag {
-                            draggingId = item.id
-                            return NSItemProvider(object: String(describing: item.id) as NSString)
-                        }
                         .onDrop(of: [.text], delegate: RowDropDelegate(
                             targetId: item.id, items: $items, draggingId: $draggingId,
                             onCommit: { onReorder?($0) },
@@ -126,7 +131,56 @@ public struct PlaylistIterator<Item: Identifiable, Thumbnail: View>: View {
     private func row(_ item: Item, number: Int) -> some View {
         let selected = selection?.wrappedValue == item.id
         let active = activeId == item.id
+        let state = rowState(item)
         return HStack(spacing: theme.contentSpacing) {
+            // ⚠️ Gestures, drag and the combined accessibility element live on the CONTENT
+            // region, not the row. Before the trailing column existed the whole row was one
+            // hit target and one VoiceOver element; a button placed inside that would have
+            // fought the drag, toggled the selection on its way to being pressed, and been
+            // swallowed by `children: .combine` so a screen reader never found it.
+            content(item, number: number, state: state)
+                .contentShape(Rectangle())
+                .modifier(RowTap(selected: selected,
+                                 select: { toggleSelection(item, selected: selected) },
+                                 // ⚠️ Activation SELECTS (sets, never toggles) before it
+                                 // fires. `exclusively(before:)` swallows the first click of
+                                 // a double-click entirely, so without this a double-click
+                                 // activated a row that was never selected — measured in the
+                                 // lab as ACTIVATE with no SELECT line. Finder and Mail
+                                 // select-then-open, and a Take on an unselected row reads
+                                 // as the app acting on something the user did not pick.
+                                 activate: onActivate.map { handler in {
+                                     selection?.wrappedValue = item.id
+                                     handler(item)
+                                 } }))
+                .onDrag {
+                    draggingId = item.id
+                    return NSItemProvider(object: String(describing: item.id) as NSString)
+                }
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(accessibilityText(item, number: number, active: active,
+                                                      state: state))
+                .accessibilityAddTraits(selected ? .isSelected : [])
+            trailingColumn(item)
+        }
+        .padding(.horizontal, theme.rowHorizontalPadding)
+        .padding(.vertical, theme.rowVerticalPadding)
+        .background(selected ? theme.selectionWash : SwiftUI.Color.clear)
+        // The ACTIVE (current) row gets the accent ring — distinct from selection.
+        .overlay(
+            RoundedRectangle(cornerRadius: theme.cornerRadius)
+                .strokeBorder(active ? theme.activeRing : SwiftUI.Color.clear,
+                              lineWidth: theme.activeRingWidth)
+                .padding(Tokens.Space.xs / 2)
+        )
+        .opacity(draggingId == item.id ? 0.4 : 1)
+        .modifier(OptionalHelp(text: state.reason))
+        .modifier(OptionalContextMenu(menu: rowContextMenu.map { menu in { menu(item) } }))
+        .accessibilityElement(children: .contain)
+    }
+
+    private func content(_ item: Item, number: Int, state: PlaylistRowState) -> some View {
+        HStack(spacing: theme.contentSpacing) {
             if showsDragHandles {
                 Image(systemName: "line.3.horizontal")
                     .foregroundStyle(theme.secondaryText)
@@ -142,31 +196,31 @@ public struct PlaylistIterator<Item: Identifiable, Thumbnail: View>: View {
             VStack(alignment: .leading, spacing: Tokens.Space.xs / 2) {
                 Text(name(item))
                     .font(theme.nameFont)
-                    .foregroundStyle(theme.nameText)
+                    .foregroundStyle(state.isDimmed ? theme.dimmedText : theme.nameText)
+                    .strikethrough(state.isStruck)
                     .lineLimit(1)
-                metadataLine(item)
+                metadataLine(item, dimmed: state.isDimmed)
             }
             Spacer(minLength: 0)
         }
-        .padding(.horizontal, theme.rowHorizontalPadding)
-        .padding(.vertical, theme.rowVerticalPadding)
-        .background(selected ? theme.selectionWash : SwiftUI.Color.clear)
-        // The ACTIVE (current) row gets the accent ring — distinct from selection.
-        .overlay(
-            RoundedRectangle(cornerRadius: theme.cornerRadius)
-                .strokeBorder(active ? theme.activeRing : SwiftUI.Color.clear,
-                              lineWidth: theme.activeRingWidth)
-                .padding(Tokens.Space.xs / 2)
-        )
-        .opacity(draggingId == item.id ? 0.4 : 1)
-        .contentShape(Rectangle())
-        .onTapGesture {
-            guard let selection else { return }
-            selection.wrappedValue = selected ? nil : item.id
+    }
+
+    /// The trailing column: declared actions first, then the escape-hatch accessory.
+    /// Renders nothing — and takes no space — when a host has asked for neither.
+    @ViewBuilder
+    private func trailingColumn(_ item: Item) -> some View {
+        let actions = rowActions?(item) ?? []
+        if !actions.isEmpty || rowAccessory != nil {
+            HStack(spacing: theme.actionSpacing) {
+                ForEach(actions) { PlaylistActionButton($0).theme(theme) }
+                if let rowAccessory { rowAccessory(item) }
+            }
         }
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(accessibilityText(item, number: number, active: active))
-        .accessibilityAddTraits(selected ? .isSelected : [])
+    }
+
+    private func toggleSelection(_ item: Item, selected: Bool) {
+        guard let selection else { return }
+        selection.wrappedValue = selected ? nil : item.id
     }
 
     private func thumbnailWell(_ item: Item) -> some View {
@@ -181,7 +235,7 @@ public struct PlaylistIterator<Item: Identifiable, Thumbnail: View>: View {
     }
 
     @ViewBuilder
-    private func metadataLine(_ item: Item) -> some View {
+    private func metadataLine(_ item: Item, dimmed: Bool) -> some View {
         let metadata = metadata(item)
         if !metadata.isEmpty {
             HStack(spacing: Tokens.Space.s) {
@@ -189,10 +243,10 @@ public struct PlaylistIterator<Item: Identifiable, Thumbnail: View>: View {
                     HStack(spacing: Tokens.Space.xs) {
                         Text(metadatum.label)
                             .font(theme.metadataLabelFont)
-                            .foregroundStyle(theme.secondaryText)
+                            .foregroundStyle(dimmed ? theme.dimmedText : theme.secondaryText)
                         Text(metadatum.value)
                             .font(theme.metadataValueFont).monospacedDigit()
-                            .foregroundStyle(theme.metadataValueText)
+                            .foregroundStyle(dimmed ? theme.dimmedText : theme.metadataValueText)
                     }
                 }
             }
@@ -200,10 +254,13 @@ public struct PlaylistIterator<Item: Identifiable, Thumbnail: View>: View {
         }
     }
 
-    private func accessibilityText(_ item: Item, number: Int, active: Bool) -> String {
+    private func accessibilityText(_ item: Item, number: Int, active: Bool,
+                                   state: PlaylistRowState) -> String {
         var parts = ["\(number). \(name(item))"]
         parts += metadata(item).map { "\($0.label) \($0.value)" }
         if active { parts.append("current item") }
+        // Spoken, not just greyed: VoiceOver hears WHY the row will be skipped.
+        if let prefix = state.accessibilityPrefix { parts.append(prefix) }
         return parts.joined(separator: ", ")
     }
 }
@@ -235,6 +292,54 @@ extension PlaylistIterator where Thumbnail == PlaylistThumbnailPlaceholder {
 // MARK: Chainable configuration (the calendar's modifier pattern)
 
 public extension PlaylistIterator {
+
+    // MARK: Row state · interaction · trailing column (0.21.0, AB-A-0045)
+
+    /// What the player will do with each row. See ``PlaylistRowState`` — the component
+    /// renders the treatment, the host defines the meaning, and rows stay draggable.
+    func rowState(_ state: @escaping (Item) -> PlaylistRowState) -> PlaylistIterator {
+        var copy = self
+        copy.rowState = state
+        return copy
+    }
+
+    /// Double-click (or double-tap) on a row.
+    ///
+    /// ⚠️ Setting this changes what a double-click does to selection, and it has to. The
+    /// row's single tap TOGGLES selection, so without this a double-click selected the row
+    /// and then cleared it. With it, a double-click SELECTS the row (sets, never toggles) and
+    /// then activates it — the Finder/Mail convention — so a host binding this to Take or
+    /// Open acts on the row the user just picked. Unset, the row behaves exactly as it did
+    /// in 0.20.0, with no double-tap wait on the single tap.
+    func onActivate(_ handler: @escaping (Item) -> Void) -> PlaylistIterator {
+        var copy = self
+        copy.onActivate = handler
+        return copy
+    }
+
+    /// A context menu for the whole row — right-click or long-press anywhere on it.
+    func rowContextMenu<Menu: View>(@ViewBuilder _ menu: @escaping (Item) -> Menu) -> PlaylistIterator {
+        var copy = self
+        copy.rowContextMenu = { AnyView(menu($0)) }
+        return copy
+    }
+
+    /// Icon buttons in a component-owned trailing column. See ``PlaylistRowAction`` for why
+    /// this is declarative, and ``PlaylistActionButton`` for what the component draws.
+    func rowActions(_ actions: @escaping (Item) -> [PlaylistRowAction]) -> PlaylistIterator {
+        var copy = self
+        copy.rowActions = actions
+        return copy
+    }
+
+    /// The escape hatch: arbitrary content after the declared actions, in the same column and
+    /// outside the row's drag and select gestures. Compose ``PlaylistActionButton`` inside it
+    /// if what you want is a button that does not fit ``PlaylistRowAction``'s three shapes.
+    func rowAccessory<Accessory: View>(@ViewBuilder _ accessory: @escaping (Item) -> Accessory) -> PlaylistIterator {
+        var copy = self
+        copy.rowAccessory = { AnyView(accessory($0)) }
+        return copy
+    }
 
     /// Override the visual theme. Without this, ``PlaylistTheme/scaffold`` is used.
     func theme(_ theme: PlaylistTheme) -> PlaylistIterator {
@@ -321,5 +426,49 @@ private struct RowDropDelegate<Item: Identifiable>: DropDelegate {
             onPlace(placement)
         }
         return true
+    }
+}
+
+
+// MARK: - Row modifiers
+
+/// Single tap toggles selection; a double tap, when a host wants one, is claimed as
+/// `activate` and does NOT also toggle.
+///
+/// The branch is on whether `activate` was supplied — fixed at construction, never state — so
+/// it cannot change shape mid-gesture, which is the way a `@ViewBuilder` `if` normally kills a
+/// drag (AB-L-0061). The unset branch is byte-for-byte the 0.20.0 behaviour: a plain
+/// `onTapGesture` with no double-tap wait.
+private struct RowTap: ViewModifier {
+    let selected: Bool
+    let select: () -> Void
+    let activate: (() -> Void)?
+
+    func body(content: Content) -> some View {
+        if let activate {
+            content.gesture(
+                TapGesture(count: 2).onEnded { activate() }
+                    .exclusively(before: TapGesture(count: 1).onEnded { select() })
+            )
+        } else {
+            content.onTapGesture { select() }
+        }
+    }
+}
+
+/// `.help` only when there is something to say. Applying `.help("")` to every row is the
+/// empty-tooltip habit the migration contract calls out.
+private struct OptionalHelp: ViewModifier {
+    let text: String?
+    func body(content: Content) -> some View {
+        if let text { content.help(text) } else { content }
+    }
+}
+
+/// `.contextMenu` only when a host supplied one; an empty menu still installs a menu.
+private struct OptionalContextMenu: ViewModifier {
+    let menu: (() -> AnyView)?
+    func body(content: Content) -> some View {
+        if let menu { content.contextMenu { menu() } } else { content }
     }
 }
