@@ -10,6 +10,7 @@ StatusPill("Preparing…", status: .working())
 StatusPill("Streaming", status: .working(elapsed: seconds))   // → "Streaming — 4.0 s"
 StatusPill("Failed", status: .failed)
 StatusPill("Offline — playing cache", status: .degraded)
+StatusPill("Choose a models folder", status: .attention)
 ```
 
 ## Promoted from eight copies
@@ -100,3 +101,30 @@ carries nothing.
 Adding an enum case breaks any `switch` over `Status` without a `default`. Consumers that only
 *construct* a `Status` and hand it to `StatusPill` — which is all of them today — are
 unaffected.
+
+## `attention` — settled, and waiting on a person
+
+Added in 0.23.0. Not usable until someone acts; nothing went wrong. A folder to choose,
+weights to download, a Character to re-bake.
+
+Promoted from three apps that had each bent a different case to say it:
+
+- **ML[X] Audio Studio** (AB-A-0060) rendered an `invalidated` Character's pill as `.failed`
+  — red, the only element in the view disagreeing with the three amber ones beside it — and
+  asked rather than widening `degraded` on their own.
+- **Audio8 Demo** mapped `needsFolder` / `needsDownload` to `.working()`, because grey read as
+  settled and nothing amber held still. So a state waiting on the *user* pulsed "hold on" at
+  them indefinitely.
+- **ModelSheetStudio** draws `availableAfterEvict` amber with a badge glyph.
+
+**Why not `degraded`?** Both of its promotions were usable-on-a-fallback (`isUsable: true`).
+Widening it would make "can I use this?" unanswerable from the state. The doc comments on both
+cases now point at each other.
+
+⚠️ **Told apart by shape, not colour.** It shares `working`'s amber — the conventional
+"needs attention" hue — so the pill draws a badge glyph (`exclamationmark.circle.fill`,
+`StatusPillTheme.attentionSymbol`) *instead of* the dot, as two of the three sources already
+did. That keeps the bar set for `degraded`: a still screenshot can tell it from an in-flight
+state without needing the pulse.
+
+It does not pulse.

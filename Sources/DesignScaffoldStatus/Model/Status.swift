@@ -36,7 +36,32 @@ public enum Status: Equatable, Sendable {
     /// Any *reason* belongs in the label, which the host owns. ModelSheetStudio's
     /// `whyNot`/`fallback` payload feeds a tooltip, not the badge text, which is why this
     /// case carries nothing.
+    ///
+    /// **Not usable at all?** That is ``attention``, not this.
     case degraded
+    /// Settled, and waiting on a person — a folder to choose, weights to download, an
+    /// artifact to rebuild. **Not usable until they act; nothing went wrong.**
+    ///
+    /// ## The gap between `degraded` and `failed`, found by three apps independently
+    ///
+    /// - **ML[X] Audio Studio** (AB-A-0060): a `Character` whose description was edited is
+    ///   `invalidated` — "listed, amber, not renderable". Its pill said `.failed`, red, the only
+    ///   element in the view disagreeing with the three amber ones beside it. Nothing failed.
+    /// - **Audio8 Demo**: `needsFolder` / `needsDownload` were mapped to `.working()` because
+    ///   grey read as settled and there was nothing amber that did not pulse — so a state
+    ///   that is waiting on the *user* breathed "hold on" at them indefinitely.
+    /// - **ModelSheetStudio**: `availableAfterEvict` renders amber with a badge glyph.
+    ///
+    /// `degraded` does not fit: both of its promotions were `isUsable: true`, and widening it
+    /// would make "can I use this?" unanswerable from the state. This is the fifth thing.
+    ///
+    /// ⚠️ **Told apart by SHAPE, not colour.** It shares `working`'s amber — the conventional
+    /// "needs attention" hue — so the pill draws a badge glyph (`exclamationmark.circle.fill`)
+    /// instead of a dot, the way two of the three sources already did. A still screenshot can
+    /// tell it from `working`; that was the bar set for `degraded` and it holds here.
+    ///
+    /// It does not pulse: a pulse says "hold on", and the honest message is "over to you".
+    case attention
     /// It went wrong.
     case failed
 

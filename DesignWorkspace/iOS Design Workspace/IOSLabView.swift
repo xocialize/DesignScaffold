@@ -200,6 +200,7 @@ struct IOSLabView: View {
                 StatusPill("Idle", status: .idle)
                 StatusPill("Working", status: .working(elapsed: elapsed))
                 StatusPill("Offline — playing cache", status: .degraded)
+                StatusPill("Choose a models folder", status: .attention)
                 StatusPill("Ready", status: .ready)
                 StatusPill("Failed", status: .failed)
             }

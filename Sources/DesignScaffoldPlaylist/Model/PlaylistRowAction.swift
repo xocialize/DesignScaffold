@@ -71,8 +71,14 @@ public struct PlaylistRowAction: Identifiable {
     /// So the component checks the resolved name against the platform's symbol catalog and
     /// **falls back to `symbol`** when the fill is missing — the worst case is a toggle that
     /// reads by tint alone, not one that disappears. In `DEBUG` it logs the missing name
-    /// once. If you need a specific on-state glyph, pass `onSymbol` explicitly; the `.circle`
-    /// family has valid fills throughout.
+    /// once.
+    ///
+    /// **The fallback is a floor, not a recommendation.** A toggle that falls back reads
+    /// on-vs-off by tint alone; a symbol with a real filled variant reads by *shape* — a solid
+    /// amber disc beside three outlined neighbours is legible at a glance on a dense rail in a
+    /// way a tinted `repeat.1` beside a grey one is not. MarqueeStudio kept its `.circle`
+    /// family for exactly that reason after the fallback shipped (AB-A-0058). Prefer a symbol
+    /// with a true fill; let the fallback catch the future choice that silently lacks one.
     public static func toggle(_ label: String, symbol: String, onSymbol: String? = nil,
                               isOn: Bool, id: String? = nil,
                               handler: @escaping @MainActor () -> Void) -> PlaylistRowAction {

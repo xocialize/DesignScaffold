@@ -257,6 +257,12 @@ consult it — a wrong base name is the host's bug and there is nothing better t
 `resolvedSymbol` is unchanged and still pure: it is the *intent*. `drawableSymbol` is what is
 drawn.
 
+**The fallback is a floor, not a recommendation.** A toggle that falls back reads on-vs-off by
+tint alone; one with a real filled variant reads by *shape*, which is what a dense rail needs.
+MarqueeStudio kept its `.circle` family after the fallback shipped, and was right to: the
+fallback's value is that a *future* symbol choice cannot silently vanish, not that tint-only is
+an acceptable steady state.
+
 ### `.rowActions(_:placement: .inline)`
 
 ```swift

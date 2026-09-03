@@ -5,7 +5,7 @@
 | **Audio8 Demo** | Demos | `DesignScaffold`, `DesignScaffoldControls`, `DesignScaffoldMetrics`, `DesignScaffoldStatus` | 9 | 0.16.0 | behind (0.22.0) |
 | **Gepard Demo** | Demos | `DesignScaffold`, `DesignScaffoldControls` | 1 | 0.16.0 | behind (0.22.0) |
 | **Liquid LFM 2.5 Demo** | Demos | `DesignScaffold`, `DesignScaffoldControls` | 6 | 0.16.0 | behind (0.22.0) |
-| **ML[X] Audio Studio** | ml(x) | `DesignScaffold`, `DesignScaffoldPlaylist`, `DesignScaffoldStageStepper`, `DesignScaffoldStatus`, `DesignScaffoldTimeline`, `DesignScaffoldWaveform`, `DesignScaffoldWorkspace` | 25 | 0.21.0 | behind (0.22.0) |
+| **ML[X] Audio Studio** | ml(x) | `DesignScaffold`, `DesignScaffoldPlaylist`, `DesignScaffoldStageStepper`, `DesignScaffoldStatus`, `DesignScaffoldTimeline`, `DesignScaffoldWaveform`, `DesignScaffoldWorkspace` | 25 | 0.22.0 | ✅ |
 | **ML[X] LTX Studio** | ml(x) | `DesignScaffold`, `DesignScaffoldChips`, `DesignScaffoldLoading`, `DesignScaffoldMedia`, `DesignScaffoldStageStepper`, `DesignScaffoldStatus`, `DesignScaffoldTimeline`, `DesignScaffoldWorkspace` | 11 | 0.21.0 | behind (0.22.0) |
 | **ML[X] Media Optimizer** | ml(x) | `DesignScaffold` | 3 | 0.2.0 | behind (0.22.0) |
 | **MarqueeStudio** | MVSCollective | `DesignScaffold`, `DesignScaffoldCalendar`, `DesignScaffoldPicker`, `DesignScaffoldPlaylist`, `DesignScaffoldProbe`, `DesignScaffoldWorkspace` | 16 | 0.11.0 | behind (0.22.0) |
@@ -16,7 +16,18 @@
 
 **Linked but unused** (a pin with no import — dead dependency): `ltx-features-swift`, `mlx-gepard-swift`, `mlx-indextts2-swift`, `mlx-moss-tts-swift`, `recursing-feistel-a483fe`, `sensenova-u1-swift`
 
-_A version behind the latest is a resolved snapshot, not a defect: no adopter declares an exact pin, so every one moves forward on its next resolve._
+
+### ⚠️ Shadow pins — a second `Package.resolved` that disagrees with the governing one
+
+The workspace-level file governs when the workspace is opened; the project-level file
+governs when the `.xcodeproj` is opened directly. When they disagree, the second is a
+silent downgrade for anyone who does that. Resolve with the project open and commit both.
+
+| Adopter | governs | shadowed by |
+|---|---|---|
+| **MarqueeStudio** | 0.22.0 — `MVSCollective/MarqueeStudio/MarqueeStudio_WS.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.11.0** — `MVSCollective/MarqueeStudio/MarqueeStudio/MarqueeStudio.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` |
+| **MarqueeSurface** | 0.22.0 — `MVSCollective/MarqueeStudio/MarqueeStudio_WS.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.20.0** — `MVSCollective/MarqueeStudio/MarqueeSurface/MarqueeSurface.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` |
+_A version behind the latest is a resolved snapshot, not a defect: no adopter declares an exact pin, so every one moves forward on its next resolve._ _Except the shadowed project files above, which move only when someone resolves with the project itself open._
 
 ### Sanctioned — not ours, and deliberately not flagged
 

@@ -70,6 +70,26 @@ public struct StatusPill: View {
         .accessibilityLabel(Text(text))
     }
 
+    /// A dot for every status but one. `attention` shares `working`'s colour, so it is drawn as
+    /// a badge glyph — the distinction has to survive a still screenshot, and colour alone would
+    /// not. The branch is on the pill's own value and the marker carries no gesture, so a swap
+    /// between branches costs nothing (AB-L-0061 is about gestures dying on a rebuild).
+    private var markerSize: CGFloat {
+        theme.symbol(for: status) == nil ? theme.dotSize : theme.dotSize + 4
+    }
+
+    @ViewBuilder
+    private var marker: some View {
+        if let symbol = theme.symbol(for: status) {
+            Image(systemName: symbol)
+                .resizable()
+                .scaledToFit()
+                .foregroundStyle(theme.color(for: status))
+        } else {
+            Circle().fill(theme.color(for: status))
+        }
+    }
+
     private var text: String {
         guard let elapsed = status.elapsed else { return label }
         return "\(label) — \(StatusFormat.elapsed(elapsed))"
@@ -82,9 +102,10 @@ public struct StatusPill: View {
         // container relaid out. The dot left the pill and slid up and down the window for
         // as long as it was open.
         TimelineView(Pulse.schedule(active: status.pulses, reduceMotion: reduceMotion)) { context in
-            Circle()
-                .fill(theme.color(for: status))
-                .frame(width: theme.dotSize, height: theme.dotSize)
+            marker
+                // A glyph needs more than a dot's 6pt to read as a badge; +4 keeps it inside
+                // the caption's line height so the pill does not change height per status.
+                .frame(width: markerSize, height: markerSize)
                 .opacity(Pulse.opacity(at: context.date,
                                        active: status.pulses,
                                        reduceMotion: reduceMotion,

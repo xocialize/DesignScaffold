@@ -34,6 +34,7 @@ struct StatusPillHarness: View {
                     StatusPill("Not loaded", status: .idle)
                     StatusPill("Preparing…", status: .working())
                     StatusPill("Offline — cache", status: .degraded)
+                    StatusPill("Choose a folder", status: .attention)
                     StatusPill("Ready · q4", status: .ready)
                     StatusPill("Failed", status: .failed)
                 }

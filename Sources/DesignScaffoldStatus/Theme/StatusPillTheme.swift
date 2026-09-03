@@ -24,6 +24,10 @@ public struct StatusPillTheme: Sendable {
     public var working: Color
     public var ready: Color
     public var degraded: Color
+    public var attention: Color
+    /// Drawn INSTEAD of the dot for ``Status/attention`` — shape is what tells it from
+    /// `working`, which shares its colour.
+    public var attentionSymbol: String
     public var failed: Color
     /// One breath. Shared with ``StageStepper`` via `Tokens.Motion`.
     public var pulseDuration: Double
@@ -43,6 +47,8 @@ public struct StatusPillTheme: Sendable {
         working: Color = Tokens.Color.working,
         ready: Color = Tokens.Color.ready,
         degraded: Color = Tokens.Color.degraded,
+        attention: Color = Tokens.Color.working,
+        attentionSymbol: String = "exclamationmark.circle.fill",
         failed: Color = Tokens.Color.failure,
         pulseDuration: Double = Tokens.Motion.pulseDuration,
         pulseMinOpacity: Double = Tokens.Motion.pulseMinOpacity,
@@ -59,6 +65,8 @@ public struct StatusPillTheme: Sendable {
         self.working = working
         self.ready = ready
         self.degraded = degraded
+        self.attention = attention
+        self.attentionSymbol = attentionSymbol
         self.failed = failed
         self.pulseDuration = pulseDuration
         self.pulseMinOpacity = pulseMinOpacity
@@ -72,6 +80,7 @@ public struct StatusPillTheme: Sendable {
         case .working: return working
         case .ready:    return ready
         case .degraded: return degraded
+        case .attention: return attention
         case .failed:  return failed
         }
     }
@@ -80,4 +89,12 @@ public struct StatusPillTheme: Sendable {
 public extension StatusPillTheme {
     /// The house style, and the default.
     static let scaffold = StatusPillTheme()
+}
+
+public extension StatusPillTheme {
+    /// The glyph drawn in place of the dot, for the one status whose colour is not enough.
+    func symbol(for status: Status) -> String? {
+        if case .attention = status { return attentionSymbol }
+        return nil
+    }
 }

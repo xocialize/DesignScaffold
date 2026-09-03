@@ -40,11 +40,32 @@ final class StatusTests: XCTestCase {
 
     /// The dot colour comes from the status, never from the call site — the reason four of the
     /// eight promoted copies needed replacing.
-    func testEveryStatusResolvesADistinctColor() {
+    /// Every DOT-drawn status has its own colour. `attention` is excluded on purpose: it
+    /// shares `working`'s amber and is told apart by shape — see the test below.
+    func testEveryDotStatusResolvesADistinctColor() {
         let theme = StatusPillTheme.scaffold
-        let all: [Status] = [.idle, .working(), .degraded, .ready, .failed]
-        let colors = all.map { theme.color(for: $0) }
-        XCTAssertEqual(Set(colors.map(String.init(describing:))).count, all.count)
+        let dots: [Status] = [.idle, .working(), .degraded, .ready, .failed]
+        let colors = dots.map { theme.color(for: $0) }
+        XCTAssertEqual(Set(colors.map(String.init(describing:))).count, dots.count)
+    }
+
+    /// ⚠️ `attention` is the one status a still screenshot must separate from `working` by
+    /// SHAPE: it is the only one that draws a glyph instead of a dot. If a second glyph status
+    /// ever appears, this test is the place that says two badges now need telling apart.
+    func testAttentionIsTheOnlyStatusDrawnAsAGlyph() {
+        let theme = StatusPillTheme.scaffold
+        XCTAssertNotNil(theme.symbol(for: .attention))
+        for other in [Status.idle, .working(), .degraded, .ready, .failed] {
+            XCTAssertNil(theme.symbol(for: other), "\(other) must stay a dot")
+        }
+    }
+
+    /// Settled and waiting on a person: a pulse would say "hold on" to the one party who is
+    /// supposed to act. Audio8 mapped needs-folder/needs-download to `.working()` for want of
+    /// this case, and breathed at the user indefinitely.
+    func testAttentionDoesNotPulse() {
+        XCTAssertFalse(Status.attention.pulses)
+        XCTAssertNil(Status.attention.elapsed)
     }
 
     /// ⚠️ `degraded` must not borrow `working`'s orange. The pulse is not enough to separate

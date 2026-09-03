@@ -129,6 +129,13 @@ an uppercased one gets spelled out letter by letter.
 3. **Kill stale instances with `pkill -9`** and check the binary's mtime before believing a
    screenshot.
 
+   ⚠️ **Not with `-f` against a bracketed path.** `ML[X]` is a regex character class that
+   matches `MLX`, so `pkill -f "…/ML[X] Audio Studio"` matches nothing and reports success —
+   the Audio Studio seat's first stale-instance check "passed" against a matcher that could
+   not fail (AB-L-0105). Match a fixed string: `ps -Ao pid,comm= | grep -F "$BIN"`. The same
+   bracket silently empties a shell `grep -r` over that path, which is how this ask was nearly
+   filed with "rowActions not yet adopted" — `git grep` was right, the shell grep was not.
+
 ---
 
 ## 5. Two habits that are not optional
