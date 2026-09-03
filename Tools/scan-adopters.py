@@ -14,6 +14,49 @@ import json, re, subprocess, sys
 from pathlib import Path
 
 ROOTS = [Path("/Volumes/Satechi/Development"), Path("/Volumes/DEV_VOL1")]
+
+# Directories that can never contain an adopter and dominate the volume: build output holds
+# dependency CHECKOUTS (every package's mlx-swift, swift-nio, …) — ~97% of the Swift files on
+# both roots. `Path.rglob` cannot prune, so the first version walked all of them and filtered
+# afterwards. Fine at seconds, until the trees grew and a run took 3m46s.
+PRUNE = [".build", "DerivedData", "node_modules", ".git", ".swiftpm", "xcuserdata"]
+
+def walk(root: Path, *patterns: str):
+    """Yield paths under `root` whose filename matches any of `patterns`, pruning PRUNE dirs.
+
+    Delegates to `find`, and the reason is MEASURED, not stylistic. Pruning by name was only
+    half the problem: even pruned, `/Volumes/Satechi/Development` has ~77 000 directories
+    (`mlxengine-image` alone ~30 000 — oracle and dataset trees with no code in them). The
+    per-file work (`app_of`, reading the source, git) is ~3 s in total and was never the cost,
+    which is worth recording because it was the first suspect and the profile disagreed:
+    `os.walk` was 151.7 s of a 157.8 s run.
+
+    What the enumeration of that tree costs on this external volume, measured (2026-09-03):
+
+        os.walk, pruned          84 s  per pass
+        find, same prunes        58 s  per pass COLD  ·  11 s WARM
+
+    The 5× between cold and warm is the volume's metadata cache, not this script — and it is
+    why a standalone `find` timed right after another `find` looks five times faster than the
+    same command inside a cold run. Hence the one rule that IS this script's to keep: enumerate
+    each root ONCE and dispatch by name (`scan()` used to walk once per pattern, doubling it).
+    DEV_VOL1 is ~1 s either way.
+    """
+    import subprocess
+    prune = []
+    for i, name in enumerate(PRUNE):
+        if i: prune.append("-o")
+        prune += ["-name", name]
+    match = []
+    for i, pat in enumerate(patterns):
+        if i: match.append("-o")
+        match += ["-name", pat]
+    cmd = ["find", str(root), "(", *prune, ")", "-prune", "-o", "(", *match, ")", "-type", "f", "-print0"]
+    out = subprocess.run(cmd, capture_output=True).stdout
+    for raw in out.split(b"\0"):
+        if raw:
+            yield Path(raw.decode("utf-8", errors="surrogateescape"))
+
 SELF = Path("/Volumes/Satechi/Development/DesignScaffold")
 SKIP = re.compile(r"/\.build/|/\.git/|/DerivedData/|AgentBridge-Store/retired/|/checkouts/")
 
@@ -96,7 +139,11 @@ def scan():
         if not root.exists():
             continue
         # resolved pins
-        for f in root.rglob("Package.resolved"):
+        # ONE enumeration per root — see walk(). Both patterns ride the same find.
+        found = list(walk(root, "Package.resolved", "*.swift"))
+        resolved = [f for f in found if f.name == "Package.resolved"]
+        swifts = [f for f in found if f.suffix == ".swift"]
+        for f in resolved:
             if SKIP.search(str(f)):
                 continue
             try:
@@ -108,7 +155,7 @@ def scan():
                     pins[app_of(f)] = (pin["state"].get("version", "?"), rel(f),
                                        project_of(f), scope_root(f.parent))
         # source imports (ground truth) + vocabulary forks
-        for f in root.rglob("*.swift"):
+        for f in swifts:
             s = str(f)
             if SKIP.search(s) or s.startswith(str(SELF)):
                 continue
