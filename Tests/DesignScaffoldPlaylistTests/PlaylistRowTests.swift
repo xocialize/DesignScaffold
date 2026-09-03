@@ -67,6 +67,52 @@ final class PlaylistRowTests: XCTestCase {
         XCTAssertEqual(on.resolvedSymbol, "lock")
     }
 
+    // MARK: Action → symbol that is actually DRAWN (AB-A-0058)
+
+    /// ⚠️ `repeat.1.fill` does not exist. SwiftUI draws nothing for it and says nothing —
+    /// MarqueeStudio's loop toggle vanished when on. The drawn symbol must fall back to the
+    /// base one, so the worst case is a toggle that reads by tint alone.
+    func testAMissingFillFallsBackToTheBaseSymbol() {
+        let on = PlaylistRowAction.toggle("Loop", symbol: "repeat.1", isOn: true) {}
+        XCTAssertEqual(on.resolvedSymbol, "repeat.1.fill", "the INTENT is still the fill")
+        XCTAssertEqual(on.drawableSymbol(exists: { $0 != "repeat.1.fill" }), "repeat.1")
+    }
+
+    func testAnExistingFillIsDrawnAsIntended() {
+        let on = PlaylistRowAction.toggle("Favourite", symbol: "star", isOn: true) {}
+        XCTAssertEqual(on.drawableSymbol(exists: { _ in true }), "star.fill")
+    }
+
+    /// An explicit `onSymbol` gets the same protection — a typo there would vanish too.
+    func testAMissingExplicitOnSymbolAlsoFallsBack() {
+        let on = PlaylistRowAction.toggle("Lock", symbol: "lock.open", onSymbol: "lokc",
+                                          isOn: true) {}
+        XCTAssertEqual(on.drawableSymbol(exists: { $0 != "lokc" }), "lock.open")
+    }
+
+    /// Off toggles and plain actions draw the host's own symbol without consulting anything:
+    /// there is nothing better to fall back to, and a wrong base name is the host's bug.
+    func testOffAndPlainNeverConsultTheCatalog() {
+        var consulted = 0
+        let off = PlaylistRowAction.toggle("Loop", symbol: "repeat.1", isOn: false) {}
+        let plain = PlaylistRowAction.action("Export", symbol: "square.and.arrow.up") {}
+        XCTAssertEqual(off.drawableSymbol(exists: { _ in consulted += 1; return false }), "repeat.1")
+        XCTAssertEqual(plain.drawableSymbol(exists: { _ in consulted += 1; return false }),
+                       "square.and.arrow.up")
+        XCTAssertEqual(consulted, 0)
+    }
+
+    /// The real catalog, on the real platform: the two Marquee hit, one that exists, and a
+    /// control that cannot. If `repeat.1.fill` ever ships in SF Symbols this test will say so,
+    /// which is fine — the fallback simply stops being exercised.
+    func testTheCatalogKnowsWhichFillsAreReal() {
+        XCTAssertFalse(SymbolCatalog.exists("repeat.1.fill"))
+        XCTAssertFalse(SymbolCatalog.exists("arrow.right.to.line.fill"))
+        XCTAssertTrue(SymbolCatalog.exists("pause.circle.fill"))
+        XCTAssertTrue(SymbolCatalog.exists("star.fill"))
+        XCTAssertFalse(SymbolCatalog.exists("definitely.not.a.symbol"))
+    }
+
     func testDestructiveCarriesItsRole() {
         let d = PlaylistRowAction.destructive("Delete", symbol: "trash") {}
         XCTAssertEqual(d.role, .destructive)

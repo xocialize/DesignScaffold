@@ -23,7 +23,9 @@ public struct PlaylistActionButton: View {
         Button(role: action.role == .destructive ? .destructive : nil) {
             action.handler()
         } label: {
-            Image(systemName: action.resolvedSymbol)
+            // ⚠️ `drawableSymbol`, not `resolvedSymbol`: a toggle whose `.fill` variant does
+            // not exist would otherwise draw NOTHING for its on state — see AB-A-0058.
+            Image(systemName: action.drawableSymbol(exists: SymbolCatalog.exists))
                 .font(theme.actionFont)
                 .foregroundStyle(tint)
                 // ⚠️ The drawn glyph area is `actionSize`; the HIT area is floored to the

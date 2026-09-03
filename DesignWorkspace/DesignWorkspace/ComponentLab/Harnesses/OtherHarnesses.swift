@@ -70,6 +70,9 @@ struct PlaylistHarness: View {
         Row(id: 5, name: "Clip 5", runtime: "00:00:35"),
     ]
     @State private var selected: Int?
+    /// Row id → the inline toggles that are ON. Marquee's four playback-state flags.
+    @State private var flags: [Int: Set<String>] = [3: ["Loop", "Pause on entry"]]
+    @State private var inlineSelected: Int?
 
     var body: some View {
         VStack(alignment: .leading, spacing: Tokens.Space.s) {
@@ -108,6 +111,43 @@ struct PlaylistHarness: View {
                 .logSelection("playlist", Set(selected.map { [$0] } ?? []))
                 .hitTestProbe("playlist")
                 .frame(height: 380)
+
+            // ⚠️ AB-A-0058, both findings on one list. Inline placement puts Marquee's four
+            // playback-state toggles on the METADATA line so the name keeps the row. And two
+            // of those four — `repeat.1`, `arrow.right.to.line` — have NO `.fill` variant:
+            // before 0.22.0 their ON state drew nothing at all. Row 3 starts with both on, so
+            // the fallback is the thing you are looking at. What to verify, running:
+            //   · clicking a toggle must NOT select the row (SELECT log stays quiet)
+            //   · dragging FROM a toggle must not start a reorder
+            //   · the on-state glyphs on row 3 are visible, tinted amber
+            Text("INLINE placement (AB-A-0058): the four toggles sit on the metadata line. "
+                 + "Row 3 starts with Loop + Pause-on-entry ON — both have no .fill symbol, "
+                 + "so a visible amber glyph there IS the fallback working. Clicking a toggle "
+                 + "must not select; dragging from one must not reorder.")
+                .font(Tokens.Font.caption).foregroundStyle(Tokens.Color.secondaryLabel)
+                .fixedSize(horizontal: false, vertical: true)
+            PlaylistIterator(items: $rows, selection: $inlineSelected, active: nil,
+                             name: { $0.name },
+                             metadata: { [PlaylistMetadatum("Start", "00:00:00"),
+                                          PlaylistMetadatum("TRT", $0.runtime)] })
+                .rowActions(placement: .inline) { row in
+                    [("Loop", "repeat.1"), ("Pause on entry", "arrow.right.to.line"),
+                     ("Pause on completion", "pause.circle"), ("Disabled", "slash.circle")]
+                    .map { label, symbol in
+                        .toggle(label, symbol: symbol, isOn: flags[row.id, default: []].contains(label)) {
+                            if flags[row.id, default: []].contains(label) {
+                                flags[row.id, default: []].remove(label)
+                            } else {
+                                flags[row.id, default: []].insert(label)
+                            }
+                            LabLog.shared.note("INLINE \(label) \(row.name) → \(flags[row.id, default: []].contains(label))")
+                        }
+                    }
+                }
+                .onReorder { order in LabLog.shared.note("INLINE-REORDER \(order.map(\.id))") }
+                .logSelection("inline", Set(inlineSelected.map { [$0] } ?? []))
+                .hitTestProbe("playlist-inline")
+                .frame(height: 300)
         }
     }
 }

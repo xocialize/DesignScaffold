@@ -233,3 +233,79 @@ An "up next" marker. One need (Marquee), and the app can draw it in the thumbnai
 already owns. It gets promoted when a second app asks — the same rule that kept the leading
 icon out of `SectionHeader`.
 
+
+
+## Inline placement, and the `.fill` that draws nothing (0.22.0)
+
+Two findings from MarqueeStudio running `rowActions` on real rows (AB-A-0058).
+
+### ⚠️ A toggle's "on" symbol could silently render nothing
+
+`toggle(_:symbol:onSymbol:isOn:)` resolves its on state as `onSymbol ?? symbol + ".fill"`.
+The `.fill` convention reads as universal and is not: `repeat.1.fill` and
+`arrow.right.to.line.fill` do not exist, while `pause.circle.fill` and `slash.circle.fill` do.
+For a name it does not know, SwiftUI draws **nothing** — the button still works, still
+tints, still announces, and only its glyph vanishes. Marquee found it by eye: a gap on a row
+whose state was on. Nothing in the API could have surfaced it.
+
+Now: `PlaylistRowAction.drawableSymbol(exists:)` checks the intended name against
+`SymbolCatalog` and **falls back to the base `symbol`** when the fill is missing, so the worst
+case is a toggle that reads by tint alone. The catalog resolves each name once and caches it;
+in `DEBUG` a missing name is logged the first time. Off toggles and plain actions never
+consult it — a wrong base name is the host's bug and there is nothing better to draw.
+
+`resolvedSymbol` is unchanged and still pure: it is the *intent*. `drawableSymbol` is what is
+drawn.
+
+### `.rowActions(_:placement: .inline)`
+
+```swift
+.rowActions(placement: .inline) { entry in
+    [ .toggle("Loop", symbol: "repeat.1", isOn: entry.loops) { … },
+      .toggle("Pause on entry", symbol: "arrow.right.to.line", isOn: entry.pausesOnEntry) { … },
+      .toggle("Pause on completion", symbol: "pause.circle", isOn: entry.pausesOnEnd) { … },
+      .toggle("Disabled", symbol: "slash.circle", isOn: entry.disabled) { … } ]
+}
+```
+
+`.trailing` — the default and 0.21.0's only behaviour — is a full-height column beside the
+whole content block, so the icons sit to the right of the name *and* the metadata and take
+width from both. `.inline` puts them on the metadata line: the name keeps the full row width,
+and the times and the icons share line two. Mitti's cue rows do exactly this.
+
+Marquee's measurement on a 420pt rail with four 20pt icons:
+
+| placement | icons | name |
+|---|---|---|
+| trailing | 86pt | ~206pt, shared with the times |
+| **inline** | 86pt | **~292pt**, times + icons on line two |
+
+The times need ~168pt, so at 86pt the strip coexists on line two with room to spare and the
+name stops truncating. The escape-hatch `rowAccessory` is unaffected: it is a column thing.
+
+### What inline changes underneath, invisible to a `.trailing` caller
+
+**The strip is an overlay, not a child.** It is layered over the content block, applied
+*after* the block's `.onDrag`, its select gesture and its combined accessibility element, and
+aligned to line two with a custom vertical guide that the metadata line publishes. Line two
+reserves the strip's width so the times never run under the icons. When a row has no
+metadata, nothing publishes the guide and the strip is simply centred.
+
+That is structurally where the trailing column already lives — outside every row gesture —
+just positioned differently. Which matters, because the first cut was not built that way:
+
+> ⚠️ The first version nested the buttons *inside* the metadata line. A click was fine — a
+> `Button` wins over its ancestor's tap gesture — but a **press-and-move on a button started
+> a row drag**, because the button sat inside the `.onDrag` source. The Component Lab logged
+> `INLINE-REORDER [2, 3, 1, 4, 5]` from dragging a toggle. Layering the strip above the block
+> instead of inside it removed the problem by construction rather than by gesture priority,
+> and let the accessibility shape stay exactly as it is for `.trailing`: one combined row
+> element, with the buttons as their own elements beside it.
+
+Both placements branch on `placement`, which is fixed at construction — they cannot change
+shape mid-gesture.
+
+**Verified running, on both platforms.** macOS: clicking an inline toggle logs the toggle and
+nothing else — no selection, no reorder; dragging from one does nothing. iOS: a single inline
+`PlaylistActionButton` measures **44pt** under the tap-target band, and the list keeps its
+height.

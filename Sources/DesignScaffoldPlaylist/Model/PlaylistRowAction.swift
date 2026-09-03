@@ -59,6 +59,20 @@ public struct PlaylistRowAction: Identifiable {
 
     /// A toggle that renders its state. Off shows `symbol`; on shows `onSymbol`, or
     /// `symbol + ".fill"` when that is not given — `star` → `star.fill`, `heart` → `heart.fill`.
+    ///
+    /// ## ⚠️ The `.fill` convention is not universal
+    ///
+    /// Many symbols have no fill variant: `repeat.1.fill` and `arrow.right.to.line.fill` do
+    /// not exist, while `pause.circle.fill` and `slash.circle.fill` do. SwiftUI draws
+    /// **nothing** for a name it does not know — the button still works, tints and announces,
+    /// and only its glyph vanishes. MarqueeStudio found this by eye (AB-A-0058): a gap on a
+    /// row whose state was on, which nothing in the API could have surfaced.
+    ///
+    /// So the component checks the resolved name against the platform's symbol catalog and
+    /// **falls back to `symbol`** when the fill is missing — the worst case is a toggle that
+    /// reads by tint alone, not one that disappears. In `DEBUG` it logs the missing name
+    /// once. If you need a specific on-state glyph, pass `onSymbol` explicitly; the `.circle`
+    /// family has valid fills throughout.
     public static func toggle(_ label: String, symbol: String, onSymbol: String? = nil,
                               isOn: Bool, id: String? = nil,
                               handler: @escaping @MainActor () -> Void) -> PlaylistRowAction {
@@ -74,10 +88,24 @@ public struct PlaylistRowAction: Identifiable {
 
     // MARK: Resolution (pure, tested)
 
-    /// The symbol to draw right now.
+    /// The symbol this action *intends* to show right now — before checking it exists.
+    ///
+    /// Pure and platform-free; see ``drawableSymbol(exists:)`` for the one that is drawn.
     public var resolvedSymbol: String {
         guard isOn == true else { return symbol }
         return onSymbol ?? symbol + ".fill"
+    }
+
+    /// The symbol that will actually be drawn: ``resolvedSymbol`` if the catalog has it,
+    /// otherwise `symbol`, which the host named explicitly and is the best available
+    /// fallback. The predicate is injected so this stays pure and testable; the component
+    /// passes ``SymbolCatalog/exists(_:)``.
+    ///
+    /// An OFF toggle never consults the catalog — its symbol is the host's own, drawn as is.
+    public func drawableSymbol(exists: (String) -> Bool) -> String {
+        let intended = resolvedSymbol
+        guard intended != symbol else { return symbol }
+        return exists(intended) ? intended : symbol
     }
 
     /// Whether this is a toggle currently on — drives the tint and the selected trait.

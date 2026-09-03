@@ -68,6 +68,7 @@ public struct PlaylistIterator<Item: Identifiable, Thumbnail: View>: View {
     var onActivate: ((Item) -> Void)?
     var rowContextMenu: ((Item) -> AnyView)?
     var rowActions: ((Item) -> [PlaylistRowAction])?
+    var rowActionPlacement: PlaylistRowActionPlacement = .trailing
     var rowAccessory: ((Item) -> AnyView)?
 
     @State private var draggingId: Item.ID?
@@ -161,6 +162,18 @@ public struct PlaylistIterator<Item: Identifiable, Thumbnail: View>: View {
                 .accessibilityLabel(accessibilityText(item, number: number, active: active,
                                                       state: state))
                 .accessibilityAddTraits(selected ? .isSelected : [])
+                // ⚠️ The inline strip is an OVERLAY applied after `.onDrag`, `.onTapGesture`
+                // and the combined accessibility element — not a child of the content block.
+                // The first cut nested the buttons inside the metadata line; a click was fine
+                // (the button wins), but a press-and-move on a button became a ROW DRAG,
+                // because the button sat inside the drag source. Measured in the lab:
+                // `INLINE-REORDER [2, 3, 1, 4, 5]` from dragging a toggle. Layering the strip
+                // above the block puts it outside the drag source, the select gesture and
+                // the combined element by construction — exactly where the trailing column
+                // already lives, just aligned to line two.
+                .overlay(alignment: Alignment(horizontal: .trailing, vertical: .inlineStrip)) {
+                    inlineStrip(item)
+                }
             trailingColumn(item)
         }
         .padding(.horizontal, theme.rowHorizontalPadding)
@@ -200,8 +213,38 @@ public struct PlaylistIterator<Item: Identifiable, Thumbnail: View>: View {
                     .strikethrough(state.isStruck)
                     .lineLimit(1)
                 metadataLine(item, dimmed: state.isDimmed)
+                    // Inline placement: reserve the strip's width on line two so the times
+                    // never run under the icons, and publish this line's centre as the
+                    // guide the overlay aligns to. Zero and a no-op for `.trailing`.
+                    .padding(.trailing, inlineStripWidth(item))
+                    .alignmentGuide(.inlineStrip) { $0[VerticalAlignment.center] }
             }
             Spacer(minLength: 0)
+        }
+    }
+
+    // MARK: Inline strip
+
+    private func inlineActions(_ item: Item) -> [PlaylistRowAction] {
+        rowActionPlacement == .inline ? (rowActions?(item) ?? []) : []
+    }
+
+    /// What the strip will occupy, so line two can make room for it. Each button's width is
+    /// floored the same way ``PlaylistActionButton`` floors it.
+    private func inlineStripWidth(_ item: Item) -> CGFloat {
+        let n = inlineActions(item).count
+        guard n > 0 else { return 0 }
+        let button = max(theme.actionSize, Tokens.Layout.minimumHitTarget)
+        return CGFloat(n) * button + CGFloat(n - 1) * theme.actionSpacing + Tokens.Space.s
+    }
+
+    @ViewBuilder
+    private func inlineStrip(_ item: Item) -> some View {
+        let actions = inlineActions(item)
+        if !actions.isEmpty {
+            HStack(spacing: theme.actionSpacing) {
+                ForEach(actions) { PlaylistActionButton($0).theme(theme) }
+            }
         }
     }
 
@@ -209,7 +252,8 @@ public struct PlaylistIterator<Item: Identifiable, Thumbnail: View>: View {
     /// Renders nothing — and takes no space — when a host has asked for neither.
     @ViewBuilder
     private func trailingColumn(_ item: Item) -> some View {
-        let actions = rowActions?(item) ?? []
+        // Inline actions live on the metadata line; the accessory is a column thing always.
+        let actions = rowActionPlacement == .trailing ? (rowActions?(item) ?? []) : []
         if !actions.isEmpty || rowAccessory != nil {
             HStack(spacing: theme.actionSpacing) {
                 ForEach(actions) { PlaylistActionButton($0).theme(theme) }
@@ -324,11 +368,19 @@ public extension PlaylistIterator {
         return copy
     }
 
-    /// Icon buttons in a component-owned trailing column. See ``PlaylistRowAction`` for why
-    /// this is declarative, and ``PlaylistActionButton`` for what the component draws.
-    func rowActions(_ actions: @escaping (Item) -> [PlaylistRowAction]) -> PlaylistIterator {
+    /// Icon buttons the component draws. See ``PlaylistRowAction`` for why this is
+    /// declarative, ``PlaylistActionButton`` for what is drawn, and
+    /// ``PlaylistRowActionPlacement`` for where.
+    ///
+    /// `.trailing` (the default, and 0.21.0's only behaviour) is a full-height column beside
+    /// the whole content block. `.inline` puts the buttons on the metadata line, so the name
+    /// keeps the full row width — MarqueeStudio measured the difference at ~292pt for the
+    /// name against ~184pt (AB-A-0058).
+    func rowActions(_ actions: @escaping (Item) -> [PlaylistRowAction],
+                    placement: PlaylistRowActionPlacement = .trailing) -> PlaylistIterator {
         var copy = self
         copy.rowActions = actions
+        copy.rowActionPlacement = placement
         return copy
     }
 
@@ -471,4 +523,32 @@ private struct OptionalContextMenu: ViewModifier {
     func body(content: Content) -> some View {
         if let menu { content.contextMenu { menu() } } else { content }
     }
+}
+
+
+// MARK: - Placement
+
+/// Where ``PlaylistIterator/rowActions(_:placement:)`` draws its buttons.
+public enum PlaylistRowActionPlacement: Sendable {
+    /// A full-height column beside the content block. The 0.21.0 behaviour, and the default.
+    case trailing
+    /// On the metadata line, trailing. The name keeps the full row width; the times and the
+    /// icons share line two. Mitti's cue rows do this, and MarqueeStudio measured it as the
+    /// only placement that stops the name truncating on a 420pt rail (AB-A-0058).
+    ///
+    /// The escape-hatch accessory is unaffected — it is a column thing regardless.
+    case inline
+}
+
+/// The vertical guide the inline strip aligns to: the centre of the metadata line.
+///
+/// Set on line two inside `content` and read by the overlay in `row`. A custom guide set on a
+/// descendant propagates up through the stacks, which is what lets a view layered OVER the
+/// whole content block line up with one line inside it. When a row has no metadata, nothing
+/// sets the guide and it falls back to the block's centre — the strip is simply centred.
+extension VerticalAlignment {
+    private enum InlineStripID: AlignmentID {
+        static func defaultValue(in d: ViewDimensions) -> CGFloat { d[VerticalAlignment.center] }
+    }
+    static let inlineStrip = VerticalAlignment(InlineStripID.self)
 }

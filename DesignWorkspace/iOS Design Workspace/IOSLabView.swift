@@ -142,7 +142,7 @@ struct IOSLabView: View {
                     RoundedRectangle(cornerRadius: Tokens.Radius.control)
                         .fill(Tokens.Color.fillElevated)
                 }
-                .rowActions { track in
+                .rowActions(placement: .inline) { track in
                     [ .toggle("Favourite", symbol: "star", isOn: favourites.contains(track.id)) {
                           if favourites.contains(track.id) { favourites.remove(track.id) }
                           else { favourites.insert(track.id) }
@@ -150,6 +150,13 @@ struct IOSLabView: View {
                       .destructive("Delete", symbol: "trash") { } ]
                 }
                 .tapTargetBand("playlist list", .container, show: showBands, measured: $measured)
+                // ⚠️ The band cannot reach a row inside the list, but the button is public,
+                // so ONE inline-style button is measured on its own. `repeat.1` has no
+                // `.fill` — the amber glyph here is the AB-A-0058 fallback, on device.
+                Text("One inline action button, measured alone").font(Tokens.Font.caption)
+                    .foregroundStyle(Tokens.Color.tertiaryLabel)
+                PlaylistActionButton(.toggle("Loop", symbol: "repeat.1", isOn: true) {})
+                    .tapTargetBand("inline action button", show: showBands, measured: $measured)
 
                 // ⚠️ The band cannot reach inside the list, so the BUTTON is measured on its
                 // own — which is why PlaylistActionButton is public. This is the reading
