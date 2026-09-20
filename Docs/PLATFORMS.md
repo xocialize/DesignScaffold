@@ -1,7 +1,7 @@
 # Platforms
 
-`platforms: [.macOS(.v26), .iOS(.v16)]` — iOS added 2026-08-31 for MarqueeSurface (AB-A-0042),
-the fleet's first iOS consumer.
+`platforms: [.macOS(.v15), .iOS(.v16)]` — iOS added 2026-08-31 for MarqueeSurface (AB-A-0042),
+the fleet's first iOS consumer; macOS dropped from `.v26` on 2026-09-19 (AB-A-0080).
 
 Everything below was found by **compiling for `generic/platform=iOS`**, one scheme at a time,
 not by reading availability tables.
@@ -139,7 +139,49 @@ and the package as a whole still builds.
 
 ---
 
-## The floor, and what "verified" means here
+## The macOS floor was 26 for three months, and nothing needed it
+
+**macOS 15.** Dropped from `.v26` on 2026-09-19 after mlx-forge asked why the ML[X] Media
+Optimizer had to declare macOS 26.1 to reach the App Store (AB-A-0080). It did not.
+
+⚠️ **The 26 was the vintage of the Figma kit, not a requirement of the code.** The tokens were
+traced from Apple's macOS 26/27 UI kit, so `.macOS(.v26)` went into the manifest at the
+package's first commit (`68a93f3`) and was never revisited — the one later touch added iOS
+beside it. Nothing ever justified it in a doc, a decision or a commit message.
+
+**What the values actually are:** numbers (radius 12, control height 24, SF Pro 13) and the six
+system semantics in `PlatformSemantics.swift`. Every one of them long predates 26. No source
+file uses a 26-only API — no `glassEffect`, no `Glass*` type, and not a single
+`@available(macOS …)` anywhere in `Sources`; the only conditionals in the package are
+`#if os(macOS)` / `#if canImport(AppKit)` platform splits.
+
+Measured, not argued: at `.v15` the package builds clean — **all 15 library modules, 13.83 s,
+no errors and no availability warnings** — and the full suite passes, **216 tests across 13
+bundles, 0 failures**. Independently reproduced by mlx-forge on a scratch clone at `d72652f`
+before the ask was filed.
+
+⚠️ **Lower is permissive, so no adopter has to move.** A consumer that wants macOS 26 still
+declares 26; it just no longer inherits one it never asked for. Existing pins keep resolving —
+this is why the 0.24.0 release did not touch a single adopter's pin.
+
+**What this does NOT claim.** The floor says the code runs on 15; it does not say the package
+was *looked at* there. The token values were traced from the 26/27 kit, and on macOS 15 the
+system-drawn chrome around them is the 15 chrome — the scaffold's own surfaces (`cardSurface()`,
+radii, type ramp) are literals and render as specified, but nobody has put a window up on a 15
+machine. Same distinction this file opens with: compiling is not belonging.
+
+⚠️ **The two dev harnesses stay high on purpose.** `DesignWorkspace` (macOS 27) and
+`Tools/InputDriver` (macOS 26) are the local workbench and the pointer-driver, not shipped
+products and not in any consumer's graph. They run on the dev Mac, so they are free to use
+whatever it has — but it does mean **this repo's own harness cannot validate the 15 floor**.
+That check belongs to a consumer on a 15 machine.
+
+**Below 15 is unverified, and deliberately not claimed** — the same toolchain clamp documented
+for iOS below applies to macOS.
+
+---
+
+## The iOS floor, and what "verified" means here
 
 **iOS 16.** Set by shipping code, found by compiling:
 

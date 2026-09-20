@@ -17,9 +17,16 @@ import PackageDescription
 
 let package = Package(
     name: "DesignScaffold",
-    // iOS added 2026-08-31 for MarqueeSurface (AB-A-0042). The floor is deliberately LOW
-    // and was found by compiling, not by reading availability tables — see the ask thread.
-    platforms: [.macOS(.v26), .iOS(.v16)],
+    // Both floors are deliberately LOW and were found by COMPILING, not by reading
+    // availability tables. iOS added 2026-08-31 for MarqueeSurface (AB-A-0042).
+    //
+    // macOS dropped .v26 → .v15 on 2026-09-19 (AB-A-0080). The 26 was never a requirement:
+    // it was the vintage of the FIGMA KIT the token values were traced from, copied into the
+    // manifest at the package's first commit and never revisited. The values themselves are
+    // numbers (radius 12, height 24, SF Pro 13) and system semantics that long predate 26 —
+    // no source file uses a 26-only API, and there is no `glassEffect` anywhere. The floor
+    // was pinning consumers to macOS 26.1 for nothing; see Docs/PLATFORMS.md.
+    platforms: [.macOS(.v15), .iOS(.v16)],
     products: [
         // The design vocabulary itself: Tokens (colour · type · spacing · radii · layout)
         // + cardSurface(). Zero dependencies; every component product re-exports it.

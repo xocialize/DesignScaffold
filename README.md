@@ -88,6 +88,18 @@ says **12**.
    (row heights, group padding).
 4. Diff against the table above and update `Tokens.swift`.
 
+## Platforms
+
+**macOS 15+ · iOS 16+.** Both floors were found by compiling, and both are as low as the code
+allows rather than as high as the toolchain happens to be.
+
+⚠️ The macOS 26/27 in *Provenance* above is the vintage of the **Figma kit the values were
+traced from** — it is not a runtime requirement, and reading it as one is exactly what held the
+floor at `.macOS(.v26)` until 2026-09-19 (AB-A-0080). Twelve of fifteen products also compile
+for iOS, which is a weaker claim than "supported": see
+**[Docs/PLATFORMS.md](Docs/PLATFORMS.md)** for what is verified, what is merely compiling, and
+why the geometry tokens do not port to touch.
+
 ## Usage
 
 ```swift
