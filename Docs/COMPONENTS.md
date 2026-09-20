@@ -115,32 +115,21 @@ source `import`; the pin column shows version drift.
 
 | Adopter | Project | Products used | Files | Pin | |
 |---|---|---|---|---|---|
-| **Audio8 Demo** | Demos | `DesignScaffold`, `DesignScaffoldControls`, `DesignScaffoldMetrics`, `DesignScaffoldStatus` | 9 | 0.23.0 | behind (0.24.0) |
-| **Gepard Demo** | Demos | `DesignScaffold`, `DesignScaffoldControls` | 1 | 0.23.0 | behind (0.24.0) |
-| **Liquid LFM 2.5 Demo** | Demos | `DesignScaffold`, `DesignScaffoldControls` | 6 | 0.23.0 | behind (0.24.0) |
-| **ML[X] Audio Studio** | ml(x) | `DesignScaffold`, `DesignScaffoldChips`, `DesignScaffoldPlaylist`, `DesignScaffoldStageStepper`, `DesignScaffoldStatus`, `DesignScaffoldTimeline`, `DesignScaffoldWaveform`, `DesignScaffoldWorkspace` | 25 | 0.23.0 | behind (0.24.0) |
-| **ML[X] LTX Studio** | ml(x) | `DesignScaffold`, `DesignScaffoldChips`, `DesignScaffoldLoading`, `DesignScaffoldMedia`, `DesignScaffoldStageStepper`, `DesignScaffoldStatus`, `DesignScaffoldTimeline`, `DesignScaffoldWorkspace` | 11 | 0.21.0 | behind (0.24.0) |
+| **Audio8 Demo** | Demos | `DesignScaffold`, `DesignScaffoldControls`, `DesignScaffoldMetrics`, `DesignScaffoldStatus` | 9 | 0.24.0 | ✅ |
+| **Gepard Demo** | Demos | `DesignScaffold`, `DesignScaffoldControls` | 1 | 0.24.0 | ✅ |
+| **Liquid LFM 2.5 Demo** | Demos | `DesignScaffold`, `DesignScaffoldControls` | 6 | 0.24.0 | ✅ |
+| **ML[X] Audio Studio** | ml(x) | `DesignScaffold`, `DesignScaffoldChips`, `DesignScaffoldPlaylist`, `DesignScaffoldStageStepper`, `DesignScaffoldStatus`, `DesignScaffoldTimeline`, `DesignScaffoldWaveform`, `DesignScaffoldWorkspace` | 25 | 0.24.0 | ✅ |
+| **ML[X] LTX Studio** | ml(x) | `DesignScaffold`, `DesignScaffoldChips`, `DesignScaffoldLoading`, `DesignScaffoldMedia`, `DesignScaffoldStageStepper`, `DesignScaffoldStatus`, `DesignScaffoldTimeline`, `DesignScaffoldWorkspace` | 11 | 0.24.0 | ✅ |
 | **ML[X] Media Optimizer** | ml(x) | `DesignScaffold`, `DesignScaffoldControls`, `DesignScaffoldMedia`, `DesignScaffoldMetrics`, `DesignScaffoldStageStepper`, `DesignScaffoldStatus`, `DesignScaffoldWorkspace` | 14 | 0.24.0 | ✅ |
-| **MarqueeStudio** | MVSCollective | `DesignScaffold`, `DesignScaffoldCalendar`, `DesignScaffoldPicker`, `DesignScaffoldPlaylist`, `DesignScaffoldProbe`, `DesignScaffoldWorkspace` | 16 | 0.11.0 | behind (0.24.0) |
-| **MarqueeSurface** | MVSCollective | `DesignScaffold`, `DesignScaffoldStatus` | 5 | 0.20.0 | behind (0.24.0) |
-| **Moebius Demo** | Demos | `DesignScaffold`, `DesignScaffoldControls` | 5 | 0.23.0 | behind (0.24.0) |
-| **SenseNova-U1.5 Demo** | Demos | `DesignScaffold`, `DesignScaffoldChips`, `DesignScaffoldControls`, `DesignScaffoldMedia`, `DesignScaffoldProbe`, `DesignScaffoldStageStepper`, `DesignScaffoldStatus` | 10 | 0.23.0 | behind (0.24.0) |
-| **mlx-engine-swift** | MLXEngine | `DesignScaffold` | 5 | 0.4.2 | behind (0.24.0) |
+| **MarqueeStudio** | MVSCollective | `DesignScaffold`, `DesignScaffoldCalendar`, `DesignScaffoldPicker`, `DesignScaffoldPlaylist`, `DesignScaffoldProbe`, `DesignScaffoldWorkspace` | 16 | 0.24.0 | ✅ |
+| **MarqueeSurface** | MVSCollective | `DesignScaffold`, `DesignScaffoldStatus` | 5 | 0.24.0 | ✅ |
+| **Moebius Demo** | Demos | `DesignScaffold`, `DesignScaffoldControls` | 5 | 0.24.0 | ✅ |
+| **SenseNova-U1.5 Demo** | Demos | `DesignScaffold`, `DesignScaffoldChips`, `DesignScaffoldControls`, `DesignScaffoldMedia`, `DesignScaffoldProbe`, `DesignScaffoldStageStepper`, `DesignScaffoldStatus` | 10 | 0.24.0 | ✅ |
+| **mlx-engine-swift** | MLXEngine | `DesignScaffold` | 5 | 0.24.0 | ✅ |
 
 **Linked but unused** (a pin with no import — dead dependency): `ltx-2-mlx-swift`, `ltx-features-swift`, `mage-vl-swift`, `mlx-gepard-swift`, `mlx-indextts2-swift`, `mlx-moss-tts-swift`, `mlx-nemotron-stt-swift`, `mlx-qwen3-tts-swift`, `mlx-vibevoice-asr-swift`, `mlx-voxcpm2-tts-swift`, `recursing-feistel-a483fe`, `sensenova-u1-swift`
 
-
-### ⚠️ Shadow pins — a second `Package.resolved` that disagrees with the governing one
-
-The workspace-level file governs when the workspace is opened; the project-level file
-governs when the `.xcodeproj` is opened directly. When they disagree, the second is a
-silent downgrade for anyone who does that. Resolve with the project open and commit both.
-
-| Adopter | governs | shadowed by |
-|---|---|---|
-| **MarqueeStudio** | 0.22.0 — `MVSCollective/MarqueeStudio/MarqueeStudio_WS.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.11.0** — `MVSCollective/MarqueeStudio/MarqueeStudio/MarqueeStudio.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` |
-| **MarqueeSurface** | 0.22.0 — `MVSCollective/MarqueeStudio/MarqueeStudio_WS.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.20.0** — `MVSCollective/MarqueeStudio/MarqueeSurface/MarqueeSurface.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` |
-_A version behind the latest is a resolved snapshot, not a defect: no adopter declares an exact pin, so every one moves forward on its next resolve._ _Except the shadowed project files above, which move only when someone resolves with the project itself open._
+_A version behind the latest is a resolved snapshot, not a defect: no adopter declares an exact pin, so every one moves forward on its next resolve._
 
 ### Sanctioned — not ours, and deliberately not flagged
 
