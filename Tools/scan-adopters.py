@@ -57,7 +57,29 @@ def walk(root: Path, *patterns: str):
         if raw:
             yield Path(raw.decode("utf-8", errors="surrogateescape"))
 
-SELF = Path("/Volumes/Satechi/Development/DesignScaffold")
+# The tree this script LIVES in — outputs land here, so running the tool from a git worktree
+# regenerates that worktree's copy instead of silently writing into the main checkout. The old
+# value was the main checkout's absolute path, which meant a worktree run reported success and
+# left the change in somebody else's working tree.
+HERE = Path(__file__).resolve().parents[1]
+
+
+def _main_checkout() -> Path:
+    """The canonical package root, from whichever tree we were run in.
+
+    From a worktree, --git-common-dir points at the MAIN checkout's .git, so its parent is the
+    canonical root. Needed because the scan must skip EVERY DesignScaffold checkout: miss one
+    and the package reports itself as its own adopter.
+    """
+    out = subprocess.run(["git", "rev-parse", "--path-format=absolute", "--git-common-dir"],
+                         cwd=HERE, capture_output=True, text=True)
+    if out.returncode == 0 and out.stdout.strip():
+        return Path(out.stdout.strip()).parent
+    return HERE
+
+
+SELF = HERE
+SELF_TREES = {HERE, _main_checkout()}
 SKIP = re.compile(r"/\.build/|/\.git/|/DerivedData/|AgentBridge-Store/retired/|/checkouts/")
 
 # Vocabularies that are NOT ours and must stop being reported as forks. An anomaly needs a
@@ -157,7 +179,7 @@ def scan():
         # source imports (ground truth) + vocabulary forks
         for f in swifts:
             s = str(f)
-            if SKIP.search(s) or s.startswith(str(SELF)):
+            if SKIP.search(s) or any(s.startswith(str(t)) for t in SELF_TREES):
                 continue
             try:
                 text = f.read_text(errors="ignore")
