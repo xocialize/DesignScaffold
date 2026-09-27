@@ -112,6 +112,7 @@ PlaylistIterator(items: $clips, name: { $0.title })   // placeholder thumbnails
 |---|---|
 | `.showsIndex(false)` | Hide the 1-based position column |
 | `.showsDragHandles(false)` | Hide the handles (rows stay draggable — the handle is an affordance, not the hit target) |
+| `.allowsReordering(false)` | Refuse drag-to-reorder: no row starts a drag, no drop lands, no handle is drawn — a read-only list (0.25.0) |
 | `.emptyMessage("No clips yet.")` | The message centred over an empty list |
 | `.onReorder { ... }` | The order-persist callback |
 | `.theme(_:)` | Override the visual theme |
@@ -315,3 +316,19 @@ shape mid-gesture.
 nothing else — no selection, no reorder; dragging from one does nothing. iOS: a single inline
 `PlaylistActionButton` measures **44pt** under the tap-target band, and the list keeps its
 height.
+
+## Reorder off (0.25.0)
+
+`.allowsReordering(false)` makes the list read-only in the one respect a list can be: rows
+start no drag and take no drop, and no handle is drawn whatever `.showsDragHandles` says.
+Selection, activation, the context menu, the actions and the trailing column are untouched;
+`onReorder` and `onPlace` never fire while it is off. On by default — a 0.24.0 call site is
+unchanged.
+
+Why a switch rather than "ignore the drop": MarqueeStudio's Published view lists a
+*cartridge's* entries — what a sign has, not what the host may change — and bound a constant
+array (plan D-r2-19 b). The drop landed nowhere, but the row still **lifted and dimmed** on a
+press-and-move, which reads as "you may move this". A drag source that ignores its drop is a
+promise the list breaks; not being a drag source is the honest shape. Off, the row carries no
+`.onDrag` and no drop delegate at all (`OptionalDrag`, `OptionalReorderDrop`), so the gesture
+does not exist rather than failing quietly.

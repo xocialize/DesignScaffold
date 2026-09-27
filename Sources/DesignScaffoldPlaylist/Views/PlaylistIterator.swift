@@ -58,6 +58,8 @@ public struct PlaylistIterator<Item: Identifiable, Thumbnail: View>: View {
     var emptyMessage = "No items yet."
     var showsIndex = true
     var showsDragHandles = true
+    // Added in 0.25.0: off, a row starts no drag and takes no drop (a read-only list).
+    var allowsReordering = true
     var onReorder: (([Item]) -> Void)?
     var onPlace: ((PlaylistReorder.Placement<Item.ID>) -> Void)?
 
@@ -110,10 +112,11 @@ public struct PlaylistIterator<Item: Identifiable, Thumbnail: View>: View {
             LazyVStack(spacing: 0) {
                 ForEach(Array(items.enumerated()), id: \.element.id) { offset, item in
                     row(item, number: offset + 1)
-                        .onDrop(of: [.text], delegate: RowDropDelegate(
+                        // No delegate at all when reordering is off: nothing to drop onto.
+                        .modifier(OptionalReorderDrop(enabled: allowsReordering, delegate: RowDropDelegate(
                             targetId: item.id, items: $items, draggingId: $draggingId,
                             onCommit: { onReorder?($0) },
-                            onPlace: { onPlace?($0) }))
+                            onPlace: { onPlace?($0) })))
                     Divider().overlay(theme.separator)
                 }
             }
@@ -154,10 +157,13 @@ public struct PlaylistIterator<Item: Identifiable, Thumbnail: View>: View {
                                      selection?.wrappedValue = item.id
                                      handler(item)
                                  } }))
-                .onDrag {
+                // ⚠️ No `.onDrag` at all when reordering is off (0.25.0). A drag source that
+                // ignores its drop still LIFTS the row and dims it, which reads as "you may
+                // move this"; a read-only list must not offer the gesture in the first place.
+                .modifier(OptionalDrag(provider: allowsReordering ? {
                     draggingId = item.id
                     return NSItemProvider(object: String(describing: item.id) as NSString)
-                }
+                } : nil))
                 .accessibilityElement(children: .combine)
                 .accessibilityLabel(accessibilityText(item, number: number, active: active,
                                                       state: state))
@@ -194,7 +200,8 @@ public struct PlaylistIterator<Item: Identifiable, Thumbnail: View>: View {
 
     private func content(_ item: Item, number: Int, state: PlaylistRowState) -> some View {
         HStack(spacing: theme.contentSpacing) {
-            if showsDragHandles {
+            // The handle is an affordance for a gesture; a list that refuses the gesture shows none.
+            if showsDragHandles && allowsReordering {
                 Image(systemName: "line.3.horizontal")
                     .foregroundStyle(theme.secondaryText)
                     .help("Drag to reorder")
@@ -428,10 +435,24 @@ public extension PlaylistIterator {
     }
 
     /// Show or hide the drag handles. Rows stay draggable either way — the handle
-    /// is an affordance, not the hit target.
+    /// is an affordance, not the hit target. (Unless reordering is off, when no
+    /// handle is drawn whatever this says: ``allowsReordering(_:)``.)
     func showsDragHandles(_ shows: Bool = true) -> PlaylistIterator {
         var copy = self
         copy.showsDragHandles = shows
+        return copy
+    }
+
+    /// Allow or refuse drag-to-reorder (0.25.0). Off, a row starts no drag and takes
+    /// no drop, and no handle is drawn: for a list that shows what something HAS
+    /// rather than what the host may change — MarqueeStudio's Published view lists
+    /// a cartridge's entries this way. Selection, activation, the context menu, the
+    /// actions and the trailing column are untouched. ``onReorder(_:)`` and
+    /// ``onPlace(_:)`` never fire while it is off. On by default: a 0.24.0 call
+    /// site is unchanged.
+    func allowsReordering(_ allows: Bool = true) -> PlaylistIterator {
+        var copy = self
+        copy.allowsReordering = allows
         return copy
     }
 
@@ -522,6 +543,24 @@ private struct OptionalContextMenu: ViewModifier {
     let menu: (() -> AnyView)?
     func body(content: Content) -> some View {
         if let menu { content.contextMenu { menu() } } else { content }
+    }
+}
+
+/// `.onDrag` only while the list allows reordering (0.25.0); off, the row is not a
+/// drag source at all — it neither lifts nor dims.
+private struct OptionalDrag: ViewModifier {
+    let provider: (() -> NSItemProvider)?
+    func body(content: Content) -> some View {
+        if let provider { content.onDrag(provider) } else { content }
+    }
+}
+
+/// The reorder drop delegate only while the list allows reordering (0.25.0).
+private struct OptionalReorderDrop<Delegate: DropDelegate>: ViewModifier {
+    let enabled: Bool
+    let delegate: Delegate
+    func body(content: Content) -> some View {
+        if enabled { content.onDrop(of: [.text], delegate: delegate) } else { content }
     }
 }
 
