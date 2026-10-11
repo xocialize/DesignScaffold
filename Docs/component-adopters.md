@@ -2,19 +2,19 @@
 
 | Adopter | Project | Products used | Files | Pin | |
 |---|---|---|---|---|---|
-| **Audio8 Demo** | Demos | `DesignScaffold`, `DesignScaffoldControls`, `DesignScaffoldMetrics`, `DesignScaffoldStatus` | 9 | 0.24.0 | behind (0.25.0) |
+| **Audio8 Demo** | Demos | `DesignScaffold`, `DesignScaffoldControls`, `DesignScaffoldMetrics`, `DesignScaffoldStatus` | 9 | 0.25.0 | ✅ |
 | **BiRefNet Demo** | Demos | `DesignScaffold`, `DesignScaffoldMedia`, `DesignScaffoldStatus` | 2 | 0.25.0 | ✅ |
 | **clever-stonebraker-bcdea5** | MLXEngine | `DesignScaffold` | 5 | 0.25.0 | ✅ |
 | **ecstatic-zhukovsky-b0661c** | MLXEngine | `DesignScaffold` | 5 | 0.24.0 | behind (0.25.0) |
 | **focused-shaw-a36652** | MLXEngine | `DesignScaffold` | 5 | 0.24.0 | behind (0.25.0) |
 | **ForgeCanvasUI** | mlxengine-forge | `DesignScaffold`, `DesignScaffoldMetrics`, `DesignScaffoldProbe`, `DesignScaffoldStatus` | 3 | 0.24.0 | behind (0.25.0) |
-| **Gepard Demo** | Demos | `DesignScaffold`, `DesignScaffoldControls` | 1 | 0.24.0 | behind (0.25.0) |
+| **Gepard Demo** | Demos | `DesignScaffold`, `DesignScaffoldControls` | 1 | 0.25.0 | ✅ |
 | **ImageServerKit** | ml(x) | `DesignScaffold`, `DesignScaffoldStageStepper`, `DesignScaffoldStatus`, `DesignScaffoldWorkspace` | 7 | 0.25.0 | ✅ |
 | **Labs/ForgeCanvasLab** | mlxengine-forge | `DesignScaffold`, `DesignScaffoldMedia`, `DesignScaffoldProbe`, `DesignScaffoldWorkspace` | 1 | 0.25.0 | ✅ |
 | **Labs/ForgeCanvasLab** | mlxengine-forge | `DesignScaffold`, `DesignScaffoldMedia`, `DesignScaffoldProbe`, `DesignScaffoldWorkspace` | 1 | 0.25.0 | ✅ |
 | **Labs/ForgeCanvasLab** | mlxengine-forge | `DesignScaffold`, `DesignScaffoldMedia`, `DesignScaffoldProbe`, `DesignScaffoldWorkspace` | 1 | 0.25.0 | ✅ |
 | **Labs/ForgeCanvasLab** | mlxengine-forge | `DesignScaffold`, `DesignScaffoldMedia`, `DesignScaffoldProbe`, `DesignScaffoldWorkspace` | 1 | 0.24.0 | behind (0.25.0) |
-| **Liquid LFM 2.5 Demo** | Demos | `DesignScaffold`, `DesignScaffoldControls` | 6 | 0.24.0 | behind (0.25.0) |
+| **Liquid LFM 2.5 Demo** | Demos | `DesignScaffold`, `DesignScaffoldControls` | 6 | 0.25.0 | ✅ |
 | **Mage Demo** | Demos | `DesignScaffold`, `DesignScaffoldControls`, `DesignScaffoldMedia` | 1 | 0.25.0 | ✅ |
 | **media-engine-spec** | media-engine-spec | `DesignScaffold`, `DesignScaffoldControls` | 3 | 0.25.0 | ✅ |
 | **MetalLayers** | research | `DesignScaffold`, `DesignScaffoldProbe` | 3 | 0.24.0 | behind (0.25.0) |
@@ -24,20 +24,20 @@
 | **ML[X] Media Restore** | ml(x) | `DesignScaffold`, `DesignScaffoldMedia`, `DesignScaffoldProbe`, `DesignScaffoldStatus`, `DesignScaffoldWorkspace` | 1 | 0.24.0 | behind (0.25.0) |
 | **MLX MageVL Demo** | Demos | `DesignScaffold`, `DesignScaffoldMedia`, `DesignScaffoldMetrics`, `DesignScaffoldStatus` | 6 | 0.25.0 | ✅ |
 | **mlx-engine-swift** | MLXEngine | `DesignScaffold` | 5 | 0.24.0 | behind (0.25.0) |
-| **Moebius Demo** | Demos | `DesignScaffold`, `DesignScaffoldControls` | 5 | 0.24.0 | behind (0.25.0) |
+| **Moebius Demo** | Demos | `DesignScaffold`, `DesignScaffoldControls` | 5 | 0.25.0 | ✅ |
 | **Nacre Demo** | Demos | `DesignScaffold`, `DesignScaffoldControls`, `DesignScaffoldMedia`, `DesignScaffoldMetrics` | 5 | 0.25.0 | ✅ |
 | **Nemotron ASR Demo** | Demos | `DesignScaffold`, `DesignScaffoldMetrics`, `DesignScaffoldStatus`, `DesignScaffoldWaveform` | 2 | 0.25.0 | ✅ |
 | **optimistic-driscoll-c05a3b** | ml(x) | `DesignScaffold`, `DesignScaffoldMedia`, `DesignScaffoldProbe`, `DesignScaffoldStatus`, `DesignScaffoldWorkspace` | 4 | 0.24.0 | behind (0.25.0) |
 | **peaceful-goldwasser-6657fd** | MLXEngine | `DesignScaffold` | 5 | 0.25.0 | ✅ |
-| **pixel-agency-desktop** | pixel-agency-desktop | `DesignScaffold`, `DesignScaffoldStatus`, `DesignScaffoldWorkspace` | 8 | 0.25.0 | ✅ |
+| **pixel-agency-desktop** | pixel-agency-desktop | `DesignScaffold`, `DesignScaffoldStatus`, `DesignScaffoldWorkspace` | 9 | 0.25.0 | 🚧 in progress (uncommitted) |
 | **pixel-agency-desktop/App** | pixel-agency-desktop | `DesignScaffold` | 1 | 0.25.0 | ✅ |
 | **pixel-agency-lite** | pixel-agency-lite | `DesignScaffold`, `DesignScaffoldControls`, `DesignScaffoldMedia`, `DesignScaffoldWorkspace` | 6 | 0.25.0 | ✅ |
 | **pixel-agency-lite/App** | pixel-agency-lite | `DesignScaffold` | 1 | 0.25.0 | ✅ |
 | **Qwen Image Demo** | Demos | `DesignScaffold`, `DesignScaffoldControls`, `DesignScaffoldMedia` | 2 | 0.25.0 | ✅ |
-| **SenseNova-U1.5 Demo** | Demos | `DesignScaffold`, `DesignScaffoldChips`, `DesignScaffoldControls`, `DesignScaffoldMedia`, `DesignScaffoldProbe`, `DesignScaffoldStageStepper`, `DesignScaffoldStatus` | 10 | 0.24.0 | behind (0.25.0) |
+| **SenseNova-U1.5 Demo** | Demos | `DesignScaffold`, `DesignScaffoldChips`, `DesignScaffoldControls`, `DesignScaffoldMedia`, `DesignScaffoldProbe`, `DesignScaffoldStageStepper`, `DesignScaffoldStatus` | 10 | 0.25.0 | ✅ |
 | **Trellis2 Demo** | Demos | `DesignScaffold`, `DesignScaffoldControls`, `DesignScaffoldMedia` | 6 | 0.25.0 | ✅ |
 
-**Linked but unused** (a pin with no import — dead dependency): `ForgeCore`, `LTXVideoTesting.xcodeproj`, `ModelSheetStudio`, `ModelSheetStudio.xcodeproj`, `TierBench`, `WANVideoTesting.xcodeproj`, `canvas-contention`, `great-swirles-0be069`, `ltx-2-mlx-swift`, `ltx-features-swift`, `mage-vl-swift`, `ming-image-swift`, `mlx-animesr-swift`, `mlx-bark-tts-swift`, `mlx-dia2-tts-swift`, `mlx-edgetam-swift`, `mlx-flashvsr-swift`, `mlx-gepard-swift`, `mlx-heart-swift`, `mlx-image-runtime`, `mlx-indextts2-swift`, `mlx-moss-tts-swift`, `mlx-nacre-swift`, `mlx-nemotron-stt-swift`, `mlx-nerve-swift`, `mlx-qwen3-tts-swift`, `mlx-r2t2-stt-swift`, `mlx-realplksr-swift`, `mlx-seedvr2-swift`, `mlx-siglip2-iqa-swift`, `mlx-step-audio-editx-swift`, `mlx-vibevoice-asr-swift`, `mlx-vosr-swift`, `mlx-voxcpm2-tts-swift`, `mlxengine-3d`, `mlxengine-image`, `mlxengine-video`, `mlxengine-video-ltx`, `nerve-bench`, `nrscore`, `pixel-agency-image-engine`, `qwen-image21-swift`, `qwen25vl-mlx-swift`, `recursing-feistel-a483fe`, `sensenova-u1-swift`, `voice-chat-kit`, `zimage-ab`
+**Linked but unused** (a pin with no import — dead dependency): `ForgeCore`, `LTXVideoTesting.xcodeproj`, `ModelSheetStudio`, `ModelSheetStudio.xcodeproj`, `TierBench`, `WANVideoTesting.xcodeproj`, `canvas-contention`, `great-swirles-0be069`, `ltx-2-mlx-swift`, `ltx-features-swift`, `mage-vl-swift`, `ming-image-swift`, `mlx-animesr-swift`, `mlx-bark-tts-swift`, `mlx-dia2-tts-swift`, `mlx-edgetam-swift`, `mlx-flashvsr-swift`, `mlx-gepard-swift`, `mlx-heart-swift`, `mlx-image-runtime`, `mlx-indextts2-swift`, `mlx-lama-swift`, `mlx-moss-tts-swift`, `mlx-nacre-swift`, `mlx-nemotron-stt-swift`, `mlx-nerve-swift`, `mlx-qwen3-tts-swift`, `mlx-r2t2-stt-swift`, `mlx-realplksr-swift`, `mlx-seedvr2-swift`, `mlx-siglip2-iqa-swift`, `mlx-step-audio-editx-swift`, `mlx-vibevoice-asr-swift`, `mlx-vosr-swift`, `mlx-voxcpm2-tts-swift`, `mlxengine-3d`, `mlxengine-image`, `mlxengine-video`, `mlxengine-video-ltx`, `nerve-bench`, `nrscore`, `pixel-agency-image-engine`, `qwen-image21-swift`, `qwen25vl-mlx-swift`, `recursing-feistel-a483fe`, `sensenova-u1-swift`, `voice-chat-kit`, `zimage-ab`
 
 
 ### ⚠️ Shadow pins — a second `Package.resolved` that disagrees with the governing one
@@ -48,20 +48,16 @@ silent downgrade for anyone who does that. Resolve with the project open and com
 
 | Adopter | governs | shadowed by |
 |---|---|---|
-| **Audio8 Demo** | 0.25.0 — `Demos/MLX_Demos_WS.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.24.0** — `Demos/Audio8 Demo/Audio8 Demo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` |
 | **ForgeCanvasLab** | 0.25.0 — `mlxengine-forge/XocializeForge.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.24.0** — `mlxengine-forge/Labs/ForgeCanvasLab/Package.resolved` |
 | **ForgeCanvasUI** | 0.25.0 — `mlxengine-forge/XocializeForge.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.24.0** — `mlxengine-forge/PROD/ForgeCanvasUI/Package.resolved` |
 | **ForgeCore** | 0.25.0 — `mlxengine-forge/XocializeForge.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.24.0** — `mlxengine-forge/PROD/ForgeCore/Package.resolved` |
-| **Gepard Demo** | 0.25.0 — `Demos/MLX_Demos_WS.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.24.0** — `Demos/Gepard Demo/Gepard Demo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` |
-| **Liquid LFM 2.5 Demo** | 0.25.0 — `Demos/MLX_Demos_WS.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.24.0** — `Demos/Liquid LFM 2.5 Demo/Liquid LFM 2.5 Demo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` |
-| **Moebius Demo** | 0.25.0 — `Demos/MLX_Demos_WS.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.24.0** — `Demos/Moebius Demo/Moebius Demo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` |
-| **SenseNova-U1.5 Demo** | 0.25.0 — `Demos/MLX_Demos_WS.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.24.0** — `Demos/SenseNova-U1.5 Demo/SenseNova-U1.5 Demo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` |
 | **canvas-contention** | 0.25.0 — `mlxengine-forge/XocializeForge.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.24.0** — `mlxengine-forge/Tools/canvas-contention/Package.resolved` |
 | **ecstatic-zhukovsky-b0661c** | 0.25.0 — `MLXEngine/MLXEngine.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.24.0** — `MLXEngine/mlx-engine-swift/.claude/worktrees/ecstatic-zhukovsky-b0661c/Package.resolved` |
 | **focused-shaw-a36652** | 0.25.0 — `MLXEngine/MLXEngine.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.24.0** — `MLXEngine/mlx-engine-swift/.claude/worktrees/focused-shaw-a36652/Package.resolved` |
 | **ltx-features-swift** | 0.25.0 — `mlxengine-video-ltx/MLXEngineVideoLTX.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.21.0** — `mlxengine-video-ltx/LTX_DEV/ltx-features-swift/Package.resolved` |
 | **mlx-engine-swift** | 0.25.0 — `MLXEngine/MLXEngine.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.24.0** — `MLXEngine/mlx-engine-swift/Package.resolved` |
 | **mlx-heart-swift** | 0.24.0 — `mlxengine-image/MLXEngineImageWS.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.25.0** — `mlxengine-image/PROD/mlx-heart-swift/Package.resolved` |
+| **mlx-lama-swift** | 0.24.0 — `mlxengine-image/MLXEngineImageWS.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.25.0** — `mlxengine-image/PROD/mlx-lama-swift/Package.resolved` |
 | **mlx-nacre-swift** | 0.24.0 — `mlxengine-image/MLXEngineImageWS.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.25.0** — `mlxengine-image/WIP/mlx-nacre-swift/Package.resolved` |
 | **mlx-nerve-swift** | 0.24.0 — `mlxengine-image/MLXEngineImageWS.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.25.0** — `mlxengine-image/PROD/mlx-nerve-swift/Package.resolved` |
 | **mlx-siglip2-iqa-swift** | 0.24.0 — `mlxengine-image/MLXEngineImageWS.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.25.0** — `mlxengine-image/PROD/mlx-siglip2-iqa-swift/Package.resolved` |
