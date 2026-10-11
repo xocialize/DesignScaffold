@@ -48,16 +48,14 @@ silent downgrade for anyone who does that. Resolve with the project open and com
 
 | Adopter | governs | shadowed by |
 |---|---|---|
-| **BiRefNet Demo** | 0.24.0 — `Demos/MLX_Demos_WS.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.25.0** — `Demos/BiRefNet Demo/BiRefNet Demo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` |
+| **Audio8 Demo** | 0.25.0 — `Demos/MLX_Demos_WS.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.24.0** — `Demos/Audio8 Demo/Audio8 Demo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` |
 | **ForgeCanvasLab** | 0.25.0 — `mlxengine-forge/XocializeForge.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.24.0** — `mlxengine-forge/Labs/ForgeCanvasLab/Package.resolved` |
 | **ForgeCanvasUI** | 0.25.0 — `mlxengine-forge/XocializeForge.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.24.0** — `mlxengine-forge/PROD/ForgeCanvasUI/Package.resolved` |
 | **ForgeCore** | 0.25.0 — `mlxengine-forge/XocializeForge.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.24.0** — `mlxengine-forge/PROD/ForgeCore/Package.resolved` |
-| **MLX MageVL Demo** | 0.24.0 — `Demos/MLX_Demos_WS.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.25.0** — `Demos/MLX MageVL Demo/MLX MageVL Demo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` |
-| **Mage Demo** | 0.24.0 — `Demos/MLX_Demos_WS.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.25.0** — `Demos/Mage Demo/Mage Demo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` |
-| **Nacre Demo** | 0.24.0 — `Demos/MLX_Demos_WS.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.25.0** — `Demos/Nacre Demo/Nacre Demo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` |
-| **Nemotron ASR Demo** | 0.24.0 — `Demos/MLX_Demos_WS.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.25.0** — `Demos/Nemotron ASR Demo/Nemotron ASR Demo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` |
-| **Qwen Image Demo** | 0.24.0 — `Demos/MLX_Demos_WS.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.25.0** — `Demos/Qwen Image Demo/Qwen Image Demo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` |
-| **Trellis2 Demo** | 0.24.0 — `Demos/MLX_Demos_WS.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.25.0** — `Demos/Trellis2 Demo/Trellis2 Demo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` |
+| **Gepard Demo** | 0.25.0 — `Demos/MLX_Demos_WS.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.24.0** — `Demos/Gepard Demo/Gepard Demo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` |
+| **Liquid LFM 2.5 Demo** | 0.25.0 — `Demos/MLX_Demos_WS.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.24.0** — `Demos/Liquid LFM 2.5 Demo/Liquid LFM 2.5 Demo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` |
+| **Moebius Demo** | 0.25.0 — `Demos/MLX_Demos_WS.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.24.0** — `Demos/Moebius Demo/Moebius Demo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` |
+| **SenseNova-U1.5 Demo** | 0.25.0 — `Demos/MLX_Demos_WS.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.24.0** — `Demos/SenseNova-U1.5 Demo/SenseNova-U1.5 Demo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` |
 | **canvas-contention** | 0.25.0 — `mlxengine-forge/XocializeForge.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.24.0** — `mlxengine-forge/Tools/canvas-contention/Package.resolved` |
 | **ecstatic-zhukovsky-b0661c** | 0.25.0 — `MLXEngine/MLXEngine.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.24.0** — `MLXEngine/mlx-engine-swift/.claude/worktrees/ecstatic-zhukovsky-b0661c/Package.resolved` |
 | **focused-shaw-a36652** | 0.25.0 — `MLXEngine/MLXEngine.xcworkspace/xcshareddata/swiftpm/Package.resolved` | **0.24.0** — `MLXEngine/mlx-engine-swift/.claude/worktrees/focused-shaw-a36652/Package.resolved` |
