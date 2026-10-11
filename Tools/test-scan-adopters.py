@@ -71,5 +71,31 @@ shadow = run({
 })
 check("one drifted project under an umbrella is exactly one shadow", len(shadow) == 1 and shadow[0][2][0] == "0.23.0", repr(shadow))
 
+# 6. Two repositories that each hold an `App/` package importing the kit are TWO adopters.
+#    Keying by name merged them, and the dirty check then asked one repo about the other's
+#    file — the crash on pixel-agency-desktop / pixel-agency-lite (AB-A-0152 item 1).
+def imports_of(tree):
+    with tempfile.TemporaryDirectory() as tmp:
+        root = Path(tmp) / "Dev"
+        for rel, text in tree.items():
+            (root / rel).parent.mkdir(parents=True, exist_ok=True)
+            (root / rel).write_text(text)
+        m.ROOTS[:] = [root]
+        _, imports, _, _, _ = m.scan()
+        return imports
+
+imports = imports_of({
+    "desktop/.git/HEAD": "ref: refs/heads/main",
+    "desktop/App/Package.swift": "// swift-tools-version:5.9",
+    "desktop/App/Sources/A.swift": "import DesignScaffold\n",
+    "lite/.git/HEAD": "ref: refs/heads/main",
+    "lite/App/Package.swift": "// swift-tools-version:5.9",
+    "lite/App/Sources/B.swift": "import DesignScaffold\nimport DesignScaffoldMedia\n",
+})
+check("same-named apps in two repos are two adopters", len(imports) == 2, repr(list(imports)))
+check("…and each keeps only its own files",
+      all(len(info["paths"]) == 1 for info in imports.values()), repr(imports))
+check("…under the shared display name", {info["name"] for info in imports.values()} == {"App"})
+
 print(f"\n{'ALL PASSED' if not failures else f'{failures} FAILED'}")
 sys.exit(1 if failures else 0)

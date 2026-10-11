@@ -147,13 +147,23 @@ def project_of(p: Path) -> str:
     parts = rel(p).split("/")
     return parts[0] if parts else "?"
 
-def app_of(p: Path) -> str:
-    """Nearest enclosing .xcodeproj/.xcworkspace/Package.swift owner, for a readable name."""
+def app_dir_of(p: Path) -> Path:
+    """Nearest enclosing .xcodeproj/.xcworkspace/Package.swift owner — the directory ITSELF.
+
+    Adopters are keyed by this path, not by its name. Two repositories can both hold an
+    `App/` package (pixel-agency-desktop and pixel-agency-lite do), and keying by name merged
+    them into one adopter whose files straddled two repositories; the dirty check then asked
+    one repo about a path that lived in the other and crashed (`relative_to`, 2026-10-10).
+    """
     for parent in p.parents:
         if any(parent.glob("*.xcodeproj")) or any(parent.glob("*.xcworkspace")) \
            or (parent / "Package.swift").exists():
-            return parent.name
-    return p.parent.name
+            return parent
+    return p.parent
+
+def app_of(p: Path) -> str:
+    """The owner's name, for a readable label. Not a key — see app_dir_of."""
+    return app_dir_of(p).name
 
 def scan():
     pins, imports, forks, exact_pins, all_pins = {}, {}, [], [], {}
@@ -187,9 +197,9 @@ def scan():
                 continue
             if "import DesignScaffold" in text:
                 mods = sorted(set(re.findall(r"import (DesignScaffold\w*)", text)))
-                key = app_of(f)
+                key = app_dir_of(f)   # the directory: unique even when two apps share a name
                 imports.setdefault(key, {"mods": set(), "files": 0, "project": project_of(f),
-                                         "paths": [], "name": key})
+                                         "paths": [], "name": key.name})
                 imports[key]["mods"].update(mods)
                 imports[key]["files"] += 1
                 imports[key]["paths"].append(f)
@@ -242,9 +252,34 @@ def main():
             except ValueError:
                 continue
         return False
-    for app in sorted(imports):
-        info = imports[app]
-        matched = pins_by_norm.get(norm(app))
+    # Same-named apps in different trees get their parent directory in the label, so the
+    # table says which one is which instead of listing "App" twice.
+    by_name = {}
+    for key, info in imports.items():
+        by_name.setdefault(norm(info["name"]), []).append(key)
+
+    def display(key: Path) -> str:
+        name = imports[key]["name"]
+        return f"{key.parent.name}/{name}" if len(by_name[norm(name)]) > 1 else name
+
+    # One `git status` per repository, and every file asks ITS OWN repository — never the
+    # first file's — so an adopter spanning trees cannot crash the check again.
+    dirty_cache = {}
+
+    def is_dirty(p: Path) -> bool:
+        repo = repo_of(p)
+        if repo is None:
+            return False
+        if repo not in dirty_cache:
+            dirty_cache[repo] = dirty_files(repo)
+        return str(p.relative_to(repo)) in dirty_cache[repo]
+
+    for key in sorted(imports, key=lambda k: (display(k).lower(), str(k))):
+        info = imports[key]
+        app = display(key)
+        matched = pins_by_norm.get(norm(info["name"]))
+        if matched is not None and not pin_covers(matched[3], info):
+            matched = None   # a same-named app's pin, not this one's — fall through
         if matched is None:
             # fall back to containment: workspace pins sit above the project that imports
             for candidate in pins.values():
@@ -253,11 +288,7 @@ def main():
                     break
         version = matched[0] if matched else "—"
         # in-flight adoption must not read as shipped
-        uncommitted = False
-        repo = repo_of(info["paths"][0]) if info["paths"] else None
-        if repo:
-            dirty = dirty_files(repo)
-            uncommitted = any(str(p.relative_to(repo)) in dirty for p in info["paths"])
+        uncommitted = any(is_dirty(p) for p in info["paths"])
         if uncommitted:
             drift = "🚧 in progress (uncommitted)"
         elif version == tag:
@@ -271,7 +302,7 @@ def main():
     if not imports:
         lines.append("| _none detected_ | | | | | |")
 
-    imported_norms = {norm(a) for a in imports}
+    imported_norms = {norm(info["name"]) for info in imports.values()}
     linked_only = sorted(
         app for app, meta in pins.items()
         if norm(app) not in imported_norms
