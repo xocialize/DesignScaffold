@@ -9,8 +9,10 @@ ClipView(clip)
     .hitTestProbe("clip-\(clip.id)")
 ```
 
-Run the app with `-DesignScaffoldProbe YES` (or `DESIGNSCAFFOLD_PROBE=1` in the environment),
-then drive it with [`Tools/InputDriver`](../Tools/README.md) at the reported coordinates:
+Run the app with `DESIGNSCAFFOLD_PROBE=1` in the environment (the `-DesignScaffoldProbe YES`
+argument also works in a bundled app, but it stopped a SwiftPM app's window from appearing,
+AB-L-0150), then drive it with [`Tools/InputDriver`](../Tools/README.md), or with AppProbe's
+`pointer` tool, at the reported coordinates:
 
 ```
 PROBE TARGET clip-A centre 3800 519 size 144x56
@@ -81,3 +83,55 @@ The probe reports coordinates; something has to click them. `Tools/InputDriver` 
 including that a click into a window which is not frontmost is consumed activating it.
 `Tools/menu-matrix.sh` is a worked example that walks a behaviour matrix with a positive
 control on every cell.
+
+## The channel: state, commands, events, stalls (0.26.0)
+
+Coordinates and outcome lines answer "where" and "did it fire". A checklist also asks what the
+app now **holds** ("a Generative Layer above the active layer, masked by the selection"), needs
+input the pointer can't give politely (a stroke on a canvas while the operator keeps working),
+and asks whether the app **stayed responsive**. 0.26.0 adds those, through one invisible
+element a driver reaches over accessibility:
+
+```swift
+RootView()
+    .designScaffoldProbeHost()            // once per window; HitTestProbe.installHost(in:) for AppKit
+
+HitTestProbe.state("document") {         // computed at read time, never stale
+    ["size": [doc.width, doc.height], "layers": doc.layers.map(\.name),
+     "undo": undoManager.undoActionName, "selection": selection?.bounds]
+}
+HitTestProbe.command("canvas.drag") { args in   // runs on the main thread when a driver sets it
+    try ProbeInput.drag(canvas, from: canvas.viewPoint(try args.point("from")),
+                                to: canvas.viewPoint(try args.point("to")))
+    return ["layers": doc.layers.count]
+}
+HitTestProbe.event("EXPORTED", url.lastPathComponent)   // numbered with SELECTION, COMMIT…
+```
+
+**The wire.** The host is a 1 × 1 view with the accessibility identifier `DesignScaffoldProbe`:
+- **Read its AX value** to get JSON: `targets` (as `PROBE TARGET` prints them), `state` (every provider, run now), `last_seq`, the `commands` it takes, `heartbeat`, and the last command's `reply`.
+- **Set its AX value** to `{"id": "…", "command": "name", "args": {…}}` to run a command. Its reply (`ok`, and `result` or `error`) comes back on the next read, under the same `id`.
+- **Built-in commands:** `events {since: seq}` returns the numbered events after a seq. `ping` checks the wire.
+
+Accessibility, not a socket, because:
+- a driver already speaks it;
+- a sandboxed app needs no entitlement for it, where a socket or a loopback port would;
+- it reaches an app however it was launched, Xcode included, where stdout isn't the driver's to read.
+
+Everything is absent from the accessibility tree unless the probe is enabled.
+
+**`ProbeInput`** sends real `NSEvent`s straight to an **AppKit** view's `mouseDown`, `mouseDragged` and `mouseUp`, as an app's hosted tests do. No pointer moves and the app needn't be in front.
+
+⚠️ It tests what the view **does** with a press, not whether a press would **reach** it. Window hit testing, a sheet in the way and first-click activation are all skipped; checking those is the real pointer's job. And a SwiftUI gesture ignores it: this harness measured `NSApp.sendEvent` and direct `mouseDown` inert there. Use `.hitTestProbe` targets and the real pointer for SwiftUI.
+
+**The heartbeat.** While the channel runs, a background timer asks the main queue to note the time every 50 ms. An answer more than 100 ms late is a **stall**, kept with its start (the app's uptime clock, which events also carry) and length. One blocked stretch counts once, not once per delayed beat.
+
+A driver can't read the app *during* a stall, because its accessibility requests wait for the same main thread. So the stalls are kept and read afterwards. "The app stays responsive while it runs" becomes the worst stall since the run started.
+
+**Driving it.** AppProbe (`xocialize/AppProbe`, the `appprobe` MCP server) reads and commands the host:
+- `probe` lists targets, commands, state names, events since a seq and the worst stall;
+- `probe_state` returns the state and the stalls since a moment;
+- `probe_command` runs a command and returns its result, with the seq before it ran.
+
+`pointer target=` clicks a probe target with the real pointer. It refuses to click when another app's window is on top at that point (AB-L-0150).
+

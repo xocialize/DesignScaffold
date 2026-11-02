@@ -45,7 +45,7 @@ let package = Package(
         .library(name: "DesignScaffoldChips", targets: ["DesignScaffoldChips"]),
         // Three-panel app shell (navigation rail · work area · inspector) with hairlines.
         .library(name: "DesignScaffoldWorkspace", targets: ["DesignScaffoldWorkspace"]),
-        // Opt-in pointer gate: report where a view DREW, and what a gesture actually did.
+        // Opt-in test probe: where a view DREW, what a gesture did, and app state and commands for a driver.
         .library(name: "DesignScaffoldProbe", targets: ["DesignScaffoldProbe"]),
         // Findable selection list for large libraries (search · tag scoping · sort · multi-select).
         .library(name: "DesignScaffoldPicker", targets: ["DesignScaffoldPicker"]),
@@ -104,6 +104,10 @@ let package = Package(
         .testTarget(
             name: "DesignScaffoldStageStepperTests",
             dependencies: ["DesignScaffoldStageStepper"]
+        ),
+        .testTarget(
+            name: "DesignScaffoldProbeTests",
+            dependencies: ["DesignScaffoldProbe"]
         ),
         .target(
             name: "DesignScaffoldMetrics",

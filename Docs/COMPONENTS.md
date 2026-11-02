@@ -1,7 +1,7 @@
 # DesignScaffold components — the fleet catalog
 
 **Generated from `Package.swift` by `Tools/generate-components-catalog.py` — do not hand-edit.**
-Current release: **0.25.0** · `https://github.com/xocialize/DesignScaffold` (public, MIT).
+Current release: **0.26.0** · `https://github.com/xocialize/DesignScaffold` (public, MIT).
 
 > **Before building any macOS UI surface, look here first.** DesignScaffold is the fleet's
 > single design authority (AB-D-0040 / AB-D-0042): the token vocabulary and every shared
@@ -21,7 +21,7 @@ Current release: **0.25.0** · `https://github.com/xocialize/DesignScaffold` (pu
 | [DesignScaffoldTimeline](Timeline.md) | Media-agnostic multi-track timeline (ruler · headers · clip lanes · playhead) |
 | `DesignScaffoldChips` | Capsule filter chips, single-select, wrapping |
 | `DesignScaffoldWorkspace` | Three-panel app shell (navigation rail · work area · inspector) with hairlines |
-| `DesignScaffoldProbe` | Opt-in pointer gate: report where a view DREW, and what a gesture actually did |
+| [DesignScaffoldProbe](HitTestProbe.md) | Opt-in test probe: where a view DREW, what a gesture did, and app state and commands for a driver |
 | `DesignScaffoldPicker` | Findable selection list for large libraries (search · tag scoping · sort · multi-select) |
 | `DesignScaffoldStatus` | Status pill: a dot, a label, a capsule — idle · working · ready · failed |
 | [DesignScaffoldWaveform](Waveform.md) | Audio waveform: a live input level meter and a track visualiser, one Canvas renderer |

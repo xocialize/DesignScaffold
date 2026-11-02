@@ -16,7 +16,8 @@ ROOT = Path(__file__).resolve().parent.parent
 
 # product name -> doc page basename (only where they differ from the product suffix)
 DOC_OVERRIDES = {"DesignScaffoldLoading": "LoadingModal",
-                 "DesignScaffoldPlaylist": "PlaylistIterator"}
+                 "DesignScaffoldPlaylist": "PlaylistIterator",
+                 "DesignScaffoldProbe": "HitTestProbe"}
 
 def products():
     text = (ROOT / "Package.swift").read_text()

@@ -99,27 +99,43 @@ public enum HitTestProbe {
     /// primary display, y increasing downward.
     public static func flush() {
         guard isEnabled else { return }
-        guard let window = NSApp.keyWindow ?? NSApp.windows.first(where: { $0.isVisible }),
-              let primary = NSScreen.screens.first else {
+        guard converter() != nil else {
             emit("PROBE ERROR no visible window to convert against")
             return
         }
+        let current = currentTargets()
+        for t in current {
+            emit("PROBE TARGET \(t.name) centre \(t.x) \(t.y) size \(t.w)x\(t.h)")
+        }
+        emit("PROBE READY \(current.count)")
+    }
+
+    /// A target as a driver clicks it: its centre and size in the space `CGEvent` uses.
+    struct PlacedTarget { let name: String; let x: Int; let y: Int; let w: Int; let h: Int }
+
+    /// The window frame and primary-display height that turn SwiftUI `.global` frames into
+    /// CGEvent space.
+    private static func converter() -> (frame: CGRect, windowTop: CGFloat)? {
+        // NSApp is nil in a process with no NSApplication (a unit test): nothing is drawn there.
+        let app: NSApplication? = NSApp
+        guard let app, let window = app.keyWindow ?? app.windows.first(where: { $0.isVisible }),
+              let primary = NSScreen.screens.first else { return nil }
         // ⚠️ SwiftUI's `.global` space is the window FRAME, not the content view — measured in
         // two apps independently, and both got it wrong first. Routing through
         // `contentView.bounds` puts every target exactly one title bar (~27-34pt) too low, and
         // a target computed by hand landed 27pt off for the same reason.
         let frame = window.frame                              // AppKit screen space, y up
-        let windowTop = primary.frame.height - frame.maxY     // CGEvent space, y down
+        return (frame, primary.frame.height - frame.maxY)     // CGEvent space, y down
+    }
 
-        for target in targets.values.sorted(by: { $0.rect.minX < $1.rect.minX }) {
+    /// Every registered target, placed. Read by `flush()` and by the probe host.
+    static func currentTargets() -> [PlacedTarget] {
+        guard isEnabled, let (frame, windowTop) = converter() else { return [] }
+        return targets.values.sorted(by: { $0.rect.minX < $1.rect.minX }).map { target in
             let r = target.rect
-            emit(String(format: "PROBE TARGET %@ centre %d %d size %dx%d",
-                        target.name,
-                        Int((frame.minX + r.midX).rounded()),
-                        Int((windowTop + r.midY).rounded()),
-                        Int(r.width), Int(r.height)))
+            return PlacedTarget(name: target.name, x: Int((frame.minX + r.midX).rounded()),
+                                y: Int((windowTop + r.midY).rounded()), w: Int(r.width), h: Int(r.height))
         }
-        emit("PROBE READY \(targets.count)")
     }
 
     public static func reset() { targets.removeAll() }
@@ -133,7 +149,9 @@ public enum HitTestProbe {
     /// What the app believes is selected, in terms a harness can assert on.
     public static func selection(_ names: [String]) {
         guard isEnabled else { return }
-        emit("PROBE SELECTION \(names.isEmpty ? "none" : names.sorted().joined(separator: ","))")
+        let detail = names.isEmpty ? "none" : names.sorted().joined(separator: ",")
+        emit("PROBE SELECTION \(detail)")
+        ProbeChannel.append("SELECTION", detail)
     }
 
     /// A target that ACTS rather than selects — a button drawn inside a decoration.
@@ -143,6 +161,7 @@ public enum HitTestProbe {
     public static func activation(_ name: String) {
         guard isEnabled else { return }
         emit("PROBE ACTIVATION \(name)")
+        ProbeChannel.append("ACTIVATION", name)
     }
 
     /// A context-menu ITEM fired, and on what.
@@ -153,13 +172,16 @@ public enum HitTestProbe {
     public static func menuItem(_ item: String, on target: String) {
         guard isEnabled else { return }
         emit("PROBE MENUITEM \(item) on \(target)")
+        ProbeChannel.append("MENUITEM", "\(item) on \(target)")
     }
 
     /// A committed edit. `kind` distinguishes which callback fired — a trim that commits as a
     /// move is a silent wrong answer, and silence is how a non-committing drag presents.
     public static func commit(_ kind: String, _ target: String, _ detail: String = "") {
         guard isEnabled else { return }
-        emit("PROBE COMMIT \(kind) \(target)\(detail.isEmpty ? "" : " " + detail)")
+        let line = "\(kind) \(target)\(detail.isEmpty ? "" : " " + detail)"
+        emit("PROBE COMMIT \(line)")
+        ProbeChannel.append("COMMIT", line)
     }
 }
 
